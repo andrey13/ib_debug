@@ -36,6 +36,7 @@ const empty_MTS = {
     dsp: '0',
     mts_SN: '',
     size_gb: '0',
+    size2: '0',
     user: '',
     reson: '',
     comment: '',
@@ -124,6 +125,7 @@ function createTabZayavki(id_div, appH) {
         scrollToRowIfVisible: false,
         selectable: true,
         selectableRangeMode: "click",
+        reactiveData: true,
 
         columns: [
             { title: "id", field: "id", width: 50, print: false },
@@ -275,14 +277,14 @@ function createTabZayavki(id_div, appH) {
         const appH = window.innerHeight - 300
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
 
-        const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
-        const bADDMTS = "<button id='addMTS' title='Создание устройства' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
-        const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
+        const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
+        const bADDMTS = "<button id='addMTS' title='Создание устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
+        const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
         const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELMTS + bMODMTS + bADDMTS} Список МТС</div>`
 
-        const bDELARM = "<button id='delARM' title='Удаление компьютера' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
-        const bADDARM = "<button id='addARM' title='Создание компьютера' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
-        const bMODARM = `<button id='modARM' title='Изменить компьютера' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
+        const bDELARM = "<button id='delARM' title='Удаление компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
+        const bADDARM = "<button id='addARM' title='Создание компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
+        const bMODARM = `<button id='modARM' title='Изменить компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
         const menuARM = `<div id="tabARMmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELARM + bADDARM} Список рабочих станций</div>`
 
         const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
@@ -404,19 +406,20 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
         selectable: true,
         selectableRangeMode: "click",
         variableHeight: false,
+        headerSort: false,
 
         columns: [
-            { title: "id", field: "id", width: 50, print: false },
+            { title: "id", field: "id", width: 30, print: false },
             // { title: "id_zayavka", field: "id_zayavka", width: 90 },
             // { title: "id_mts", field: "id_mts", width: 90 },
-            { title: "дсп", field: "dsp", formatter: "lookup", formatterParams: { 0: "   ", 1: "дсп" }, width: 54 },
-            { title: "Гб", field: "size_gb", width: 50 },
-            { title: "ответственный", field: "user", widthGrow: 2, formatter:"textarea" },
-            { title: "обоснование", field: "reson", widthGrow: 2, formatter:"textarea" },
+            { title: "дсп", field: "dsp", formatter: "lookup", formatterParams: { 0: "   ", 1: "дсп" }, width: 30 },
+            { title: "Гб", field: "size_gb", width: 30 },
+            { title: "ответственный", field: "user", widthGrow: 2, formatter: "textarea" },
+            { title: "обоснование", field: "reson", widthGrow: 2, formatter: "textarea" },
             { title: "заводской номер", field: "mts_SN", widthGrow: 1 },
             { title: "выдано", field: "date_vidano", width: 100 },
             { title: "подключено", field: "date_podkl", width: 100 },
-            { title: "комментарии", field: "comment", widthGrow: 2, formatter:"textarea" },
+            { title: "комментарии", field: "comment", widthGrow: 2, formatter: "textarea" },
         ],
 
         renderStarted: function () { },
@@ -531,23 +534,26 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
         const headerZayavkaMTS = `<h4>Параметры МТС №${d.id}</h4>`
 
         const bodyZayavkaMTS = `<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
-                                    <input type="checkbox" id="MTS_dsp">
+                                    <input type="checkbox" id="MTS_dsp" disabled>
                                     <label for="MTS_dsp"> ДСП</label>
-                                    <br>
-                                    <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}">
-                                    <label for="MTS_size">  Объем (Гб)</label>
-                                    <br>
-                                    <input class="o3-border" type="text" id="MTS_SN" value="${d.mts_SN}">
-                                    <label for="MTS_SN">  Серийный номер</label>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <button id="selectUser" class="w3-btn w3-padding-small w3-border w3-border-black w3-hover-teal"  >ответственное лицо</button>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <button id="selectUser" class="w3-btn w3-padding-small w3-border w3-border-black w3-hover-teal disabled">ответственное лицо</button>
                                     <span id="user-name">${d.user}</span>
-                                    <BR>
+                                    <br>
+                                    <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}" disabled>
+                                    <label for="MTS_size">  Объем (Гб) запрошено</label>
+                                    <br>
+                                    <input class="o3-border" type="text" id="MTS_size2" value="${d.size2}" disabled>
+                                    <label for="MTS_size2">  Объем (Гб) фактически выдано</label>
+                                    <br>
+                                    <input class="o3-border" type="text" id="MTS_SN" value="${d.mts_SN}" disabled>
+                                    <label for="MTS_SN">  Серийный номер</label>
+                                    <br>
                                     <label for="MTS_reson"><b>Обоснование:</b></label><br>
-                                    <textarea id="MTS_reson" rows="3" style="width:100%">${d.reson}</textarea>
+                                    <textarea id="MTS_reson" rows="3" style="width:100%" disabled>${d.reson}</textarea>
                                     <br>
                                     <label for="MTS_comm"><b>Комментарии:</b></label><br>
-                                    <textarea id="MTS_comm" rows="3" style="width:100%">${d.comment}</textarea>
+                                    <textarea id="MTS_comm" rows="3" style="width:100%" disabled>${d.comment}</textarea>
                                     <br>
                                     <br>
                                     <button id="enterMTS" class="w3-btn o3-border w3-hover-teal"  >сохранить</button>
@@ -556,7 +562,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
 
         footZayavkaMTS = ``
 
-        newModalWindow( "editMTS", headerZayavkaMTS, bodyZayavkaMTS, footZayavkaMTS, width = "60%", marginLeft = "5%", marginTop = "10%" )
+        newModalWindow("editMTS", headerZayavkaMTS, bodyZayavkaMTS, footZayavkaMTS, width = "60%", marginLeft = "5%", marginTop = "10%")
 
         id2e("MTS_dsp").focus()
         id2e("MTS_dsp").select()
@@ -575,6 +581,21 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
                 })
         }
 
+        // включение/отключение элементов управления согласно роли текущего пользователя ----
+        id2e('MTS_dsp').disabled = true
+        id2e('MTS_size').disabled = true
+        id2e('MTS_SN').disabled = true
+        id2e('selectUser').disabled = true
+        id2e('MTS_reson').disabled = true
+        id2e('MTS_comm').disabled = true
+
+        if (isRole('tex')) {
+            id2e('MTS_dsp').disabled = false
+            id2e('MTS_size').disabled = false
+            id2e('selectUser').disabled = false
+            id2e('MTS_reson').disabled = false
+        }
+
         // кнопка ENTER ---------------------------------------------------------------------
         id2e("enterMTS").onclick = function () {
             d.dsp = id2e("MTS_dsp").checked ? "1" : "0"
@@ -583,12 +604,12 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
             d.comment = id2e("MTS_comm").value
             d.reson = id2e("MTS_reson").value
 
-            runSQL_p( `UPDATE zayavka2mts SET 
+            runSQL_p(`UPDATE zayavka2mts SET 
                         dsp=${d.dsp}, 
                         size_gb=${d.size_gb}, 
                         id_user=${d.id_user}, 
                         reson='${d.reson}', 
-                        comment='${d.comment}' WHERE id=${d.id}` )
+                        comment='${d.comment}' WHERE id=${d.id}`)
 
             runSQL_p(`UPDATE mts SET SN=${d.mts_SN} WHERE id=${d.id_mts}`)
 
@@ -600,7 +621,6 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
         id2e("cancelMTS").onclick = function () {
             if (mode == "new") {
                 let id = tableMTS.getSelectedData()[0].id
-                console.log('d = ', d)
                 delMTS(d)
                 tableMTS.deleteRow(id)
                 id = getFirstID(tableMTS)
@@ -678,30 +698,16 @@ function createTabComp(id_div, appH, id_zayavka = 0) {
         selectable: true,
         selectableRangeMode: "click",
         variableHeight: false,
+        headerSort: false,
 
         columns: [
-            { title: "id", field: "id", width: 50, print: false },
-            { title: "id_zayavka", field: "id_zayavka", width: 90 },
-            { title: "id_mts", field: "id_mts", width: 90 },
-            { title: "id_comp", field: "id_comp", width: 90 },
-            {
-                title: "название",
-                field: "comp_name",
-                widthGrow: 2,
-                headerFilter: true,
-            },
-            {
-                title: "пользователь",
-                field: "comp_user",
-                widthGrow: 2,
-                headerFilter: true,
-            },
-            {
-                title: "комментарии",
-                field: "comment",
-                widthGrow: 2,
-                headerFilter: true,
-            },
+            { title: "id", field: "id", width: 30, print: false },
+            // { title: "id_zayavka", field: "id_zayavka", width: 90 },
+            // { title: "id_mts", field: "id_mts", width: 90 },
+            // { title: "id_comp", field: "id_comp", width: 90 },
+            { title: "название", field: "comp_name", widthGrow: 1 },
+            { title: "пользователь", field: "comp_user", widthGrow: 2 },
+            { title: "комментарии", field: "comment", widthGrow: 2 },
         ],
 
         renderStarted: function () { },

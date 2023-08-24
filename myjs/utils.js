@@ -27,6 +27,13 @@ async function start_app() {
 }
 
 //=======================================================================================
+async function verInc(table, key) {
+    let response = await fetch(`myphp/verInc.php?t=${table}&k=${key}`)
+    let data = await response.json()
+    return data;
+}
+
+//=======================================================================================
 function fio2fio0(fio) {
     let arrayOffio = fio.split(' ');
     return arrayOffio[0] + ' ' + arrayOffio[1].substring(0,1) + arrayOffio[2].substring(0,1);
@@ -205,11 +212,23 @@ async function initUser(account) {
     g_user.depart    = user_data[0].depart;
     g_user.id_otdel = user_data[0].id_otdel;
 
-    let userModules  = await id2modules(user_data[0].id);
-    g_user.modules   = userModules;
-    let ht_menu      = await initMenu(userModules);
+    let userModules  = await id2modules(user_data[0].id)
+    let userRoles    = await id2roles(g_user.id)
+    g_user.modules   = userModules
+    g_user.roles     = userRoles
+    let ht_menu      = await initMenu(userModules)
     //alert('initUser-2');
-    return true;
+    return true
+}
+
+//=======================================================================================
+// проверка роли текущего пользователя
+//=======================================================================================
+function isRole(role) {
+    for (d of g_user.roles) {
+        if (d.role == role) return true
+    }
+    return false
 }
 
 //=======================================================================================
@@ -222,7 +241,7 @@ async function account2data(account) {
 }
 
 //=======================================================================================
-// определение модулей, доступных пользователю пользователя
+// определение модулей, доступных пользователю
 //=======================================================================================
 async function id2modules(id_user) {
     //alert('id2modules-1');
@@ -230,6 +249,15 @@ async function id2modules(id_user) {
     let data = await response.json();
     //alert('id2modules-2');
     return data;
+}
+
+//=======================================================================================
+// определение ролей пользователя
+//=======================================================================================
+async function id2roles(id_user) {
+    let response = await fetch('myphp/id2roles.php?id=' + id_user)
+    let data = await response.json()
+    return data
 }
 
 //=======================================================================================

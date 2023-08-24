@@ -129,6 +129,7 @@ function createTabulatorGrp(id_div, appH) {
         columns: [
           //{ title: "id", field: "id", width: 50, print: false },
             { title: "группа пользователей", field: "name", headerFilter: true, widthGrow: 5, topCalc: "count", editor: ed, },
+            { title: "роль", field: "role", headerFilter: true, widthGrow: 5, editor: ed, },
             { title: "описание группы", field: "description", headerFilter: true, widthGrow: 10, editor: ed, },
         ],
 
@@ -150,7 +151,7 @@ function createTabulatorGrp(id_div, appH) {
         },
         cellEdited: function (cell) {
             let o = cell.getRow().getData();
-            runSQL_p(`UPDATE group_of_users SET name="${o.name}", description="${o.description}" WHERE id=${o.id}`);
+            runSQL_p(`UPDATE group_of_users SET name="${o.name}", description="${o.description}", role="${o.role}" WHERE id=${o.id}`);
         },
 
         footerElement: ms,
