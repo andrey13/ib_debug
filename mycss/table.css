@@ -1,0 +1,20 @@
+* {
+    box-sizing: border-box;
+}
+.tabulator {
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-family:monospace;
+}
+th {
+    color:black ;
+    background-color:rgb(172, 172, 172);
+}
+button {
+    border: 1px solid;
+    outline: 0;
+    border-radius: 0;
+}
+#dlist {
+    border: 0px solid;      
+}

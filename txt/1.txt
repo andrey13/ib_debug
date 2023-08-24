@@ -1,0 +1,135 @@
+
+tableLog.getSelectedData()[0].id
+tableLog.rowManager.activeRows[0].getData().id
+tableLog.deselectRow()
+tableLog.scrollToRow(id)
+tableLog.selectRow(id)
+.getSelectedRows()
+
+заполнение ключевого поля с автоинкрементом --------------------------------------------
+
+SET @n:=0;
+UPDATE vulner_stat SET id=@n:=@n+1;
+
+
+СТП ЗАКРЫТИЕ ЗАЯВКИ =========================================================
+
+https://support.tax.nalog.ru/include/closerequest.php?id=25014730&id=25014730&Estimate=4&endcomment=&_=1632082895019
+
+GET /include/closerequest.php?id=25014730&id=25014730&Estimate=4&endcomment=&_=1632082895019 HTTP/1.1
+Host: support.tax.nalog.ru
+Connection: keep-alive
+sec-ch-ua: "Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"
+Accept: */*
+X-Requested-With: XMLHttpRequest
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36
+sec-ch-ua-platform: "Windows"
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://support.tax.nalog.ru/requests/?filter%5Busername%5D=6100-02-708&filter%5Bstatus%5D%5B0%5D=%D0%97%D0%B0%D0%BA%D1%80%D1%8B%D1%82%D0%B8%D0%B5&_=1632082895015
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+Cookie: BITRIX_SM_LOGIN=6100-02-708; BITRIX_SM_SOUND_LOGIN_PLAYED=Y; _ym_uid=1630480977978255577; _ym_d=1630480977; PHPSESSID=d27ee335ff205cbf7e9a4bc10c0b617f
+
+
+HTTP/1.1 200 OK
+Date: Sun, 19 Sep 2021 20:23:08 GMT
+Server: Apache/2.4.18 (Ubuntu)
+X-Powered-By: PHP/5.6.40-47+ubuntu16.04.1+deb.sury.org+1
+P3P: policyref="/bitrix/p3p.xml", CP="NON DSP COR CUR ADM DEV PSA PSD OUR UNR BUS UNI COM NAV INT DEM STA"
+X-Powered-CMS: Bitrix Site Manager (8ab35cbc8ac114fd385954992ac2e7b9)
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Content-Length: 0
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+
+send @ https://support.tax.nalog.ru/bitrix/templates/requests_1_3/js/jquery.min.js:4
+ajax @ https://support.tax.nalog.ru/bitrix/templates/requests_1_3/js/jquery.min.js:4
+(anonymous) @ https://support.tax.nalog.ru/bitrix/templates/requests_1_3/js/main2018.js?1632082894:970
+dispatch @ https://support.tax.nalog.ru/bitrix/templates/requests_1_3/js/jquery.min.js:3
+r.handle @ https://support.tax.nalog.ru/bitrix/templates/requests_1_3/js/jquery.min.js:3
+
+
+
+
+
+
+
+https://support.tax.nalog.ru/requests/detail.php?ROW_ID=25036615&_=1632132432514
+detail.php?ROW_ID=25036615&_=1632132432514
+
+GET /requests/detail.php?ROW_ID=25036615&_=1632132432514 HTTP/1.1
+Host: support.tax.nalog.ru
+Connection: keep-alive
+sec-ch-ua: "Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"
+Accept: */*
+X-Requested-With: XMLHttpRequest
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36
+sec-ch-ua-platform: "Windows"
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://support.tax.nalog.ru/requests/?filter%5Busername%5D=6100-02-708
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+Cookie: BITRIX_SM_LOGIN=6100-02-708; BITRIX_SM_SOUND_LOGIN_PLAYED=Y; _ym_uid=1630480977978255577; _ym_d=1630480977; PHPSESSID=d27ee335ff205cbf7e9a4bc10c0b617f
+
+HTTP/1.1 200 OK
+Date: Mon, 20 Sep 2021 10:14:45 GMT
+Server: Apache/2.4.18 (Ubuntu)
+X-Powered-By: PHP/5.6.40-47+ubuntu16.04.1+deb.sury.org+1
+P3P: policyref="/bitrix/p3p.xml", CP="NON DSP COR CUR ADM DEV PSA PSD OUR UNR BUS UNI COM NAV INT DEM STA"
+X-Powered-CMS: Bitrix Site Manager (8ab35cbc8ac114fd385954992ac2e7b9)
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Vary: Accept-Encoding
+Content-Encoding: gzip
+Content-Length: 4382
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+
+
+
+
+https://support.tax.nalog.ru/include/closerequest.php?id=25036615&id=25036615&Estimate=4&endcomment=&_=1632132432517
+
+GET /include/closerequest.php?id=25036615&id=25036615&Estimate=4&endcomment=&_=1632132432517 HTTP/1.1
+Host: support.tax.nalog.ru
+Connection: keep-alive
+sec-ch-ua: "Google Chrome";v="93", " Not;A Brand";v="99", "Chromium";v="93"
+Accept: */*
+X-Requested-With: XMLHttpRequest
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36
+sec-ch-ua-platform: "Windows"
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https://support.tax.nalog.ru/requests/?filter%5Busername%5D=6100-02-708
+Accept-Encoding: gzip, deflate, br
+Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7
+Cookie: BITRIX_SM_LOGIN=6100-02-708; BITRIX_SM_SOUND_LOGIN_PLAYED=Y; _ym_uid=1630480977978255577; _ym_d=1630480977; PHPSESSID=d27ee335ff205cbf7e9a4bc10c0b617f
+
+
+HTTP/1.1 200 OK
+Date: Mon, 20 Sep 2021 10:16:26 GMT
+Server: Apache/2.4.18 (Ubuntu)
+X-Powered-By: PHP/5.6.40-47+ubuntu16.04.1+deb.sury.org+1
+P3P: policyref="/bitrix/p3p.xml", CP="NON DSP COR CUR ADM DEV PSA PSD OUR UNR BUS UNI COM NAV INT DEM STA"
+X-Powered-CMS: Bitrix Site Manager (8ab35cbc8ac114fd385954992ac2e7b9)
+Expires: Thu, 19 Nov 1981 08:52:00 GMT
+Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+Pragma: no-cache
+Content-Length: 0
+Connection: close
+Content-Type: text/html; charset=UTF-8
+
+

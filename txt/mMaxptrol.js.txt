@@ -1,0 +1,9 @@
+SELECT * FROM quartal ORDER BY name DESC
+
+SELECT * FROM scan
+
+SELECT  sv.id_vulner, v.name, sv.request, sv.date, sv.n_comp
+  FROM  scan_vulner AS sv
+  LEFT  JOIN vulner AS v 
+    ON  sv.id_vulner = v.id
+  WHERE sv.id_scan = $id_scan

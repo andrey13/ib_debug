@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="./resources/images/favicon.ico" type="image/x-icon">
+
+  <title>
+    R-Vision: Вход в систему
+  </title>
+  <link rel="stylesheet" href="resources/css/login.css" />
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+  </style>
+  <script>
+    if (typeof require === 'function') {
+      window.nodeRequire = require;
+      delete window.require;
+      delete window.exports;
+      delete window.module;
+    }
+  </script>
+  <script src="resources/js/moment/moment.min.js"></script>
+  <script src="resources/js/moment/moment-timezone-with-data.min.js"></script>
+</head>
+
+<body id="login">
+<div class="outer">
+  <div class="middle">
+    <div class="inner">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <div>
+            <img width="100%" src="resources/images/smp_logo.svg" />
+          </div>
+          <hr />
+          <div id="alert" class="alert alert-danger hide" role="alert"></div>   
+                    <form method="post" id="loginForm">
+            <div class="form-group">
+              <label for="username">Имя пользователя (логин):</label>
+              <input
+                      name="username"
+                      id="username"
+                      type="text"
+                      placeholder="Имя пользователя (логин)"
+                      class="form-control"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Пароль:</label>
+              <input name="password" id="password" type="password"
+                     placeholder=Пароль class="form-control">
+            </div>
+            <br />
+            <div class="form-group">
+              <button id="submit" type="button" class="btn btn-default">
+                <img
+                        id="loader"
+                        class="hide"
+                        src="data:image/gif;base64,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"
+                />
+                Вход в систему
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var alert = document.getElementById('alert');
+  var usernameField = document.getElementById('username');
+  var passwordField = document.getElementById('password');
+  var submit = document.getElementById('submit');
+  var loader = document.getElementById('loader');
+  var checkbox = document.getElementById('checkbox');
+
+  var oauth2InitiateLinks = document.getElementsByClassName('oauth2-initiate-link');
+
+  for (var i = 0; i < oauth2InitiateLinks.length; i += 1) {
+    oauth2InitiateLinks[i].href += '?tz=' + encodeURIComponent(getTz()) +
+            '&return_to=' + encodeURIComponent(window.location.hash ? window.location.hash : '');
+  }
+
+  /**
+   * Создает и возвращает объект запроса.
+   * @Return {XMLHttpRequest}
+   */
+  function createHttpRequest() {
+    var httpRequest;
+
+    if (window.XMLHttpRequest) {
+      httpRequest = new XMLHttpRequest();
+    } else {
+      httpRequest = new ActiveXObject('Microsoft.XMLHTTP');
+    }
+
+    return httpRequest;
+  }
+
+  function doSSO() {
+    requestCsrf('https://10.252.42.143/sso');
+  }
+
+  /**
+   * Вход по логину / паролю
+   * @param {String} url адрес входа
+   * @param {String} csrf Токен.
+   */
+  function doLogin(url, csrf) {
+    console.log("url = " + url)
+    var xmlhttp = createHttpRequest();
+
+    xmlhttp.onreadystatechange = function () {
+      if (xmlhttp.readyState === xmlhttp.DONE) {
+        if (xmlhttp.status === 200) {
+          var hash = window.location.hash ? window.location.hash : '';
+          window.location = '/' + hash;
+          console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+        } else {
+          var error;
+          if (xmlhttp.status === 0) {
+              error = "Сервис недоступен";
+          } else {
+            try {
+              var result = JSON.parse(xmlhttp.responseText);
+              error = result.message;
+            } catch (err) {
+              error = err.toString();
+            }
+          }
+
+          showError(error);
+        }
+      }
+    };
+
+    xmlhttp.open("POST", url, true);
+
+    var params = "username=" + encodeURIComponent(usernameField.value) +
+            "&password=" + encodeURIComponent(passwordField.value) +
+            "&tz=" + encodeURIComponent( getTz() ) +
+            "&_csrf=" + csrf;
+
+    //var params = "username=" + "6100-02-708" +
+    //        "&password=" + "QAZwsx054" +
+    //        "&tz=" + encodeURIComponent( getTz() ) +
+    //        "&_csrf=" + csrf;
+    
+    //var params = param = username="6100-02-708&password=QAZwsx054&tz=Europe%2FMoscow&_csrf=null"
+
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    console.log("param = " + params)
+    //alert("param = " + params)
+    xmlhttp.send(params);
+  }
+
+  function getTz() {
+    if (moment && moment.tz) {
+      return moment.tz.guess();
+    }
+
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+  }
+
+  /**
+   * Запрашивает токен csrf и отправляет его вместе с данными для авторизации.
+   * @param {String} [url] Адрес запроса.
+   */
+  function requestCsrf(url) {
+    var httpRequest = createHttpRequest();
+    url = url || 'https://10.252.42.143/sso';
+    console.log("url = " + url)
+
+    httpRequest.onreadystatechange = function () {
+      if (httpRequest.readyState === httpRequest.DONE) {
+        if (httpRequest.status === 200) {
+          var csrf = JSON.parse(httpRequest.responseText);
+          var csrfToken = csrf._csrf;
+
+          doLogin(url, csrfToken);
+        } else {
+          var error;
+          if (httpRequest.status === 0) {
+              error = "Сервис недоступен";
+          } else {
+            try {
+              var result = JSON.parse(httpRequest.responseText);
+              error = result.message;
+            } catch (err) {
+              error = err.toString();
+            }
+          }
+
+          showError(error);
+        }
+      }
+    };
+
+    httpRequest.open('GET', 'https://10.252.42.143/csrfToken?' + (new Date()).getTime(), true);
+    httpRequest.send();
+  }
+
+  /**
+   * Показывает ошибку.
+   * @param {String} error Текст ошибки.
+   */
+  function showError(error) {
+    submit.className = 'btn btn-default';
+    submit.disabled = false;
+    loader.className = 'hide';
+
+    alert.innerHTML = error;
+    alert.className = 'alert alert-danger';
+  }
+
+  function processForm(event) {
+    try {
+      //submit.className = 'btn btn-default disabled';
+      //submit.disabled = true;
+      //loader.className = '';
+
+      requestCsrf();
+    } catch (err) {
+      alert.innerHTML = err.toString();
+      alert.className = 'alert alert-danger';
+    }
+
+    event = event || window.event;
+
+    if (event.preventDefault) {
+      event.preventDefault();
+    } else {
+      event.returnValue = false;
+    }
+
+    return false;
+  }
+
+  document.onkeydown = function (e) {
+    if (e && e.keyCode === 13) {
+      processForm(e);
+    }
+  };
+
+  function addEvent(evnt, elem, func) {
+    if (elem.addEventListener) {
+      elem.addEventListener(evnt, func, false);
+    } else if (elem.attachEvent) {
+      elem.attachEvent('on' + evnt, func);
+    } else {
+      elem[evnt] = func;
+    }
+  }
+
+  addEvent('click', submit, processForm);
+
+</script>
+</body>
+</html>
