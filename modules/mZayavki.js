@@ -9,6 +9,8 @@ let m_id_ARM = 0
 let m_id_empty_MTS = 0
 let m_id_empty_ARM = 0
 let m_ver_zayavki = 0
+let m_user_it = 0
+let m_user_ib = 0
 
 // пустая заявка --------------------------------------------------------------
 const empty_zayavka = {
@@ -108,20 +110,20 @@ function cb_onclick() {
 ///                                            ТАБУЛЯТОР ОБРАЩЕНИЙ                                        ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function createTabZayavki(id_div, appH) {
-    // очистка таймера -----------------------------------------------------------------
-    if (g_timerId != 0) {
-        clearInterval(g_timerId)
-    }
+    // // очистка таймера -----------------------------------------------------------------
+    // if (g_timerId != 0) {
+    //     clearInterval(g_timerId)
+    // }
 
-    // установка таймера ---------------------------------------------------------------
-    g_timerId = setInterval(async () => {
-        const ver_zayavki = await verGet('zayavki', g_user.id_depart, 'id_depart')
-        if (m_ver_zayavki != ver_zayavki) {
-            m_ver_zayavki = ver_zayavki
-            // console.log(`ver = ${m_ver_zayavki}`)
-            tableZayavki.replaceData()
-        }
-    }, 2000)
+    // // установка таймера ---------------------------------------------------------------
+    // g_timerId = setInterval(async () => {
+    //     const ver_zayavki = await verGet('zayavki', g_user.id_depart, 'id_depart')
+    //     if (m_ver_zayavki != ver_zayavki) {
+    //         m_ver_zayavki = ver_zayavki
+    //         // console.log(`ver = ${m_ver_zayavki}`)
+    //         tableZayavki.replaceData()
+    //     }
+    // }, 2000)
 
     let allow = getAllows()
     let ed = allow.E == 1 ? "input" : ""
@@ -242,10 +244,34 @@ function createTabZayavki(id_div, appH) {
     //=======================================================================================
     // создание пустой заявки с последующим редактированием
     //=======================================================================================
-    function createZayavkaMTS(type, id_type) {
+    async function createZayavkaMTS(type, id_type) {
         let d = Object.assign({}, empty_zayavka)
         d.id_type = id_type
         d.type = type
+        
+        // начальник ОИТ ----------------------------------------------------------------
+        const depart_it = await getDepart('Отдел информационных технологий')
+        const user_it = await getBoss(depart_it.id)
+        d.id_user_it = user_it.id
+        d.user_it = fio2fio(user_it.name)
+
+        // начальник ОИБ ----------------------------------------------------------------
+        const depart_ib = await getDepart('Отдел информационной безопасности')
+        const user_ib = await getBoss(depart_ib.id)
+        d.id_user_ib = user_ib.id
+        d.user_ib = fio2fio(user_ib.name)
+
+        // начальник отдела  ------------------------------------------------------------
+        const user_otd = await getBoss(d.id_depart)
+        d.id_user_otd = user_otd.id
+        d.user_otd = fio2fio(user_otd.name)
+
+        // руководитель -----------------------------------------------------------------
+        d.id_user_ruk = 0
+        d.user_ruk = 'Мосиенко А.В.'
+
+        console.log('depart_it = ', depart_it)
+        console.log('d.id_user_it = ', d.id_user_it)
 
         const sql = `INSERT INTO zayavka (
                         id_user, 
