@@ -1,4 +1,7 @@
 function mMTS() {
+    // очистка таймера -----------------------------------------------------------------
+    if (g_timerId != 0) clearInterval(g_timerId)
+
     let appHeight = appBodyHeight();
     let tMTS = '<div id="tabMTS" style="display: inline-block; height: 100%; width: 100%;"></div>';
 

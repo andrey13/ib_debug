@@ -8,6 +8,18 @@
         display:inline-block;
       }
       */
+.o3-button-0 {
+    border: 0px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 200px;
+}
+.o3-button-fix {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 100px;
+}
 .o3-button {
     border: 1px solid black;
     margin-right: 1px;

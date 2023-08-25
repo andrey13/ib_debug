@@ -1,17 +1,18 @@
 <?php
 include 'openConn.php';
 
-$table = $_GET['t'];
-$key = $_GET['k'];
+$table_name = $_GET['t'];
+$id_key = $_GET['k'];
+$name_key = $_GET['n'];
 
-$sql = "SELECT id FROM version AS v WHERE v.table='$table' AND v.key=$key";
+$sql = "SELECT * FROM version WHERE table_name='$table_name' AND id_key=$id_key AND name_key='$name_key'";
 
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
-    $sql = "UPDATE version SET ver=ver+1 WHERE table='$table' AND key=$key";
+    $sql = "UPDATE version SET ver=ver+1 WHERE table_name='$table_name' AND id_key=$id_key AND name_key='$name_key'";
 } else {
-    $sql = "INSERT INTO version (table, key, ver) VALUES ('$table', $key, 1)";
+    $sql = "INSERT INTO version (table_name, id_key, name_key, ver) VALUES ('$table_name', $id_key, '$name_key',1)";
 }
 
 $result = $conn->query($sql);
@@ -23,10 +24,7 @@ if (!$result) {
      return;
  }
 
- if ($result->num_rows > 0) {
-     $outp = $result->fetch_all(MYSQLI_ASSOC);
-     echo json_encode($outp);
- } else { echo "[]"; }
- 
+echo "[]";
+
  $conn = null;
 ?>

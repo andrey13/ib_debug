@@ -8,20 +8,27 @@ let m_id_MTS = 0
 let m_id_ARM = 0
 let m_id_empty_MTS = 0
 let m_id_empty_ARM = 0
+let m_ver_zayavki = 0
 
 // пустая заявка --------------------------------------------------------------
 const empty_zayavka = {
     id: 0,
     id_type: 0,
     id_user: g_user.id,
+    id_user_otd: 0,
     id_user_it: 0,
     id_user_ib: 0,
+    id_user_ruk: 0,
+    id_user_isp: 0,
     id_depart: g_user.id_depart,
     date: moment().format("YYYY-MM-DD"),
     type: '',
     user: g_user.name,
-    user_it: '',
-    user_ib: '',
+    user_otd: '<выбрать>',
+    user_it: '<выбрать>',
+    user_ib: '<выбрать>',
+    user_ruk: '<выбрать>',
+    user_isp: '<выбрать>',
     depart: g_user.depart,
     comment: '',
 }
@@ -68,7 +75,7 @@ function mZayavki() {
     const tZayavki =
         '<div id="tabZayavki" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: powderblue"></div>'
 
-    // /аблон экрана: меню + контейнер
+    // шаблон экрана: меню + контейнер
     id2e("appBody").innerHTML = tTopMenu + "<br>" + tZayavki
 
     const appHeight = appBodyHeight() - id2e("tabTopMenu").offsetHeight - 8
@@ -98,9 +105,24 @@ function cb_onclick() {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///                                            ТАБУЛЯТОР ОБРАЩЕНИЙ                                          /
+///                                            ТАБУЛЯТОР ОБРАЩЕНИЙ                                        ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function createTabZayavki(id_div, appH) {
+    // очистка таймера -----------------------------------------------------------------
+    if (g_timerId != 0) {
+        clearInterval(g_timerId)
+    }
+
+    // установка таймера ---------------------------------------------------------------
+    g_timerId = setInterval(async () => {
+        const ver_zayavki = await verGet('zayavki', g_user.id_depart, 'id_depart')
+        if (m_ver_zayavki != ver_zayavki) {
+            m_ver_zayavki = ver_zayavki
+            // console.log(`ver = ${m_ver_zayavki}`)
+            tableZayavki.replaceData()
+        }
+    }, 2000)
+
     let allow = getAllows()
     let ed = allow.E == 1 ? "input" : ""
     let ed_date = allow.E == 1 ? date_Editor : ""
@@ -191,24 +213,11 @@ function createTabZayavki(id_div, appH) {
     // tableZayavki.setFilter(customFilterZayavki, "")
 
     //=======================================================================================
-    // редактирование заявки
-    //=======================================================================================
-    function editZayavka(d) {
-        switch (d.id_type) {
-            case '1':
-                editZayavkaMTS(d.id, 'edit', d.type, d.id_type)
-                break
-            case '2':
-                editZayavkaMTS(d.id, 'edit', d.type, d.id_type)
-                break
-        }
-    }
-
-
-    //=======================================================================================
-    // создание пустой заявки с последующим редактированием
+    // выбор типа обращения и вызов функции создания соответствующей заявки
     //=======================================================================================
     function createZayavka() {
+
+        // выбор типа обращения -------------------------------------------------------------
         selectTypes(
             id_taxonomy = 1,
             ok = -1,
@@ -217,6 +226,8 @@ function createTabZayavki(id_div, appH) {
             marginLeft = "25%",
             marginTop = "10%"
         ).then((selected) => {
+
+            // вызов функции создания соответствующей заявки --------------------------------
             switch (selected.id) {
                 case '1':
                     createZayavkaMTS(type = selected.name, id_type = '1')
@@ -228,6 +239,9 @@ function createTabZayavki(id_div, appH) {
         })
     }
 
+    //=======================================================================================
+    // создание пустой заявки с последующим редактированием
+    //=======================================================================================
     function createZayavkaMTS(type, id_type) {
         let d = Object.assign({}, empty_zayavka)
         d.id_type = id_type
@@ -251,30 +265,51 @@ function createTabZayavki(id_div, appH) {
         runSQL_p(sql).then((id_zayavka) => {
             d.id = id_zayavka
             m_id_zayavka = d.id
+
             tableZayavki.addRow(d, true)
             tableZayavki.scrollToRow(id_zayavka, "top", false)
             tableZayavki.deselectRow()
             tableZayavki.selectRow(id_zayavka)
-            console.log("id_zayavka1 = ", id_zayavka)
-            editZayavkaMTS(id_zayavka, 'new', type, id_type)
+
+            // вызов функции создания соответствующей заявки --------------------------------
+            switch (id_type) {
+                case '1':
+                    editZayavkaMTS1(id_zayavka, 'new', type, id_type)
+                    break
+                case '2':
+                    editZayavkaMTS2(id_zayavka, 'new', type, id_type)
+                    break
+            }
+
+            // editZayavkaMTS(id_zayavka, 'new', type, id_type)
         })
     }
 
     //=======================================================================================
-    // печать заявки
+    // редактирование заявки
     //=======================================================================================
-    function printZayavka(mode) { }
+    function editZayavka(d) {
+        switch (d.id_type) {
+            case '1':
+                editZayavkaMTS1(d.id, 'edit', d.type, d.id_type)
+                break
+            case '2':
+                editZayavkaMTS2(d.id, 'edit', d.type, d.id_type)
+                break
+        }
+    }
 
     //=======================================================================================
-    // модальное окно редактора заявки (mode = 'edit'/'new')
+    // модальное окно редактора заявки на получение МТС
     //=======================================================================================
-    function editZayavkaMTS(id_zayavka, mode, type = '', id_type) {
+
+    function editZayavkaMTS1(id_zayavka, mode, type = '', id_type) {
         let allow = getAllows()
         let d = tableZayavki.getSelectedData()[0]
 
         m_id_zayavka = d.id
 
-        const appH = window.innerHeight - 300
+        const appH = window.innerHeight - 420
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
 
         const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
@@ -290,12 +325,33 @@ function createTabZayavki(id_div, appH) {
         const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
         const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
 
-        const bodyZayavka = `<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
+        const bodyZayavka =`<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
+                            <div id="userIT" style="position: absolute; right: 0;width: 300px;">
+                            Начальнику отдела<br>
+                            информационных техногий<br>
+                            <button id="selIT" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_it}</button>
+                            </div>
+                            <br>
                             <input class="o3-border" type="date" id="z_date" value="${d.date}" tabindex="1">
                             <label for="z_date">  Дата обращения</label>
                             <br>
                             <input class="o3-border" type="text" id="z_comm" value="${d.comment}" tabindex="2">
                             <label for="z_comm">  Комментарии</label>
+                            <br>
+                            заявитель: <button id="selAuthor" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button>
+                            <span id="author-name"></span>
+                            <br>
+                            начальник отдела: <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
+                            <span id="otd-name"></span>
+                            <br>
+                            начальник ОИБ: <button id="selIB" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_ib}</button>
+                            <span id="ib-name"></span>
+                            <br>
+                            руководитель: <button id="selRuk" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_ruk}</button>
+                            <span id="ruk-name"></span>
+                            <br>
+                            исполнитель: <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
+                            <span id="isp-name"></span>
                             <br>
                             ${menuMTS}${menuARM}
                             ${tabMTS}${tabARM}
@@ -323,6 +379,7 @@ function createTabZayavki(id_div, appH) {
             runSQL_p(
                 `UPDATE zayavka SET date="${d.date}", comment="${d.comment}"} WHERE id=${d.id}`
             )
+            verInc('zayavki', g_user.id_depart, 'id_depart')
             removeModalWindow("editZayavka")
             tableZayavki.updateRow(d.id, d)
         }
@@ -338,7 +395,104 @@ function createTabZayavki(id_div, appH) {
             }
             removeModalWindow("editZayavka")
         }
-    }
+    } // editZayavkaMTS
+
+
+    //=======================================================================================
+    // печать заявки
+    //=======================================================================================
+    function printZayavka(mode) { }
+
+    //=======================================================================================
+    // модальное окно редактора заявки (mode = 'edit'/'new')
+    //=======================================================================================
+    function editZayavkaMTS2(id_zayavka, mode, type = '', id_type) {
+        let allow = getAllows()
+        let d = tableZayavki.getSelectedData()[0]
+
+        m_id_zayavka = d.id
+
+        const appH = window.innerHeight - 420
+        const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
+
+        const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
+        const bADDMTS = "<button id='addMTS' title='Создание устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
+        const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
+        const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELMTS + bMODMTS + bADDMTS} Список МТС</div>`
+
+        const bDELARM = "<button id='delARM' title='Удаление компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
+        const bADDARM = "<button id='addARM' title='Создание компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
+        const bMODARM = `<button id='modARM' title='Изменить компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
+        const menuARM = `<div id="tabARMmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELARM + bADDARM} Список рабочих станций</div>`
+
+        const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
+        const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
+
+        const bodyZayavka = `<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
+                            <input class="o3-border" type="date" id="z_date" value="${d.date}" tabindex="1">
+                            <label for="z_date">  Дата обращения</label>
+                            <br>
+                            <input class="o3-border" type="text" id="z_comm" value="${d.comment}" tabindex="2">
+                            <label for="z_comm">  Комментарии</label>
+                            <br>
+                            <button id="selAuthor" class="w3-btn w3-padding-small o3-button-fix w3-hover-teal disabled">составил  </button>
+                            <span id="author-name">${d.user}</span>
+                            <br>
+                            <button id="selOtd" class="w3-btn w3-padding-small o3-button-fix w3-hover-teal disabled">подписал  </button>
+                            <span id="otd-name">${d.user_otd}</span>
+                            <br>
+                            <button id="selIB" class="w3-btn w3-padding-small o3-button-fix w3-hover-teal disabled">согласовал</button>
+                            <span id="ib-name">${d.user_ib}</span>
+                            <br>
+                            <button id="selRuk" class="w3-btn w3-padding-small o3-button-fix w3-hover-teal disabled">утвердил</button>
+                            <span id="ruk-name">${d.user_ruk}</span>
+                            <br>
+                            <button id="selIsp" class="w3-btn w3-padding-small o3-button-fix w3-hover-teal disabled">исполнил</button>
+                            <span id="isp-name">${d.user_isp}</span>
+                            <br>
+                            ${menuMTS}${menuARM}
+                            ${tabMTS}${tabARM}
+                            <br><br>
+                            <button id="b_ENTER" class="w3-btn o3-border w3-hover-teal"  tabindex="6">сохранить</button>
+                            <button id="b_CANCEL" class="w3-btn o3-border w3-hover-red" tabindex="7">отменить</button>                            
+                            <button id="b_PRINT1" class="w3-btn o3-border w3-hover-teal" tabindex="8">печать СЗ на получение</button>
+                            <button id="b_PRINT2" class="w3-btn o3-border w3-hover-teal" tabindex="9">печать заявки на подключение</button>
+                            </div>`
+
+        footZayavka = ``
+
+        newModalWindow("editZayavka", headerZayavka, bodyZayavka, footZayavka, width = "98%", marginLeft = "1%", marginTop = "1%")
+
+        createTabZMTS("tabMTS", appH, (id_zayavka = d.id))
+        createTabComp("tabARM", appH, (id_zayavka = d.id))
+
+        id2e("z_date").focus()
+        id2e("z_date").select()
+
+        // кнопка ENTER ---------------------------------------------------------------------
+        id2e("b_ENTER").onclick = function () {
+            d.date = id2e("z_date").value
+            d.comment = id2e("z_comm").value
+            runSQL_p(
+                `UPDATE zayavka SET date="${d.date}", comment="${d.comment}"} WHERE id=${d.id}`
+            )
+            verInc('zayavki', g_user.id_depart, 'id_depart')
+            removeModalWindow("editZayavka")
+            tableZayavki.updateRow(d.id, d)
+        }
+
+        // кнопка CANCEL --------------------------------------------------------------------
+        id2e("b_CANCEL").onclick = function () {
+            if (mode == "new") {
+                let id_zayavka = tableZayavki.getSelectedData()[0].id
+                delZayavka(id_zayavka)
+                tableZayavki.deleteRow(id_zayavka)
+                id_zayavka = getFirstID(tableZayavki)
+                tableZayavki.selectRow(id_zayavka)
+            }
+            removeModalWindow("editZayavka")
+        }
+    } // editZayavkaMTS
 
     //=======================================================================================
     // модальное окно удаления заявки
@@ -374,7 +528,7 @@ function createTabZayavki(id_div, appH) {
         )
     }
 
-}
+} // createTabZayavki
 
 
 /////////////////////////////////////////////////////////////////////////////////////////

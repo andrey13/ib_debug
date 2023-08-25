@@ -26,12 +26,44 @@ async function start_app() {
     return res;
 }
 
-//=======================================================================================
-async function verInc(table, key) {
-    let response = await fetch(`myphp/verInc.php?t=${table}&k=${key}`)
-    let data = await response.json()
-    return data;
+
+//////////////////// УВЕЛИЧЕНИЕ ВЕРСИИ ДАННЫХ ТАБЛИЦЫ НА ЕДИНИЦУ ////////////////////////////
+// table_name - имя проверяемой таблицы                                                    //
+// id_key - значение индекса поля с именем name_key                                        //
+// name_key - имя поля, по которому фильтруются записи таблицы                             //
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+async function verInc(table_name, id_key, name_key) {
+    let response = await fetch(`myphp/verInc.php?t=${table_name}&k=${id_key}&n=${name_key}`)
 }
+
+///////////////////// ПРОВЕРКА ТАБЛИЦЫ НА НОВУЮ ВЕРСИЮ ДАННЫХ ///////////////////////////////
+// table_name - имя проверяемой таблицы                                                    //
+// id_key - значение индекса поля с именем name_key                                        //
+// name_key - имя поля, по которому фильтруются записи таблицы                             //
+// ver_old - номер предыдущей версии данных, с которым сравнивается номер текущей версии   //
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+async function isVerNew(table_name, id_key, name_key, ver_old) {
+    let response = await fetch(`myphp/isVerNew.php?t=${table_name}&k=${id_key}&n=${name_key}&v=${ver_old}`)
+    let data = await response.json()
+    return data[0]
+}
+
+//////////////////////////// ПОЛУЧЕНИЕ ВЕРСИИ ДАННЫХ ТАБЛИЦЫ  ///////////////////////////////
+// table_name - имя проверяемой таблицы                                                    //
+// id_key - значение индекса поля с именем name_key                                        //
+// name_key - имя поля, по которому фильтруются записи таблицы                             //
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+async function verGet(table_name, id_key, name_key) {
+    const response = await fetch(`myphp/verGet.php?t=${table_name}&k=${id_key}&n=${name_key}`)
+    const data = await response.json()
+    return data[0]
+}
+
+
+
 
 //=======================================================================================
 function fio2fio0(fio) {
