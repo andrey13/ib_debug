@@ -9,6 +9,8 @@ let m_id_ARM = 0
 let m_id_empty_MTS = 0
 let m_id_empty_ARM = 0
 let m_ver_zayavki = 0
+let m_user_it = 0
+let m_user_ib = 0
 
 // пустая заявка --------------------------------------------------------------
 const empty_zayavka = {
@@ -73,7 +75,7 @@ function mZayavki() {
 
     // пустой контейнер для табулятора
     const tZayavki =
-        '<div id="tabZayavki" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: powderblue"></div>'
+        '<div id="tabZayavki" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black;"></div>'
 
     // шаблон экрана: меню + контейнер
     id2e("appBody").innerHTML = tTopMenu + "<br>" + tZayavki
@@ -108,20 +110,20 @@ function cb_onclick() {
 ///                                            ТАБУЛЯТОР ОБРАЩЕНИЙ                                        ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function createTabZayavki(id_div, appH) {
-    // очистка таймера -----------------------------------------------------------------
-    if (g_timerId != 0) {
-        clearInterval(g_timerId)
-    }
+    // // очистка таймера -----------------------------------------------------------------
+    // if (g_timerId != 0) {
+    //     clearInterval(g_timerId)
+    // }
 
-    // установка таймера ---------------------------------------------------------------
-    g_timerId = setInterval(async () => {
-        const ver_zayavki = await verGet('zayavki', g_user.id_depart, 'id_depart')
-        if (m_ver_zayavki != ver_zayavki) {
-            m_ver_zayavki = ver_zayavki
-            // console.log(`ver = ${m_ver_zayavki}`)
-            tableZayavki.replaceData()
-        }
-    }, 2000)
+    // // установка таймера ---------------------------------------------------------------
+    // g_timerId = setInterval(async () => {
+    //     const ver_zayavki = await verGet('zayavki', g_user.id_depart, 'id_depart')
+    //     if (m_ver_zayavki != ver_zayavki) {
+    //         m_ver_zayavki = ver_zayavki
+    //         // console.log(`ver = ${m_ver_zayavki}`)
+    //         tableZayavki.replaceData()
+    //     }
+    // }, 2000)
 
     let allow = getAllows()
     let ed = allow.E == 1 ? "input" : ""
@@ -242,10 +244,34 @@ function createTabZayavki(id_div, appH) {
     //=======================================================================================
     // создание пустой заявки с последующим редактированием
     //=======================================================================================
-    function createZayavkaMTS(type, id_type) {
+    async function createZayavkaMTS(type, id_type) {
         let d = Object.assign({}, empty_zayavka)
         d.id_type = id_type
         d.type = type
+        
+        // начальник ОИТ ----------------------------------------------------------------
+        const depart_it = await getDepart('Отдел информационных технологий')
+        const user_it = await getBoss(depart_it.id)
+        d.id_user_it = user_it.id
+        d.user_it = fio2fio(user_it.name)
+
+        // начальник ОИБ ----------------------------------------------------------------
+        const depart_ib = await getDepart('Отдел информационной безопасности')
+        const user_ib = await getBoss(depart_ib.id)
+        d.id_user_ib = user_ib.id
+        d.user_ib = fio2fio(user_ib.name)
+
+        // начальник отдела  ------------------------------------------------------------
+        const user_otd = await getBoss(d.id_depart)
+        d.id_user_otd = user_otd.id
+        d.user_otd = fio2fio(user_otd.name)
+
+        // руководитель -----------------------------------------------------------------
+        d.id_user_ruk = 0
+        d.user_ruk = 'Мосиенко А.В.'
+
+        console.log('depart_it = ', depart_it)
+        console.log('d.id_user_it = ', d.id_user_it)
 
         const sql = `INSERT INTO zayavka (
                         id_user, 
@@ -309,21 +335,21 @@ function createTabZayavki(id_div, appH) {
 
         m_id_zayavka = d.id
 
-        const appH = window.innerHeight - 420
+        const appH = window.innerHeight - 600
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
 
         const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
         const bADDMTS = "<button id='addMTS' title='Создание устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
         const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
-        const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELMTS + bMODMTS + bADDMTS} Список МТС</div>`
+        const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0; width: 100%;">${bDELMTS + bMODMTS + bADDMTS}</div>`
 
-        const bDELARM = "<button id='delARM' title='Удаление компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
-        const bADDARM = "<button id='addARM' title='Создание компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
-        const bMODARM = `<button id='modARM' title='Изменить компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
-        const menuARM = `<div id="tabARMmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELARM + bADDARM} Список рабочих станций</div>`
+        // const bDELARM = "<button id='delARM' title='Удаление компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
+        // const bADDARM = "<button id='addARM' title='Создание компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
+        // const bMODARM = `<button id='modARM' title='Изменить компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
+        // const menuARM = `<div id="tabARMmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELARM + bADDARM} Список рабочих станций</div>`
 
-        const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
-        const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
+        const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: white"></div>`
+        // const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue"></div>`
 
         const bodyZayavka =`<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
                             <div id="userIT" style="position: absolute; right: 0;width: 300px;">
@@ -332,34 +358,30 @@ function createTabZayavki(id_div, appH) {
                             <button id="selIT" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_it}</button>
                             </div>
                             <br>
-                            <input class="o3-border" type="date" id="z_date" value="${d.date}" tabindex="1">
+                            <br>
+                            <input class="o3-border" type="date" id="z_date" value="${d.date}">
                             <label for="z_date">  Дата обращения</label>
                             <br>
-                            <input class="o3-border" type="text" id="z_comm" value="${d.comment}" tabindex="2">
-                            <label for="z_comm">  Комментарии</label>
+                            <center><h4>Прошу осуществить выдачу/возврат/замену МТС следующим сотрудникам:</h4></center>
+                            <br>
+                            ${menuMTS}
+                            ${tabMTS}
+                            <label for="z_comm">Комментарии</label><br>
+                            <textarea id="z_comm" rows="3" style="width:100%" class="o3-border" value="${d.comment}"></textarea>                            
+                            <br>
+                            <br><br>
+                            начальник отдела: <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
+                            <span id="otd-name"></span>
                             <br>
                             заявитель: <button id="selAuthor" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button>
                             <span id="author-name"></span>
                             <br>
-                            начальник отдела: <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
-                            <span id="otd-name"></span>
-                            <br>
-                            начальник ОИБ: <button id="selIB" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_ib}</button>
-                            <span id="ib-name"></span>
-                            <br>
-                            руководитель: <button id="selRuk" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_ruk}</button>
-                            <span id="ruk-name"></span>
-                            <br>
                             исполнитель: <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
                             <span id="isp-name"></span>
                             <br>
-                            ${menuMTS}${menuARM}
-                            ${tabMTS}${tabARM}
-                            <br><br>
-                            <button id="b_ENTER" class="w3-btn o3-border w3-hover-teal"  tabindex="6">сохранить</button>
-                            <button id="b_CANCEL" class="w3-btn o3-border w3-hover-red" tabindex="7">отменить</button>                            
-                            <button id="b_PRINT1" class="w3-btn o3-border w3-hover-teal" tabindex="8">печать СЗ на получение</button>
-                            <button id="b_PRINT2" class="w3-btn o3-border w3-hover-teal" tabindex="9">печать заявки на подключение</button>
+                            <button id="b_ENTER" class="w3-btn w3-padding-small o3-border w3-hover-teal"  tabindex="6">сохранить</button>
+                            <button id="b_CANCEL" class="w3-btn w3-padding-small o3-border w3-hover-red" tabindex="7">отменить</button>                            
+                            <button id="b_PRINT1" class="w3-btn w3-padding-small o3-border w3-hover-teal" tabindex="8">печать служебной записки</button>
                             </div>`
 
         footZayavka = ``
@@ -367,7 +389,7 @@ function createTabZayavki(id_div, appH) {
         newModalWindow("editZayavka", headerZayavka, bodyZayavka, footZayavka, width = "98%", marginLeft = "1%", marginTop = "1%")
 
         createTabZMTS("tabMTS", appH, (id_zayavka = d.id))
-        createTabComp("tabARM", appH, (id_zayavka = d.id))
+        // createTabComp("tabARM", appH, (id_zayavka = d.id))
 
         id2e("z_date").focus()
         id2e("z_date").select()
@@ -534,7 +556,7 @@ function createTabZayavki(id_div, appH) {
 /////////////////////////////////////////////////////////////////////////////////////////
 //                                   ТАБУЛЯТОР МТС                                     //
 /////////////////////////////////////////////////////////////////////////////////////////
-function createTabZMTS(id_div, appH, id_zayavka = 0) {
+function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     let allow = getAllows()
     let ed = allow.E == 1 ? "input" : ""
     let ed_date = allow.E == 1 ? date_Editor : ""
@@ -582,18 +604,18 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
             const id = getFirstID(tableMTS)
             tableMTS.selectRow(id)
             m_id_MTS = tableMTS.getRow(id).getData().id_mts
-            tableARM.setFilter("id_mts", "=", m_id_MTS)
+            if (syncWithARM) tableARM.setFilter("id_mts", "=", m_id_MTS)
         },
 
         rowSelectionChanged: function (data, rows) {
             id2e("delMTS").disabled = data.length == 0
             id2e("modMTS").disabled = data.length != 1
-            id2e("addARM").disabled = data.length != 1
+            if (syncWithARM) id2e("addARM").disabled = data.length != 1
         },
 
         rowClick: function (e, row) {
             m_id_MTS = row.getData().id_mts
-            tableARM.setFilter("id_mts", "=", m_id_MTS)
+            if (syncWithARM) tableARM.setFilter("id_mts", "=", m_id_MTS)
         },
 
         cellDblClick: function (e, cell) {
@@ -605,7 +627,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
         delMTSYESNO()
     }
     id2e("modMTS").onclick = function () {
-        editMTS(tableMTS.getSelectedData()[0].id, "edit")
+        editMTS(tableMTS.getSelectedData()[0].id, "edit", syncWithARM)
     }
     id2e("addMTS").onclick = () => {
         // createMTS(id_zayavka)
@@ -680,19 +702,22 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
     //=======================================================================================
     // модальное окно редактора МТС (mode = 'edit'/'new')
     //=======================================================================================
-    async function editMTS(id_mts, mode) {
+    async function editMTS(id_mts, mode, syncWithARM = false) {
         let allow = getAllows()
         let d = tableMTS.getSelectedData()[0]
-        if (d.user === null) d.user = ''
+        if (d.user === null) d.user = '<выбрать>'
 
-        const headerZayavkaMTS = `<h4>Параметры МТС №${d.id}</h4>`
+        const headerZayavkaMTS = `<h4>Операция с МТС</h4>`
 
         const bodyZayavkaMTS = `<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
+                                    <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button></center>
+                                    <br>                                    
+                                    <span style="display: flex; align-items: center;"><input type="radio" id="oper_get" name="selectOper" checked><label for="oper_get">&nbsp;получение</label></span>
+                                    <span style="display: flex; align-items: center;"><input type="radio" id="oper_put" name="selectOper"><label for="oper_get">&nbsp;возврат</label></span>
+                                    <span style="display: flex; align-items: center;"><input type="radio" id="oper_chg" name="selectOper"><label for="oper_get">&nbsp;замена</label></span>
+                                    <br>
                                     <input type="checkbox" id="MTS_dsp" disabled>
                                     <label for="MTS_dsp"> ДСП</label>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <button id="selectUser" class="w3-btn w3-padding-small w3-border w3-border-black w3-hover-teal disabled">ответственное лицо</button>
-                                    <span id="user-name">${d.user}</span>
                                     <br>
                                     <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}" disabled>
                                     <label for="MTS_size">  Объем (Гб) запрошено</label>
@@ -710,8 +735,8 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
                                     <textarea id="MTS_comm" rows="3" style="width:100%" disabled>${d.comment}</textarea>
                                     <br>
                                     <br>
-                                    <button id="enterMTS" class="w3-btn o3-border w3-hover-teal"  >сохранить</button>
-                                    <button id="cancelMTS" class="w3-btn o3-border w3-hover-red" >отменить</button>                            
+                                    <button id="enterMTS" class="w3-btn w3-padding-small o3-border w3-hover-teal"  >сохранить</button>
+                                    <button id="cancelMTS" class="w3-btn w3-padding-small o3-border w3-hover-red" >отменить</button>                            
                               </div>`
 
         footZayavkaMTS = ``
@@ -729,7 +754,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
                     selectedUsers.forEach((u) => {
                         d.id_user = u.id
                         d.user = u.name
-                        id2e('user-name').innerHTML = d.user
+                        id2e('selectUser').innerHTML = d.user
                         console.log(`id_user, user = ${d.id_user} ${d.user}`)
                     })
                 })
@@ -780,7 +805,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
                 id = getFirstID(tableMTS)
                 tableMTS.selectRow(id)
                 m_id_MTS = tableMTS.getSelectedData().id_mts
-                tableARM.setFilter("id_mts", "=", m_id_MTS)
+                if (syncWithARM) tableARM.setFilter("id_mts", "=", m_id_MTS)
             }
             removeModalWindow("editMTS")
         }
@@ -789,7 +814,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
     //=======================================================================================
     // модальное окно удаления MTS
     //=======================================================================================
-    function delMTSYESNO() {
+    function delMTSYESNO(syncWithARM = false) {
         const data = tableMTS.getSelectedData()
         dialogYESNO("Устройства: <br><br>будут удалены, вы уверены?<br>").then(
             (ans) => {
@@ -805,7 +830,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0) {
                     const d = tableMTS.getSelectedData()
                     id2e("delMTS").disabled = d.length == 0
                     id2e("modMTS").disabled = d.length == 0
-                    id2e("addARM").disabled = d.length == 0
+                    if (syncWithARM) id2e("addARM").disabled = d.length == 0
                 }
             }
         )

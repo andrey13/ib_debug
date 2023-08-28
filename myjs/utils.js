@@ -26,6 +26,17 @@ async function start_app() {
     return res;
 }
 
+async function getDepart(depart) {
+    let response = await fetch(`myphp/getDepart.php?d=${depart}`)
+    let data = await response.json()
+    return data[0]
+}
+
+async function getBoss(id_depart) {
+    let response = await fetch(`myphp/getBoss.php?d=${id_depart}`)
+    let data = await response.json()
+    return data[0]
+}
 
 //////////////////// УВЕЛИЧЕНИЕ ВЕРСИИ ДАННЫХ ТАБЛИЦЫ НА ЕДИНИЦУ ////////////////////////////
 // table_name - имя проверяемой таблицы                                                    //
@@ -73,7 +84,7 @@ function fio2fio0(fio) {
 //=======================================================================================
 function fio2fio(fio) {
     let arrayOffio = fio.split(' ');
-    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0,1) + '.' + arrayOffio[2].substring(0,1);
+    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0,1) + '.' + arrayOffio[2].substring(0,1) + '.';
 }
 //=======================================================================================
 function fio2fio1(fio) {
