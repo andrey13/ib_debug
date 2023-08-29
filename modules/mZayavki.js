@@ -3,6 +3,7 @@
 // let ms = bPRT + bVEW + bDEL + bMOD + bADD
 // let ml = bVEW + '<br>' + bDEL + '<br>' + bMOD + '<br>' + bADD
 
+let v1 = null
 let m_id_zayavka = 0
 let m_id_MTS = 0
 let m_id_ARM = 0
@@ -11,6 +12,12 @@ let m_id_empty_ARM = 0
 let m_ver_zayavki = 0
 let m_user_it = 0
 let m_user_ib = 0
+
+// виды операций с МТС---------------------------------------------------------
+let m_operTypes = []
+
+// статусы заявок--------------------------------------------------------------
+let m_statusTypes = []
 
 // пустая заявка --------------------------------------------------------------
 const empty_zayavka = {
@@ -23,6 +30,8 @@ const empty_zayavka = {
     id_user_ruk: 0,
     id_user_isp: 0,
     id_depart: g_user.id_depart,
+    id_status: 0,
+    status: '',
     date: moment().format("YYYY-MM-DD"),
     type: '',
     user: g_user.name,
@@ -42,11 +51,13 @@ const empty_MTS = {
     id_status: '0',
     id_user: '0',
     id_mts: '0',
+    id_oper: '',
     dsp: '0',
     mts_SN: '',
     size_gb: '0',
     size2: '0',
-    user: '',
+    user: '<выбрать>',
+    oper: '',
     reson: '',
     comment: '',
 }
@@ -62,7 +73,10 @@ const empty_ARM = {
     comment: '',
 }
 
-function mZayavki() {
+async function mZayavki() {
+    m_operTypes   = await getTypes('операции с МТС')
+    m_statusTypes = await getTypes('статус обращения')
+
     const bVEW = "<button id='vewZayavki' title='Предварительный просмотр заявки' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-eye'></i></button>"
     const bPRT = "<button id='prtZayavki' title='Сохранение в файле PDF заявки'   class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-download'></i></button>"
     const bDEL = "<button id='delZayavki' title='Удаление заявки'                 class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
@@ -83,6 +97,17 @@ function mZayavki() {
     const appHeight = appBodyHeight() - id2e("tabTopMenu").offsetHeight - 8
 
     createTabZayavki("tabZayavki", appHeight)
+}
+
+
+//=======================================================================================
+function getStatusName(id_status) {
+    return m_statusTypes.find(t => t.id == id_status).name
+}
+
+//=======================================================================================
+function getOperName(id_oper) {
+    return m_operTypes.find(t => t.id == id_oper).name
 }
 
 //=======================================================================================
@@ -132,8 +157,8 @@ function createTabZayavki(id_div, appH) {
     let dt_now = new Date(moment().format("YYYY-MM-DD"))
     dt_now = dt_now.getTime()
 
-    const tableZayavki = new Tabulator("#" + id_div, {
-        ajaxURL: "myphp/loadDataZayavki.php",
+     tableZayavki = new Tabulator("#" + id_div, {
+        ajaxURL: "myphp/getZayavki.php",
         ajaxParams: { d: g_user.id_depart },
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -161,15 +186,16 @@ function createTabZayavki(id_div, appH) {
                     outputFormat: "DD.MM.YYYY",
                 },
             },
+            { title: "состояние", field: "status", width: 100, headerFilter: true },
             { title: "тема обращения", field: "type", widthGrow: 2, headerFilter: true },
-            // { title: "i_user", field: "id_user", width: 50 },
+            { title: "i_user", field: "id_user", width: 50 },
             { title: "заявитель", field: "user", widthGrow: 2, headerFilter: true },
-            // { title: "i_depart", field: "id_depart", width: 50 },
+            { title: "i_depart", field: "id_depart", width: 50 },
             { title: "отдел", field: "depart", widthGrow: 2, headerFilter: true },
-            // { title: "i_user_it", field: "id_user_it", width: 50 },
-            // { title: "начальник ОИТ", field: "user_it", widthGrow: 2, headerFilter: true },
-            // { title: "i_user_ib", field: "id_user_ib", width: 50 },
-            // { title: "начальник ОИБ", field: "user_ib", widthGrow: 2, headerFilter: true },
+            { title: "i_user_it", field: "id_user_it", width: 50 },
+            { title: "начальник ОИТ", field: "user_it", widthGrow: 2, headerFilter: true },
+            { title: "i_user_ib", field: "id_user_ib", width: 50 },
+            { title: "начальник ОИБ", field: "user_ib", widthGrow: 2, headerFilter: true },
             { title: "комментарий", field: "comment", widthGrow: 2, headerFilter: true },
         ],
 
@@ -194,6 +220,10 @@ function createTabZayavki(id_div, appH) {
             editZayavka(tableZayavki.getSelectedData()[0])
         },
     })
+
+    function mutFio(v) {
+        return fio2fio0(v)
+    }
 
     id2e("prtZayavki").onclick = function () {
         printZayavka("print")
@@ -248,23 +278,25 @@ function createTabZayavki(id_div, appH) {
         let d = Object.assign({}, empty_zayavka)
         d.id_type = id_type
         d.type = type
+        d.id_status = m_statusTypes[0].id
         
+
         // начальник ОИТ ----------------------------------------------------------------
         const depart_it = await getDepart('Отдел информационных технологий')
         const user_it = await getBoss(depart_it.id)
         d.id_user_it = user_it.id
-        d.user_it = fio2fio(user_it.name)
+        d.user_it = user_it.name
 
         // начальник ОИБ ----------------------------------------------------------------
         const depart_ib = await getDepart('Отдел информационной безопасности')
         const user_ib = await getBoss(depart_ib.id)
         d.id_user_ib = user_ib.id
-        d.user_ib = fio2fio(user_ib.name)
+        d.user_ib = user_ib.name
 
         // начальник отдела  ------------------------------------------------------------
         const user_otd = await getBoss(d.id_depart)
         d.id_user_otd = user_otd.id
-        d.user_otd = fio2fio(user_otd.name)
+        d.user_otd = user_otd.name
 
         // руководитель -----------------------------------------------------------------
         d.id_user_ruk = 0
@@ -275,14 +307,26 @@ function createTabZayavki(id_div, appH) {
 
         const sql = `INSERT INTO zayavka (
                         id_user, 
+                        id_user_it,
+                        id_user_ib,
+                        id_user_otd,
+                        id_user_ruk,
+                        id_user_isp,
                         id_type,
+                        id_status,
                         date, 
                         comment, 
                         id_depart
                     ) 
                     VALUES (
                         ${d.id_user}, 
+                        ${d.id_user_it}, 
+                        ${d.id_user_ib}, 
+                        ${d.id_user_otd}, 
+                        ${d.id_user_ruk}, 
+                        ${d.id_user_isp}, 
                         ${d.id_type},
+                        ${d.id_status},
                        '${d.date}', 
                        '${d.comment}', 
                         ${d.id_depart}
@@ -293,6 +337,7 @@ function createTabZayavki(id_div, appH) {
             m_id_zayavka = d.id
 
             tableZayavki.addRow(d, true)
+            tableZayavki.redraw()
             tableZayavki.scrollToRow(id_zayavka, "top", false)
             tableZayavki.deselectRow()
             tableZayavki.selectRow(id_zayavka)
@@ -326,10 +371,10 @@ function createTabZayavki(id_div, appH) {
     }
 
     //=======================================================================================
-    // модальное окно редактора заявки на получение МТС
+    // модальное окно редактора заявки на получение/возврат/замену МТС
     //=======================================================================================
 
-    function editZayavkaMTS1(id_zayavka, mode, type = '', id_type) {
+    async function editZayavkaMTS1(id_zayavka, mode, type = '', id_type) {
         let allow = getAllows()
         let d = tableZayavki.getSelectedData()[0]
 
@@ -351,11 +396,11 @@ function createTabZayavki(id_div, appH) {
         const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: white"></div>`
         // const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue"></div>`
 
-        const bodyZayavka =`<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
+        const bodyZayavka = `<div id="" style="margin: 0; padding: 1%;" class="w3-container">
                             <div id="userIT" style="position: absolute; right: 0;width: 300px;">
                             Начальнику отдела<br>
                             информационных техногий<br>
-                            <button id="selIT" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_it}</button>
+                            <button id="selIT" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${fio2dat(d.user_it)}</button>
                             </div>
                             <br>
                             <br>
@@ -379,9 +424,10 @@ function createTabZayavki(id_div, appH) {
                             исполнитель: <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
                             <span id="isp-name"></span>
                             <br>
-                            <button id="b_ENTER" class="w3-btn w3-padding-small o3-border w3-hover-teal"  tabindex="6">сохранить</button>
-                            <button id="b_CANCEL" class="w3-btn w3-padding-small o3-border w3-hover-red" tabindex="7">отменить</button>                            
-                            <button id="b_PRINT1" class="w3-btn w3-padding-small o3-border w3-hover-teal" tabindex="8">печать служебной записки</button>
+                            <button id="b_ENTER" class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить как черновик</button>
+                            <button id="b_ACTION" class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить и отправить на выполнение</button>
+                            <button id="b_CANCEL" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
+                            <button id="b_PRINT1" class="w3-btn w3-padding-small o3-border w3-hover-teal">печать служебной записки</button>
                             </div>`
 
         footZayavka = ``
@@ -398,6 +444,21 @@ function createTabZayavki(id_div, appH) {
         id2e("b_ENTER").onclick = function () {
             d.date = id2e("z_date").value
             d.comment = id2e("z_comm").value
+            d.status = getStatusName(d.id_status)
+            runSQL_p(
+                `UPDATE zayavka SET date="${d.date}", comment="${d.comment}"} WHERE id=${d.id}`
+            )
+            verInc('zayavki', g_user.id_depart, 'id_depart')
+            removeModalWindow("editZayavka")
+            tableZayavki.updateRow(d.id, d)
+        }
+
+        // кнопка ACTION ---------------------------------------------------------------------
+        id2e("b_ACTION").onclick = function () {
+            d.date = id2e("z_date").value
+            d.comment = id2e("z_comm").value
+            d.id_status++
+            d.status = getStatusName(d.id_status)
             runSQL_p(
                 `UPDATE zayavka SET date="${d.date}", comment="${d.comment}"} WHERE id=${d.id}`
             )
@@ -450,7 +511,7 @@ function createTabZayavki(id_div, appH) {
         const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
         const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue""></div>`
 
-        const bodyZayavka = `<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
+        const bodyZayavka = `<div id="" style="margin: 0; padding: 1%;" class="w3-container">
                             <input class="o3-border" type="date" id="z_date" value="${d.date}" tabindex="1">
                             <label for="z_date">  Дата обращения</label>
                             <br>
@@ -554,8 +615,9 @@ function createTabZayavki(id_div, appH) {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-//                                   ТАБУЛЯТОР МТС                                     //
+//                                  ТАБУЛЯТОР МТС                                      //
 /////////////////////////////////////////////////////////////////////////////////////////
+
 function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     let allow = getAllows()
     let ed = allow.E == 1 ? "input" : ""
@@ -585,9 +647,10 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         headerSort: false,
 
         columns: [
-            { title: "id", field: "id", width: 30, print: false },
             // { title: "id_zayavka", field: "id_zayavka", width: 90 },
             // { title: "id_mts", field: "id_mts", width: 90 },
+            { title: "id", field: "id", width: 30, print: false },
+            { title: "операция", field: "oper", width: 90 },
             { title: "дсп", field: "dsp", formatter: "lookup", formatterParams: { 0: "   ", 1: "дсп" }, width: 30 },
             { title: "Гб", field: "size_gb", width: 30 },
             { title: "ответственный", field: "user", widthGrow: 2, formatter: "textarea" },
@@ -638,7 +701,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     //tableMTS.setFilter(customFilterZayavki, '')
 
     //=======================================================================================
-    // добавление или изменение МТС
+    // добавление или изменение МТС выбором из существуующих
     //=======================================================================================
     async function createMTS(id_zayavka) {
         let id_mts = 0
@@ -676,22 +739,23 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     function createMTS1(id_zayavka) {
         let v_id_mts = 0
         let d = Object.assign({}, empty_MTS)
-        // console.log("id_zayavka3 = ", id_zayavka)
+        d.id_oper = m_operTypes[0].id
 
         runSQL_p(
-            `INSERT INTO mts (id_zayavka, status, dsp, size_gb, SN) VALUES (${id_zayavka}, "заказ", 0, 0, '${d.mts_SN}')`
+            `INSERT INTO mts (id_zayavka, id_status, status, dsp, size_gb, SN) VALUES (${id_zayavka}, 0, "заказ", 0, 0, '${d.mts_SN}')`
         )
             .then((id_mts) => {
                 v_id_mts = id_mts
                 return runSQL_p(
-                    `INSERT INTO zayavka2mts (id_zayavka, id_mts, size_gb) VALUES (${id_zayavka}, ${id_mts}, 0)`
+                    `INSERT INTO zayavka2mts (id_zayavka, id_status, id_mts, size_gb) VALUES (${id_zayavka}, 0, ${id_mts}, 0)`
                 )
             })
             .then((id) => {
                 d.id = id
                 d.id_zayavka = id_zayavka
                 d.id_mts = v_id_mts
-                tableMTS.addRow(d, true)
+                tableMTS.addRow(d, false)
+                tableMTS.redraw()
                 tableMTS.scrollToRow(id, "top", false)
                 tableMTS.deselectRow()
                 tableMTS.selectRow(id)
@@ -703,45 +767,68 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     // модальное окно редактора МТС (mode = 'edit'/'new')
     //=======================================================================================
     async function editMTS(id_mts, mode, syncWithARM = false) {
-        let allow = getAllows()
-        let d = tableMTS.getSelectedData()[0]
+        const allow = getAllows()
+        const d = tableMTS.getSelectedData()[0]
+        console.log('d = ', d)
+
         if (d.user === null) d.user = '<выбрать>'
 
-        const headerZayavkaMTS = `<h4>Операция с МТС</h4>`
+        const headerZayavkaMTS = `<h4>параметры МТС</h4>`
 
-        const bodyZayavkaMTS = `<div id="vEditZayavka" style="margin: 0; padding: 1%;" class="w3-container">
-                                    <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button></center>
-                                    <br>                                    
-                                    <span style="display: flex; align-items: center;"><input type="radio" id="oper_get" name="selectOper" checked><label for="oper_get">&nbsp;получение</label></span>
-                                    <span style="display: flex; align-items: center;"><input type="radio" id="oper_put" name="selectOper"><label for="oper_get">&nbsp;возврат</label></span>
-                                    <span style="display: flex; align-items: center;"><input type="radio" id="oper_chg" name="selectOper"><label for="oper_get">&nbsp;замена</label></span>
-                                    <br>
-                                    <input type="checkbox" id="MTS_dsp" disabled>
-                                    <label for="MTS_dsp"> ДСП</label>
-                                    <br>
-                                    <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}" disabled>
-                                    <label for="MTS_size">  Объем (Гб) запрошено</label>
-                                    <br>
-                                    <input class="o3-border" type="text" id="MTS_size2" value="${d.size2}" disabled>
-                                    <label for="MTS_size2">  Объем (Гб) фактически выдано</label>
-                                    <br>
-                                    <input class="o3-border" type="text" id="MTS_SN" value="${d.mts_SN}" disabled>
-                                    <label for="MTS_SN">  Серийный номер</label>
-                                    <br>
-                                    <label for="MTS_reson"><b>Обоснование:</b></label><br>
-                                    <textarea id="MTS_reson" rows="3" style="width:100%" disabled>${d.reson}</textarea>
-                                    <br>
-                                    <label for="MTS_comm"><b>Комментарии:</b></label><br>
-                                    <textarea id="MTS_comm" rows="3" style="width:100%" disabled>${d.comment}</textarea>
-                                    <br>
-                                    <br>
-                                    <button id="enterMTS" class="w3-btn w3-padding-small o3-border w3-hover-teal"  >сохранить</button>
-                                    <button id="cancelMTS" class="w3-btn w3-padding-small o3-border w3-hover-red" >отменить</button>                            
-                              </div>`
+        const bodyZayavkaMTS =
+            `<div id="vEditMTS" style="margin: 0; padding: 1%;" class="w3-container">
+                <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button></center>
+                <br>                                    
+
+                <span style="display: flex; align-items: center;" v-for="o in operTypes">
+                    <input type="radio" :id="'oper'+o.id" name="operTypes" v-bind:value="o.id" v-model="id_oper">
+                    <label v-bind:for="'oper'+o.id">&nbsp;{{ o.name }}</label>
+                </span>                
+                
+                <br>
+                
+                <input type="checkbox" id="MTS_dsp" disabled>
+                <label for="MTS_dsp"> ДСП</label>
+                <br>
+                
+                <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}" disabled>
+                <label for="MTS_size">  Объем (Гб) запрошено</label>
+                <br>
+                
+                <input class="o3-border" type="text" id="MTS_size2" value="${d.size2}" disabled>
+                <label for="MTS_size2">  Объем (Гб) фактически выдано</label>
+                <br>
+                
+                <input class="o3-border" type="text" id="MTS_SN" value="${d.mts_SN}" disabled>
+                <label for="MTS_SN">  Серийный номер</label>
+                <br>
+                
+                <label for="MTS_reson"><b>Обоснование:</b></label><br>
+                <textarea id="MTS_reson" rows="3" style="width:100%" disabled>${d.reson}</textarea>
+                <br>
+                
+                <label for="MTS_comm"><b>Комментарии:</b></label><br>
+                <textarea id="MTS_comm" rows="3" style="width:100%" disabled>${d.comment}</textarea>
+                <br>
+                <br>
+                <button id="enterMTS" class="w3-btn w3-padding-small o3-border w3-hover-teal"  >сохранить</button>
+                <button id="cancelMTS" class="w3-btn w3-padding-small o3-border w3-hover-red" >отменить</button>                            
+            </div>`
 
         footZayavkaMTS = ``
 
         newModalWindow("editMTS", headerZayavkaMTS, bodyZayavkaMTS, footZayavkaMTS, width = "60%", marginLeft = "5%", marginTop = "10%")
+
+        v1 = Vue.createApp({
+            data() {
+                return {
+                    operTypes: m_operTypes,
+                    text: 'ABC',
+                    id_oper: d.id_oper,
+                    oper: d.oper,
+                }
+            }
+        }).mount('#vEditMTS');
 
         id2e("MTS_dsp").focus()
         id2e("MTS_dsp").select()
@@ -782,11 +869,14 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             d.mts_SN = id2e("MTS_SN").value
             d.comment = id2e("MTS_comm").value
             d.reson = id2e("MTS_reson").value
+            d.id_oper = v1.$data.id_oper
+            d.oper = getOperName(d.id_oper)
 
             runSQL_p(`UPDATE zayavka2mts SET 
                         dsp=${d.dsp}, 
                         size_gb=${d.size_gb}, 
                         id_user=${d.id_user}, 
+                        id_oper=${d.id_oper},
                         reson='${d.reson}', 
                         comment='${d.comment}' WHERE id=${d.id}`)
 

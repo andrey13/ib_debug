@@ -7,6 +7,8 @@
         $sql = "SELECT mts.id, 
                        mts.id_user,
                        mts.id_depart,
+                       mts.id_oper,
+                       mts.id_status,
                        mts.date,
                        mts.user,
                        mts.manufacturer, 

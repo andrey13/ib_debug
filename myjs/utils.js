@@ -1,24 +1,24 @@
 async function start_app() {
-    sel_STAT       = await loadSelector("status");
-    sel_LVST       = await loadSelector("lvs_type");
-    sel_TORM       = await loadSelector("torm");
-    g_user.ip      = await get_ip();
-    g_user.mask    = ip2mask(g_user.ip);
+    sel_STAT = await loadSelector("status");
+    sel_LVST = await loadSelector("lvs_type");
+    sel_TORM = await loadSelector("torm");
+    g_user.ip = await get_ip();
+    g_user.mask = ip2mask(g_user.ip);
     g_id_scan_last = await get_id_scan_last();
 
     // console.log(g_user.ip);
     // console.log(g_user.mask);
     // console.log(g_id_scan_last);
 
-//    identUser()
-//        .then((res)=> {
-//            if (res=='YES') {
-//                alert('start_app');
-//                console.log('identUser -> YES');
-//                g_moduleActive = 'mNews';
-//                mNews();
-//            }
-//        });
+    //    identUser()
+    //        .then((res)=> {
+    //            if (res=='YES') {
+    //                alert('start_app');
+    //                console.log('identUser -> YES');
+    //                g_moduleActive = 'mNews';
+    //                mNews();
+    //            }
+    //        });
     let res = await identUser();
     g_moduleActive = 'mNews';
     mNews();
@@ -26,16 +26,115 @@ async function start_app() {
     return res;
 }
 
+function fio2dat(fio) {
+    return fio2fio0(fio).split(' ').map(w => fam2dat(w)).join(' ')
+}
+
+function fam2dat(wrd) {
+    let out = wrd
+
+    if (wrd.slice(-2) == 'ин')   out = wrd.slice(0,-2) + 'ину'
+    if (wrd.slice(-2) == 'ва')   out = wrd.slice(0,-2) + 'вой'
+
+    return out
+}
+
+function txt2dat(txt) {
+    return txt.split(' ').map(w => wrd2dat(w)).join(' ')
+}
+
+function wrd2dat(wrd) {
+    let out = wrd
+
+    if (wrd == 'отдел') out = 'отдела'
+    if (wrd == 'Отдел') out = 'отдела'
+    if (wrd == 'начальник') out = 'Начальнику'
+    if (wrd == 'Начальник') out = 'Начальнику'
+    if (wrd.slice(-4) == 'ский')  out = wrd.slice(0,-4) + 'ского'
+    if (wrd.slice(-3) == 'вой')   out = wrd.slice(0,-3) + 'вого'
+    if (wrd.slice(-3) == 'вый')   out = wrd.slice(0,-3) + 'вого'
+    if (wrd.slice(-3) == 'ный')   out = wrd.slice(0,-3) + 'ного'
+    if (wrd.slice(-3) == 'щий')   out = wrd.slice(0,-3) + 'щего'
+
+    return out
+}
+
+//=======================================================================================
+// taxonomy -> все типы таксономии по ее названию
+//=======================================================================================
+async function getTypes(taxonomy) {
+    let response = await fetch(`myphp/getTypes.php?t=${taxonomy}`)
+    let data = await response.json()
+    return data
+}
+
+//=======================================================================================
+// id_user -> должность (нач или и.о.) + отдел
+//=======================================================================================
+async function idUser2TitleDepart(id_user) {
+    const title = await idUser2Title(id_user)
+    const depart = await idUser2Depart(id_user)
+}
+
+//=======================================================================================
+// id_user -> должность
+//=======================================================================================
+async function idUser2Title(id_user) {
+}
+
+//=======================================================================================
+// id_user -> отдел
+//=======================================================================================
+async function idUser2Depart(id_user) {
+}
+//=======================================================================================
+// depart -> все данные отдела по его названию
+//=======================================================================================
 async function getDepart(depart) {
     let response = await fetch(`myphp/getDepart.php?d=${depart}`)
     let data = await response.json()
     return data[0]
 }
 
+//=======================================================================================
+// id_depart -> все данные начальника отдела по id отдела
+//=======================================================================================
 async function getBoss(id_depart) {
     let response = await fetch(`myphp/getBoss.php?d=${id_depart}`)
     let data = await response.json()
     return data[0]
+}
+
+//=======================================================================================
+// Иванов Петр Сидорович -> Иванов ПС
+//=======================================================================================
+function fio2fio0(fio) {
+    if (!!!fio) return ''
+    if (fio === null) return ''
+    let arrayOffio = fio.split(' ');
+    if (arrayOffio.length < 3) return fio
+    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0, 1) + arrayOffio[2].substring(0, 1);
+}
+//=======================================================================================
+// Иванов Петр Сидорович -> Иванов П.С.
+//=======================================================================================
+function fio2fio(fio) {
+    let arrayOffio = fio.split(' ');
+    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0, 1) + '.' + arrayOffio[2].substring(0, 1) + '.';
+}
+//=======================================================================================
+// Иванов Петр Сидорович -> Иванов П. С.
+//=======================================================================================
+function fio2fio1(fio) {
+    let arrayOffio = fio.split(' ');
+    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0, 1) + '. ' + arrayOffio[2].substring(0, 1);
+}
+///////////////////////////////////////////////////////////////////////////////////////////
+// Иванов Петр Сидорович -> П.С. Иванов
+///////////////////////////////////////////////////////////////////////////////////////////
+function fio2fio2(fio) {
+    let arrayOffio = fio.split(' ');
+    return arrayOffio[1].substring(0, 1) + '.' + arrayOffio[2].substring(0, 1) + '. ' + arrayOffio[0];
 }
 
 //////////////////// УВЕЛИЧЕНИЕ ВЕРСИИ ДАННЫХ ТАБЛИЦЫ НА ЕДИНИЦУ ////////////////////////////
@@ -72,31 +171,6 @@ async function verGet(table_name, id_key, name_key) {
     const data = await response.json()
     return data[0]
 }
-
-
-
-
-//=======================================================================================
-function fio2fio0(fio) {
-    let arrayOffio = fio.split(' ');
-    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0,1) + arrayOffio[2].substring(0,1);
-}
-//=======================================================================================
-function fio2fio(fio) {
-    let arrayOffio = fio.split(' ');
-    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0,1) + '.' + arrayOffio[2].substring(0,1) + '.';
-}
-//=======================================================================================
-function fio2fio1(fio) {
-    let arrayOffio = fio.split(' ');
-    return arrayOffio[0] + ' ' + arrayOffio[1].substring(0,1) + '. ' + arrayOffio[2].substring(0,1);
-}
-//=======================================================================================
-function fio2fio2(fio) {
-    let arrayOffio = fio.split(' ');
-    return arrayOffio[1].substring(0,1) + '.' + arrayOffio[2].substring(0,1) + '. ' + arrayOffio[0];
-}
-
 
 
 //=======================================================================================
@@ -171,7 +245,7 @@ async function identUser() {
                 if (await initUser(g_user.usr)) {
                     div_modal.style.display = "none";
                     div_modal.remove();
-                    div_modal.onkeyup = function (e) {};
+                    div_modal.onkeyup = function (e) { };
                     log_reg("регистрация пользователя " + s_usr, s_pwd);
                     resolve('YES');
                 } else {
@@ -229,7 +303,7 @@ async function autentUser(user) {
 
     let response = await fetch('myphp/regUser1.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(o),
     });
 
@@ -247,19 +321,19 @@ async function initUser(account) {
     // console.log('user_data = ', user_data)
     if (user_data.length == 0) return false;
 
-    g_user.id        = user_data[0].id;
-    g_user.sono      = user_data[0].sono;
-    g_user.name      = user_data[0].name;
-    g_user.tel       = user_data[0].telephone;
+    g_user.id = user_data[0].id;
+    g_user.sono = user_data[0].sono;
+    g_user.name = user_data[0].name;
+    g_user.tel = user_data[0].telephone;
     g_user.id_depart = user_data[0].id_depart;
-    g_user.depart    = user_data[0].depart;
+    g_user.depart = user_data[0].depart;
     g_user.id_otdel = user_data[0].id_otdel;
 
-    let userModules  = await id2modules(user_data[0].id)
-    let userRoles    = await id2roles(g_user.id)
-    g_user.modules   = userModules
-    g_user.roles     = userRoles
-    let ht_menu      = await initMenu(userModules)
+    let userModules = await id2modules(user_data[0].id)
+    let userRoles = await id2roles(g_user.id)
+    g_user.modules = userModules
+    g_user.roles = userRoles
+    let ht_menu = await initMenu(userModules)
     //alert('initUser-2');
     return true
 }
@@ -313,11 +387,11 @@ async function initMenu(modules) {
     let script;
 
     // цикл по всем модулям, доступным пользователю -------------------------------------
-    modules.forEach(module => {     
+    modules.forEach(module => {
         // создание кнопки вызова модуля ------------------------------------------------
         ht += `<button id="${module.name}" class="button_main_menu w3-button w3-padding-small w3-border w3-hover-teal">${module.title}</button> `;
         // загрузка модуля --------------------------------------------------------------
-        if (module.name!='mNews') {
+        if (module.name != 'mNews') {
             script = document.createElement('script');
             //script.type = "module";
             script.src = "modules/" + module.name + ".js";
@@ -333,10 +407,10 @@ async function initMenu(modules) {
         }
         let module = this.id;
         //if (g_moduleActive != module) {
-            g_moduleActive = module;
-            eval(module + '();');
-            log_reg('вход в систему ' + g_moduleActive);
-            //}
+        g_moduleActive = module;
+        eval(module + '();');
+        log_reg('вход в систему ' + g_moduleActive);
+        //}
         //this.style.backgroundColor = "#D94A38";
         this.className = "button_main_menu w3-button w3-padding-small w3-border w3-hover-teal w3-teal";
     });
@@ -358,7 +432,7 @@ async function get_id_scan_last() {
 // определение ip адреса пользователя ===================================================
 async function get_ip() {
     let response = await fetch('myphp/get_ip.php');
-    let ip      = await response.text();
+    let ip = await response.text();
     return ip;
 }
 
@@ -371,7 +445,7 @@ async function loadSelector(table) {
 
 
 function date2date(date) {
-    return (!date || date=='0000-00-00') ? '' : moment(date,"YYYY-MM-DD").format("DD.MM.YYYY");
+    return (!date || date == '0000-00-00') ? '' : moment(date, "YYYY-MM-DD").format("DD.MM.YYYY");
 }
 
 let date_Editor = function (cell, onRendered, success, cancel) {
@@ -529,7 +603,7 @@ function dialogYESNO(text) {
         document.getElementById("YES").focus();
 
         div_modal.onkeyup = function (e) {
-            console.log('key=',e.key);
+            console.log('key=', e.key);
             if (e.key == 'Escape') {
                 div_modal.remove();
                 div_modal.onkeyup = function (e) { };
@@ -571,13 +645,13 @@ function getAllows() {
 // активация модального окна ============================================================
 function newModalWindow(modal, html_header, html_body, html_footer, width, marginLeft, marginTop) {
     //return new Promise(function (resolve, reject) {
-        // создание элементов модального окна -----------------------------------------------   
-        let modalMain    = modal + "Main";
-        let modalContent = modal + "Content";
-        let modalHeader  = modal + "Header";
-        let modalBody    = modal + "Body";
-        let modalFooter  = modal + "Footer";
-        let modal_html   = `
+    // создание элементов модального окна -----------------------------------------------   
+    let modalMain = modal + "Main";
+    let modalContent = modal + "Content";
+    let modalHeader = modal + "Header";
+    let modalBody = modal + "Body";
+    let modalFooter = modal + "Footer";
+    let modal_html = `
            <div         id="${modalMain}"    class="modal" style="display:none;">
                <div     id="${modalContent}" class="modal-content">
                    <div id="${modalHeader}"  class="modal-header w3-teal" style="display: flex; align-items: center;">${html_header}</div>
@@ -586,27 +660,27 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
                </div>
            </div>`;
 
-        // вставить модальное окно в конец BODY ---------------------------------------------
-        let body_el = document.getElementsByTagName('body')[0];
-        body_el.insertAdjacentHTML("beforeend", modal_html);
+    // вставить модальное окно в конец BODY ---------------------------------------------
+    let body_el = document.getElementsByTagName('body')[0];
+    body_el.insertAdjacentHTML("beforeend", modal_html);
 
-        // задать ширину и положение модального окна ----------------------------------------
-        document.getElementById(modalContent).style.width  = width;
-        document.getElementById(modalContent).style.marginLeft = marginLeft;
-        document.getElementById(modalContent).style.marginTop  = marginTop;
-        id2e(modalMain).style.padding = 0;
+    // задать ширину и положение модального окна ----------------------------------------
+    document.getElementById(modalContent).style.width = width;
+    document.getElementById(modalContent).style.marginLeft = marginLeft;
+    document.getElementById(modalContent).style.marginTop = marginTop;
+    id2e(modalMain).style.padding = 0;
 
-        let div_modal = document.getElementById(modalMain);
-        div_modal.style.display = "block";
+    let div_modal = document.getElementById(modalMain);
+    div_modal.style.display = "block";
 
-        // при нажатии ESC удалять модальное окно -------------------------------------------
-        document.onkeyup = function (e) {
-            if (e.key == 'Escape') {
-                div_modal.style.display = "none";
-                div_modal.onkeyup = function (e) { };
-                div_modal.remove();
-            }
-        };
+    // при нажатии ESC удалять модальное окно -------------------------------------------
+    document.onkeyup = function (e) {
+        if (e.key == 'Escape') {
+            div_modal.style.display = "none";
+            div_modal.onkeyup = function (e) { };
+            div_modal.remove();
+        }
+    };
     //});
 }
 
@@ -624,7 +698,7 @@ function removeModalWindow(modal) {
 // активация модального окна ============================================================
 function activateModalWindow(modal) {
     let modal_object = document.getElementById(modal);
-    let modal_body   = document.getElementById(modal + "Body");
+    let modal_body = document.getElementById(modal + "Body");
     document.getElementById(modal + "Body").style.height = null;
     modal_object.style.display = "block";
     document.onkeyup = function (e) {
@@ -677,10 +751,10 @@ function rowClickCursor(row, table) {
     //console.log("rowClickCursor---------------------------------------------------------------------------");
     //console.log("rowClickCursor -> row.id", row.getData().id);
     //console.log("rowClickCursor -> id_current", table.id_current);
-    
-    if (row.getData().id == table.id_current) { 
+
+    if (row.getData().id == table.id_current) {
         //console.log("rowClickCursor - row.id=id_current"); 
-        return false; 
+        return false;
     }
 
     // установить указатель на новую строку -----------------------------------------
@@ -972,7 +1046,7 @@ async function insertDBRecord_p(o, table) {
     o.mysql_table = table;
     let response = await fetch('myphp/insertDBRecord.php', {
         method: 'POST',
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(o),
     });
     let result = await response.text();
@@ -988,7 +1062,7 @@ function insertDBRecord(o, table) {
     xh.open("POST", "myphp/insertDBRecord.php", true);
     xh.setRequestHeader("Content-Type", "application/json");
     xh.onreadystatechange = function () {
-        if (xh.readyState === 4 && xh.status === 200) {}
+        if (xh.readyState === 4 && xh.status === 200) { }
     };
     o.mysql_table = table;
     xh.send(JSON.stringify(o));
@@ -1000,7 +1074,7 @@ function updateDBRecord(o, table) {
     xh.open("POST", "myphp/updateDBRecord.php", true);
     xh.setRequestHeader("Content-Type", "application/json");
     xh.onreadystatechange = function () {
-        if (xh.readyState === 4 && xh.status === 200) {}
+        if (xh.readyState === 4 && xh.status === 200) { }
     };
     o.mysql_table = table;
     xh.send(JSON.stringify(o));
@@ -1302,16 +1376,16 @@ function usrCheck(u, p) {
 
 // загрузка справочника категорий узлов -------------------------------------------------
 async function loadCategories() {
-    let response = await fetch( 'myphp/loadDataCategories.php' );
+    let response = await fetch('myphp/loadDataCategories.php');
     let data = await response.text();
     return data;
 }
 
 // загрузка списка компьютеров, на которых найдена уязвимость с id_vulner в скане id_scan
 async function loadVulnerComps(id_vulner, id_scan) {
-    let response = await fetch( 'myphp/loadDataVulnerComps.php?v=' + id_vulner + '&s=' + id_scan );
+    let response = await fetch('myphp/loadDataVulnerComps.php?v=' + id_vulner + '&s=' + id_scan);
     let data = await response.text();
-    console.log('id_vulner, id_scan, comps = ', id_vulner+' '+id_scan+' '+data);
+    console.log('id_vulner, id_scan, comps = ', id_vulner + ' ' + id_scan + ' ' + data);
     return data;
 }
 
@@ -1341,47 +1415,47 @@ function id2e(id) {
 //=======================================================================================
 function txt2txt(text) {
     return text.toLowerCase()
-        .replace('общий',                              'общего')
-        .replace('аналитический',                      'аналитического')
-        .replace('контрольный',                        'контрольного')
-        .replace('правовой',                           'правового')
-        .replace('финансовый'   ,                      'финансового')
-        .replace('хозяйственный',                      'хозяйственного')
-        .replace('финансовый'   ,                      'финансового')
-        .replace('руководство',                        'УФНС России по Ростовской области')
-        .replace('начальник отдела',                   'Начальник')
-        .replace('заместитель начальника отдела',      'И.о. начальника')
-        .replace('отдел',                              'отдела')
-        .replace('руководитель управления',            'Руководитель')
+        .replace('общий', 'общего')
+        .replace('аналитический', 'аналитического')
+        .replace('контрольный', 'контрольного')
+        .replace('правовой', 'правового')
+        .replace('финансовый', 'финансового')
+        .replace('хозяйственный', 'хозяйственного')
+        .replace('финансовый', 'финансового')
+        .replace('руководство', 'УФНС России по Ростовской области')
+        .replace('начальник отдела', 'Начальник')
+        .replace('заместитель начальника отдела', 'И.о. начальника')
+        .replace('отдел', 'отдела')
+        .replace('руководитель управления', 'Руководитель')
         .replace('заместитель руководителя управления', 'И.о. руководителя');
 }
 
 //=======================================================================================
 function txt4txt(text) {
     return text.toLowerCase()
-        .replace('И.о. руководителя'                ,  'заместитель руководителя управления'  )
-        .replace('Руководитель'                     ,  'руководитель управления'              )
-        .replace('И.о. начальника'                  ,  'заместитель начальника отдела'        )
-        .replace('отдела'                           ,  'отдел'                                )
-        .replace('общего'                           ,  'общий'                                )
-        .replace('аналитического'                   ,  'аналитический'                        )
-        .replace('контрольного'                     ,  'контрольный'                          )
-        .replace('правового'                        ,  'правовой'                             )
-        .replace('финансового'                      ,  'финансовый'                           )
-        .replace('хозяйственного'                   ,  'хозяйственный'                        )
-        .replace('финансового'                      ,  'финансовый'                           )
-        .replace('УФНС России по Ростовской области',  'руководство'                          )
-        .replace('Начальник'                        ,  'начальник отдела'                     )
+        .replace('И.о. руководителя', 'заместитель руководителя управления')
+        .replace('Руководитель', 'руководитель управления')
+        .replace('И.о. начальника', 'заместитель начальника отдела')
+        .replace('отдела', 'отдел')
+        .replace('общего', 'общий')
+        .replace('аналитического', 'аналитический')
+        .replace('контрольного', 'контрольный')
+        .replace('правового', 'правовой')
+        .replace('финансового', 'финансовый')
+        .replace('хозяйственного', 'хозяйственный')
+        .replace('финансового', 'финансовый')
+        .replace('УФНС России по Ростовской области', 'руководство')
+        .replace('Начальник', 'начальник отдела')
 }
 
 //=======================================================================================
-function getCurrentID( table ) {
+function getCurrentID(table) {
     if (table.getSelectedData().length == 0) return 0;
     return table.getSelectedData()[0].id;
 }
 
 //=======================================================================================
-function getFirstID( table ) {
+function getFirstID(table) {
     if (table.rowManager.activeRows.length == 0) return 0;
     return table.rowManager.activeRows[0].getData().id;
 }
@@ -1392,7 +1466,7 @@ function ip10(ip_string) {
     let ip_array = ip_string.split(',');
     ip_array.every(element => {
         ip = element.trim();
-        if (ip.slice(0,2)=='10') {
+        if (ip.slice(0, 2) == '10') {
             return false;
         } else {
             return true;
@@ -1402,14 +1476,14 @@ function ip10(ip_string) {
 }
 
 //=======================================================================================
-function ip_compare(ip1,ip2) {
-    if (ip1==ip2) return 0;
+function ip_compare(ip1, ip2) {
+    if (ip1 == ip2) return 0;
     let ip1_array = ip1.split('.');
     let ip2_array = ip2.split('.');
-    let ip1_nnnn = ip1_array[0] * 16777216 + ip1_array[1] * 65536  + ip1_array[2] * 256 + ip1_array[3] * 1;
-    let ip2_nnnn = ip2_array[0] * 16777216 + ip2_array[1] * 65536  + ip2_array[2] * 256 + ip2_array[3] * 1;
+    let ip1_nnnn = ip1_array[0] * 16777216 + ip1_array[1] * 65536 + ip1_array[2] * 256 + ip1_array[3] * 1;
+    let ip2_nnnn = ip2_array[0] * 16777216 + ip2_array[1] * 65536 + ip2_array[2] * 256 + ip2_array[3] * 1;
     //console.log(ip1_nnnn, '    ', ip2_nnnn);
-    if (+ip1_nnnn > +ip2_nnnn) return  1;
+    if (+ip1_nnnn > +ip2_nnnn) return 1;
     if (+ip1_nnnn < +ip2_nnnn) return -1;
 }
 
