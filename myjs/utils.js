@@ -26,8 +26,18 @@ async function start_app() {
     return res;
 }
 
+
+function addTabRow(table, d, top = true) {
+    table.addRow(d, false)
+    table.redraw()
+    table.scrollToRow(d.id, "top", false)
+    table.deselectRow()
+    table.selectRow(d.id)
+}
+
+
 function fio2dat(fio) {
-    return fio2fio0(fio).split(' ').map(w => fam2dat(w)).join(' ')
+    return fio2fio2(fio).split(' ').map(w => fam2dat(w)).join(' ')
 }
 
 function fam2dat(wrd) {
@@ -35,12 +45,13 @@ function fam2dat(wrd) {
 
     if (wrd.slice(-2) == 'ин')   out = wrd.slice(0,-2) + 'ину'
     if (wrd.slice(-2) == 'ва')   out = wrd.slice(0,-2) + 'вой'
+    if (wrd.slice(-2) == 'ев')   out = wrd.slice(0,-2) + 'еву'
 
     return out
 }
 
 function txt2dat(txt) {
-    return txt.split(' ').map(w => wrd2dat(w)).join(' ')
+    return txt.split(' ').map(w => wrd2dat(w)).join(' ').toLowerCase()
 }
 
 function wrd2dat(wrd) {
