@@ -42,6 +42,12 @@ const empty_zayavka = {
     user_isp: '<выбрать>',
     depart: g_user.depart,
     comment: '',
+    io_it: '0',
+    io_ib: '0',
+    io_otd: '0',
+    io_ruk: '0',
+    user_title: '',
+    user_isp_title: '',
 }
 
 // пустое MTS -----------------------------------------------------------------
@@ -74,7 +80,7 @@ const empty_ARM = {
 }
 
 async function mZayavki() {
-    m_operTypes   = await getTypes('операции с МТС')
+    m_operTypes = await getTypes('операции с МТС')
     m_statusTypes = await getTypes('статус обращения')
 
     const bVEW = "<button id='vewZayavki' title='Предварительный просмотр заявки' class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-eye'></i></button>"
@@ -157,7 +163,7 @@ function createTabZayavki(id_div, appH) {
     let dt_now = new Date(moment().format("YYYY-MM-DD"))
     dt_now = dt_now.getTime()
 
-     tableZayavki = new Tabulator("#" + id_div, {
+    tableZayavki = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/getZayavki.php",
         ajaxParams: { d: g_user.id_depart },
         ajaxConfig: "GET",
@@ -275,61 +281,95 @@ function createTabZayavki(id_div, appH) {
     // создание пустой заявки с последующим редактированием
     //=======================================================================================
     async function createZayavkaMTS(type, id_type) {
-        let d = Object.assign({}, empty_zayavka)
-        d.id_type = id_type
-        d.type = type
-        d.id_status = m_statusTypes[0].id
-        
-
         // начальник ОИТ ----------------------------------------------------------------
         const depart_it = await getDepart('Отдел информационных технологий')
         const user_it = await getBoss(depart_it.id)
-        d.id_user_it = user_it.id
-        d.user_it = user_it.name
 
         // начальник ОИБ ----------------------------------------------------------------
         const depart_ib = await getDepart('Отдел информационной безопасности')
         const user_ib = await getBoss(depart_ib.id)
-        d.id_user_ib = user_ib.id
-        d.user_ib = user_ib.name
 
         // начальник отдела  ------------------------------------------------------------
-        const user_otd = await getBoss(d.id_depart)
-        d.id_user_otd = user_otd.id
-        d.user_otd = user_otd.name
+        const user_otd = await getBoss(g_user.id_depart)
 
         // руководитель -----------------------------------------------------------------
-        d.id_user_ruk = 0
-        d.user_ruk = 'Мосиенко А.В.'
+
+        // данные для пустой заявки -----------------------------------------------------
+        const d = {
+            // поля таблицы Zayavka ---
+            id: 0,
+            date: moment().format("YYYY-MM-DD"),
+            id_type: id_type,
+            id_status: m_statusTypes[0].id,
+            id_depart: g_user.id_depart,
+            id_user_ruk: 0,
+            id_user_it: user_it.id,
+            id_user_ib: user_ib.id,
+            id_user_otd: user_otd.id,
+            id_user: g_user.id,
+            id_user_isp: 0,
+            io_ruk: '0',
+            io_it: '0',
+            io_ib: '0',
+            io_otd: '0',
+            user_title: '',
+            user_isp_title: '',
+            status: '',
+            comment: '',
+            // вычисляемые поля для табулятора ---
+            type: type,
+            user_ruk: 'Мосиенко А.В.',
+            user_it: user_it.name,
+            user_ib: user_ib.name,
+            user_otd: user_otd.name,
+            user: g_user.name,
+            user_isp: '<выбрать>',
+            depart: g_user.depart,
+        }
+
 
         console.log('depart_it = ', depart_it)
         console.log('d.id_user_it = ', d.id_user_it)
 
         const sql = `INSERT INTO zayavka (
-                        id_user, 
+                        date, 
+                        id_type,
+                        id_status,
+                        id_depart,
+                        id_user_ruk,
                         id_user_it,
                         id_user_ib,
                         id_user_otd,
-                        id_user_ruk,
+                        id_user, 
                         id_user_isp,
-                        id_type,
-                        id_status,
-                        date, 
-                        comment, 
-                        id_depart
+                        io_ruk,
+                        io_it,
+                        io_ib,
+                        io_otd,
+                        user_title,
+                        user_isp_title,
+                        status,                                                                   
+                        comment                        
                     ) 
                     VALUES (
-                        ${d.id_user}, 
-                        ${d.id_user_it}, 
-                        ${d.id_user_ib}, 
-                        ${d.id_user_otd}, 
-                        ${d.id_user_ruk}, 
-                        ${d.id_user_isp}, 
+                       '${d.date}', 
                         ${d.id_type},
                         ${d.id_status},
-                       '${d.date}', 
-                       '${d.comment}', 
-                        ${d.id_depart}
+                        ${d.id_depart},
+                        ${d.id_user_ruk}, 
+                        ${d.id_user_it}, 
+                        ${d.id_user_ib}, 
+                        ${d.id_user_otd},
+                        ${d.id_user},
+                        ${d.id_user_isp}, 
+                       '${d.io_ruk}', 
+                       '${d.io_it}', 
+                       '${d.io_ib}', 
+                       '${d.io_otd}', 
+                       '${d.user_title}',
+                       '${d.user_isp_title}',
+                       '${d.status}',                                              
+                       '${d.comment}'
                     )`
 
         runSQL_p(sql).then((id_zayavka) => {
@@ -380,6 +420,14 @@ function createTabZayavki(id_div, appH) {
 
         m_id_zayavka = d.id
 
+        // подготовка полей формы ---------------------------------------------------------
+        const title_ruk = (d.io_ruk == '0') ? 'Руководитель' : 'И.о. руководителя'
+        const title_it = (d.io_it == '0') ? 'Начальнику отдела информационных технологий' : 'И.о. начальника отдела информационных технологий'
+        const title_ib = (d.io_ib == '0') ? 'Начальник отдела информационной безопасности' : 'И.о. начальника отдела информационной безопасности'
+        const title_usr = ((await id_user_2_data(d.id_user)).title.toLowerCase()) + ' ' + txt2dat( d.depart.toLowerCase() )
+        const title_otd = ((d.io_otd == '0') ? 'Начальник ' : 'И.о. начальника ') + txt2dat( d.depart.toLowerCase() )
+        const title_isp = ''
+
         const appH = window.innerHeight - 600
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
 
@@ -398,8 +446,7 @@ function createTabZayavki(id_div, appH) {
 
         const bodyZayavka = `<div id="" style="margin: 0; padding: 1%;" class="w3-container">
                             <div id="userIT" style="position: absolute; right: 0;width: 300px;">
-                            Начальнику отдела<br>
-                            информационных техногий<br>
+                            ${title_it}<br>
                             <button id="selIT" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${fio2dat(d.user_it)}</button>
                             </div>
                             <br>
@@ -414,14 +461,16 @@ function createTabZayavki(id_div, appH) {
                             <label for="z_comm">Комментарии</label><br>
                             <textarea id="z_comm" rows="3" style="width:100%" class="o3-border" value="${d.comment}"></textarea>                            
                             <br>
-                            <br><br>
-                            начальник отдела: <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
+                            ${title_otd}:<br> 
+                            <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
                             <span id="otd-name"></span>
                             <br>
-                            заявитель: <button id="selAuthor" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button>
+                            Заявитель: ${title_usr}:<br>
+                            <button id="selAuthor" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button>
                             <span id="author-name"></span>
                             <br>
-                            исполнитель: <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
+                            Исполнитель: ${title_isp}:<br>
+                            <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
                             <span id="isp-name"></span>
                             <br>
                             <button id="b_ENTER" class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить как черновик</button>
@@ -439,6 +488,24 @@ function createTabZayavki(id_div, appH) {
 
         id2e("z_date").focus()
         id2e("z_date").select()
+
+        // кнопка выбора начальника ОИТ -------------------------------------------------------
+        id2e("selIT").onclick = async function () {
+            const depart_it = (await getDepart('Отдел информационных технологий'))
+            const id_depart_it = depart_it.id
+            const id_boss_it = (await getBoss(id_depart_it)).id
+
+            console.log('id_depart_it = ', id_depart_it)
+            selectUser('6100', '', id_depart_it, 1, header = 'Выбор начальника (и.о. начальника) ОИТ', width = '40%', marginLeft = '30%', marginTop = '5%')
+                .then(selectedUsers => {
+                    selectedUsers.forEach((u) => {
+                        d.id_user_it = u.id
+                        d.user_it = fio2dat(u.name)
+                        id2e('selIT').innerHTML = d.user_it
+                        // console.log(`id_user, user = ${d.id_user} ${d.user}`)
+                    })
+                })
+        }
 
         // кнопка ENTER ---------------------------------------------------------------------
         id2e("b_ENTER").onclick = function () {
@@ -625,6 +692,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     //let dt_now = moment().format('YYYY-MM-DDTHH:mm')
     let dt_now = new Date(moment().format("YYYY-MM-DD"))
     dt_now = dt_now.getTime()
+    console.log('id_zayavka = ', id_zayavka)
 
     tableMTS = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/loadDataZayavkaMTS.php",
