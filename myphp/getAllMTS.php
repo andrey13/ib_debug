@@ -2,12 +2,12 @@
 include 'openConn.php';
 $sono = $_GET['s'];
 $id_otdel = $_GET['o'];
+$sklad = $_GET['k'];
 
-if ($id_otdel == '0') {
-    $sql = "SELECT * FROM mts";
-} else {
-    $sql = "SELECT * FROM mts WHERE id_otdel=$id_otdel";
-}
+if ($id_otdel == '0' and $sklad == '0') $sql = "SELECT * FROM mts";
+if ($id_otdel != '0' and $sklad == '0') $sql = "SELECT * FROM mts WHERE id_otdel=$id_otdel";
+if ($id_otdel == '0' and $sklad != '0') $sql = "SELECT * FROM mts WHERE sklad=$sklad";
+if ($id_otdel != '0' and $sklad != '0') $sql = "SELECT * FROM mts WHERE id_otdel=$id_otdel AND sklad=$sklad";
 
 $result = $conn->query($sql);
 
