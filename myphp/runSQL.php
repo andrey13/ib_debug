@@ -7,6 +7,10 @@ $sql          = $data['sql'];
 
 $oper = substr($sql, 0, 6);
 
+// echo "\n\r";
+// echo $sql;
+// echo "\n\r";
+
 switch ($oper) {
     case "SELECT":
         $result = $conn->query($sql);

@@ -1,10 +1,10 @@
 //=======================================================================================
 // модальное окно выбора МТС
 //=======================================================================================
-function selectMTS(sono, id_otdel, selectable) {
+function selectMTS(sono, id_otdel, selectable = true) {
     return new Promise(function (resolve, reject) {
         let formSelectMTS  = `<div id="selectMTS" class="w3-container"></div>`;
-        newModalWindow('selectMTS', '', formSelectMTS, '', '900px', '20%', '5%');
+        newModalWindow('selectMTS', '', formSelectMTS, '', width = "80%", marginLeft = "10%", marginTop = "10%")
 
         let msgFooterSelecttUser = `<span id="select-stats"></span>
                                     <button id='addSel' class='w3-button w3-white w3-border w3-hover-teal'>Выбрать помеченные записи</button>`
@@ -25,12 +25,12 @@ function createTabulatorSelectMTS(sono, id_otdel, id_div, appH, msgF, resolve, r
     let cols2 = [
             { title: "SN",           field: "SN",          widthGrow: 6, headerFilter: true },
             { title: "Производитель",field: "manufacturer",widthGrow: 4, headerFilter: true },
-            { title: "описание",     field: "desc",        widthGrow: 4, headerFilter: true },
+            { title: "описание",     field: "desc",        widthGrow: 6, headerFilter: true },
     ];
     cols = cols1.concat(cols2)
 
     tableSelectUser = new Tabulator(id_div, {
-        ajaxURL: "myphp/loadDataSelectMTS.php",
+        ajaxURL: "myphp/getAllMTS.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
         ajaxParams: { s: sono, o: id_otdel },
@@ -44,14 +44,27 @@ function createTabulatorSelectMTS(sono, id_otdel, id_div, appH, msgF, resolve, r
         headerFilterPlaceholder: "",
         selectable: selectable,
         columns: cols2,
+
         rowSelectionChanged: function (data, rows) {
-            document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length;
+            // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length;
             if (data.length==0) {
                 $("#addSel").prop('disabled', true);                
             } else {
                 $("#addSel").prop('disabled', false);
             }
         },
+
+        cellDblClick: function (e, cell) {
+            let div_modal = id2e('selectMTSMain');
+            console.log(tableSelectUser.getSelectedData())
+    
+            div_modal.style.display = "none";
+            div_modal.remove();
+            
+            // resolve(tableSelectUser.getSelectedData())
+            resolve(cell.getRow().getData())
+            },
+
 
         footerElement: msgF,
     });
@@ -69,11 +82,9 @@ function createTabulatorSelectMTS(sono, id_otdel, id_div, appH, msgF, resolve, r
 
     $("#addSel").click(function () {
         let div_modal = id2e('selectMTSMain');
-        console.log(tableSelectUser.getSelectedData())
-
         div_modal.style.display = "none";
         div_modal.remove();
-        resolve(tableSelectUser.getSelectedData());
+        resolve(tableSelectUser.getSelectedData()[0]);
     });
 
 

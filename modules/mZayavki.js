@@ -937,7 +937,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     }
     id2e("addMTS").onclick = () => {
         // createMTS(id_zayavka)
-        createMTS2(id_zayavka)
+        createMTS(id_zayavka)
     }
 
     id2e(id_div).style.display = "inline-block"
@@ -946,7 +946,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     //=======================================================================================
     // создание пустого МТС
     //=======================================================================================
-    function createMTS2(id_zayavka) {
+    function createMTS(id_zayavka) {
         const d = {
             // поля таблицы Zayavka2mts------------------
             id: '0',
@@ -985,12 +985,16 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 id_zayavka, 
                 id_status,
                 id_oper,                
-                size_gb
+                size_gb,
+                reson,
+                comment
             ) VALUES (
                 ${d.id_zayavka}, 
                 0,
                 ${d.id_oper}, 
-                ${d.size_gb}
+                ${d.size_gb},
+               "${d.reson}",
+               "${d.comment}"
             )`
         )
             .then((id) => {
@@ -1001,60 +1005,6 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             })
     }
 
-    //=======================================================================================
-    // добавление или изменение МТС выбором из существуующих
-    //=======================================================================================
-    async function createMTS(id_zayavka) {
-        let id_mts = 0
-
-        const listMTS = await selectMTS("6100", g_user.id_otdel, true)
-
-        return
-
-        listComp.forEach((comp) => {
-            const d = Object.assign({}, empty_ARM)
-            d.id = 0
-            d.id_zayavka = id_zayavka
-            d.id_mts = d_MTS.id_mts
-            d.id_comp = comp.id_comp
-            d.comp_name = comp.name
-            d.comp_user = comp.user
-
-            runSQL_p(
-                `INSERT INTO mts2comp (id_zayavka,id_mts,id_comp) VALUES (${d.id_zayavka}, ${d.id_mts}, ${d.id_comp})`
-            ).then((id) => {
-                id_arm = id
-                d.id = id
-                addTabRow(tableMTS, d, top = false)
-            })
-        })
-    }
-
-    //=======================================================================================
-    // создание пустого МТС
-    //=======================================================================================
-    function createMTS1(id_zayavka) {
-        let v_id_mts = 0
-        let d = Object.assign({}, empty_MTS)
-        d.id_oper = m_operTypes[0].id
-
-        runSQL_p(
-            `INSERT INTO mts (id_zayavka, id_status, status, dsp, size_gb, SN) VALUES (${id_zayavka}, 0, "заказ", 0, 0, '${d.mts_SN}')`
-        )
-            .then((id_mts) => {
-                v_id_mts = id_mts
-                return runSQL_p(
-                    `INSERT INTO zayavka2mts (id_zayavka, id_status, id_mts, size_gb) VALUES (${id_zayavka}, 0, ${id_mts}, 0)`
-                )
-            })
-            .then((id) => {
-                d.id = id
-                d.id_zayavka = id_zayavka
-                d.id_mts = v_id_mts
-                addTabRow(tableMTS, d, top = false)
-                editMTS(id, "new")
-            })
-    }
 
     //=======================================================================================
     // модальное окно редактора МТС (mode = 'edit'/'new')
@@ -1062,6 +1012,12 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     async function editMTS(id_mts, mode, syncWithARM = false) {
         const allow = getAllows()
         const d = tableMTS.getSelectedData()[0]
+
+        d.mts_size1 = (!!!d.mts_size1) ? '' : d.mts_size1
+        d.mts_size2 = (!!!d.mts_size2) ? '' : d.mts_size2
+        d.mts_SN1 = (!!!d.mts_SN1) ? '' : d.mts_SN1
+        d.mts_SN2 = (!!!d.mts_SN2) ? '' : d.mts_SN2
+
         console.log('d = ', d)
 
         if (d.user === null) d.user = '<выбрать>'
@@ -1082,19 +1038,29 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 
                 <input type="checkbox" id="MTS_dsp" disabled>
                 <label for="MTS_dsp"> ДСП</label>
-                <br>
-                
+                <br><br>
+                &nbsp;Запрошено:<br>
                 <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}" disabled>
-                <label for="MTS_size">  Объем (Гб) запрошено</label>
+                <label for="MTS_size">  Объем (Гб)</label>
+                <br><br>
+
+                <button id="selectMTS1" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" style="text-align: left;" disabled>Фактически выдано:       </button><br>
+                <input class="o3-border" type="text" id="MTS_size1" value="${d.mts_size1}" style="width: 100px;" disabled>
+                <label for="MTS_size1">  Объем (Гб)</label>
                 <br>
                 
-                <input class="o3-border" type="text" id="MTS_size2" value="${d.size2}" disabled>
-                <label for="MTS_size2">  Объем (Гб) фактически выдано</label>
+                <input class="o3-border" type="text" id="MTS_SN1" value="${d.mts_SN1}" style="width: 400px;" disabled>
+                <label for="MTS_SN1">  Серийный номер</label>
+                <br><br>
+                
+                <button id="selectMTS2" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" style="text-align: left;" disabled>Выдано в качестве замены:</button><br>
+                <input class="o3-border" type="text" id="MTS_size2" value="${d.mts_size2}" style="width: 100px;" disabled>
+                <label for="MTS_size2">  Объем (Гб)</label>
                 <br>
                 
-                <input class="o3-border" type="text" id="MTS_SN" value="${d.mts_SN}" disabled>
-                <label for="MTS_SN">  Серийный номер</label>
-                <br>
+                <input class="o3-border" type="text" id="MTS_SN2" value="${d.mts_SN2}" style="width: 400px;" disabled>
+                <label for="MTS_SN2">  Серийный номер</label>
+                <br><br>
                 
                 <label for="MTS_reson"><b>Обоснование:</b></label><br>
                 <textarea id="MTS_reson" rows="3" style="width:100%" disabled>${d.reson}</textarea>
@@ -1124,10 +1090,14 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         }).mount('#vEditMTS');
 
         const e_selectUser = id2e("selectUser")
+        const e_selectMTS1 = id2e("selectMTS1")
+        const e_selectMTS2 = id2e("selectMTS2")
         const e_MTS_dsp = id2e('MTS_dsp')
         const e_MTS_size = id2e('MTS_size')
+        const e_MTS_size1 = id2e('MTS_size1')
         const e_MTS_size2 = id2e('MTS_size2')
-        const e_MTS_SN = id2e('MTS_SN')
+        const e_MTS_SN1 = id2e('MTS_SN1')
+        const e_MTS_SN2 = id2e('MTS_SN2')
         const e_MTS_reson = id2e('MTS_reson')
         const e_MTS_comm = id2e('MTS_comm')
 
@@ -1150,13 +1120,6 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         }
 
         // включение/отключение элементов управления согласно роли текущего пользователя ----
-        e_MTS_dsp.disabled = true
-        e_MTS_size.disabled = true
-        e_MTS_size2.disabled = true
-        e_MTS_SN.disabled = true
-        e_selectUser.disabled = true
-        e_MTS_reson.disabled = true
-        e_MTS_comm.disabled = true
 
         if (isRole('tex')) {
             e_MTS_dsp.disabled = false
@@ -1168,18 +1131,42 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         if (isRole('su')) {
             e_MTS_dsp.disabled = false
             e_MTS_size.disabled = false
-            e_MTS_size2.disabled = false
-            e_MTS_SN.disabled = false
             e_selectUser.disabled = false
+            e_selectMTS1.disabled = false
+            e_selectMTS2.disabled = false
             e_MTS_reson.disabled = false
             e_MTS_comm.disabled = false
         }
 
+        // кнопка выбора фактически выданного МТС -------------------------------------------
+        e_selectMTS1.onclick = async () => {
+            const id_otdel = (isRole('su') || isRole('tex')) ? 0 : g_user.id_otdel
+            const mts = await selectMTS("6100", id_otdel, selectable = 1)
+            d.id_mts = mts.id
+            d.mts_size1 = mts.size_gb
+            d.mts_SN1 = mts.SN
+            e_MTS_size1.value = mts.size_gb
+            e_MTS_SN1.value = mts.SN
+        }
+
+        // кнопка выбора МТС выданного в качестве замены ------------------------------------
+        e_selectMTS2.onclick = async () => {
+            // const mts = await selectMTS("6100", g_user.id_otdel, selectable = 1)
+            const id_otdel = (isRole('su') || isRole('tex')) ? 0 : g_user.id_otdel
+            const mts = await selectMTS("6100", id_otdel, selectable = 1)
+            d.id_mts2 = mts.id
+            d.mts_size2 = mts.size_gb
+            d.mts_SN2 = mts.SN
+            e_MTS_size2.value = mts.size_gb
+            e_MTS_SN2.value = mts.SN
+        }
+
         // кнопка ENTER ---------------------------------------------------------------------
-        id2e("enterMTS").onclick = function () {
+        id2e("enterMTS").onclick = () => {
             d.dsp = e_MTS_dsp.checked ? "1" : "0"
             d.size_gb = e_MTS_size.value
-            d.mts_SN = e_MTS_SN.value
+            d.mts_SN1 = e_MTS_SN1.value
+            d.mts_SN2 = e_MTS_SN2.value
             d.comment = e_MTS_comm.value
             d.reson = e_MTS_reson.value
             d.id_oper = v1.$data.id_oper
@@ -1192,24 +1179,18 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                     id_user=${d.id_user}, 
                     id_oper=${d.id_oper},
                     id_mts=${d.id_mts},
-                    id_mts1=${d.id_mts1},
+                    id_mts2=${d.id_mts2},
                     reson='${d.reson}', 
                     comment='${d.comment}' 
                 WHERE id=${d.id}`
             )
-
-            // runSQL_p(
-            //     `UPDATE mts SET 
-            //         SN=${d.mts_SN} 
-            //     WHERE id=${d.id_mts}`
-            // )
 
             removeModalWindow("editMTS")
             tableMTS.updateRow(d.id, d)
         }
 
         // кнопка CANCEL --------------------------------------------------------------------
-        id2e("cancelMTS").onclick = function () {
+        id2e("cancelMTS").onclick = () => {
             if (mode == "new") {
                 let id = tableMTS.getSelectedData()[0].id
                 delMTS(d)
@@ -1422,3 +1403,64 @@ function createTabComp(id_div, appH, id_zayavka = 0) {
         runSQL_p(`DELETE FROM mts2comp WHERE id_comp=${d.id_comp}`)
     }
 }
+
+
+
+
+
+
+//==================================================================
+    // //=======================================================================================
+    // // добавление или изменение МТС выбором из существуующих
+    // //=======================================================================================
+    // async function createMTS(id_zayavka) {
+    //     let id_mts = 0
+
+    //     const listMTS = await selectMTS("6100", g_user.id_otdel, true)
+
+    //     return
+
+    //     listComp.forEach((comp) => {
+    //         const d = Object.assign({}, empty_ARM)
+    //         d.id = 0
+    //         d.id_zayavka = id_zayavka
+    //         d.id_mts = d_MTS.id_mts
+    //         d.id_comp = comp.id_comp
+    //         d.comp_name = comp.name
+    //         d.comp_user = comp.user
+
+    //         runSQL_p(
+    //             `INSERT INTO mts2comp (id_zayavka,id_mts,id_comp) VALUES (${d.id_zayavka}, ${d.id_mts}, ${d.id_comp})`
+    //         ).then((id) => {
+    //             id_arm = id
+    //             d.id = id
+    //             addTabRow(tableMTS, d, top = false)
+    //         })
+    //     })
+    // }
+
+    // //=======================================================================================
+    // // создание пустого МТС
+    // //=======================================================================================
+    // function createMTS1(id_zayavka) {
+    //     let v_id_mts = 0
+    //     let d = Object.assign({}, empty_MTS)
+    //     d.id_oper = m_operTypes[0].id
+
+    //     runSQL_p(
+    //         `INSERT INTO mts (id_zayavka, id_status, status, dsp, size_gb, SN) VALUES (${id_zayavka}, 0, "заказ", 0, 0, '${d.mts_SN}')`
+    //     )
+    //         .then((id_mts) => {
+    //             v_id_mts = id_mts
+    //             return runSQL_p(
+    //                 `INSERT INTO zayavka2mts (id_zayavka, id_status, id_mts, size_gb) VALUES (${id_zayavka}, 0, ${id_mts}, 0)`
+    //             )
+    //         })
+    //         .then((id) => {
+    //             d.id = id
+    //             d.id_zayavka = id_zayavka
+    //             d.id_mts = v_id_mts
+    //             addTabRow(tableMTS, d, top = false)
+    //             editMTS(id, "new")
+    //         })
+    // }
