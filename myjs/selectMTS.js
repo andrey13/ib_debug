@@ -3,7 +3,7 @@
 //=======================================================================================
 function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select') {
     return new Promise(function (resolve, reject) {
-        let formSelectMTS  = `<div id="selectMTS" class="w3-container"></div>`;
+        let formSelectMTS = `<div id="selectMTS" class="w3-container"></div>`;
         newModalWindow('selectMTS', '', formSelectMTS, '', width = "80%", marginLeft = "10%", marginTop = "10%")
 
         let msgFooterSelecttUser = `<span id="select-stats"></span>
@@ -20,14 +20,15 @@ function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select
 function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select') {
     let cols = [];
     let cols1 = [
-        { title: "СОНО",         field: "sono",       widthGrow: 1, headerFilter: true, topCalc: "count" },
+        { title: "СОНО", field: "sono", widthGrow: 1, headerFilter: true, topCalc: "count" },
     ];
     let cols2 = [
-            { title: "SN",           field: "SN",          widthGrow: 6, headerFilter: true },
-            { title: "Производитель",field: "manufacturer",widthGrow: 4, headerFilter: true },
-            { title: "описание",     field: "desc",        widthGrow: 6, headerFilter: true },
-            { title: "склад",        field: "sklad",       widthGrow: 1, headerFilter: true },
-            { title: "отдел",        field: "id_otdel",    widthGrow: 1, headerFilter: true },
+        { title: "id", field: "id", widthGrow: 1, headerFilter: true },
+        { title: "SN", field: "SN", widthGrow: 6, headerFilter: true },
+        { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true },
+        { title: "описание", field: "desc", widthGrow: 6, headerFilter: true },
+        { title: "склад", field: "sklad", widthGrow: 1, headerFilter: true },
+        { title: "отдел", field: "id_otdel", widthGrow: 1, headerFilter: true },
     ];
     cols = cols1.concat(cols2)
 
@@ -49,8 +50,8 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
         rowSelectionChanged: function (data, rows) {
             // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length;
-            if (data.length==0) {
-                $("#addSel").prop('disabled', true);                
+            if (data.length == 0) {
+                $("#addSel").prop('disabled', true);
             } else {
                 $("#addSel").prop('disabled', false);
             }
@@ -58,28 +59,28 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
         cellDblClick: function (e, cell) {
             let div_modal = id2e('selectMTSMain');
-            console.log(tableSelectUser.getSelectedData())
-    
+            // console.log(tableSelectUser.getSelectedData())
+
             div_modal.style.display = "none";
             div_modal.remove();
-            
+
             // resolve(tableSelectUser.getSelectedData())
             resolve(cell.getRow().getData())
-            },
+        },
 
 
         footerElement: msgF,
     });
 
     $("#onoffSel").click(function () {
-        if ($("#onoffSel").text()=="Показать помеченные записи") {
-            tableSelectUser.setFilter(filterSelect);        
+        if ($("#onoffSel").text() == "Показать помеченные записи") {
+            tableSelectUser.setFilter(filterSelect);
             $("#onoffSel").text("Показать все записи");
         } else {
-            tableSelectUser.setFilter();        
+            tableSelectUser.setFilter();
             $("#onoffSel").text("Показать помеченные записи");
         }
-        
+
     });
 
     $("#addSel").click(function () {

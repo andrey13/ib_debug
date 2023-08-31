@@ -329,7 +329,7 @@ let date_Editor = function (cell, onRendered, success, cancel) {
 
     function onChange() {
         if (input.value != cellValue) {
-            console.log('input.value=', input.value);
+            // console.log('input.value=', input.value);
             //console.log(moment(input.value, "DD.MM.YYYY").format("YYYY-MM-DD"));
             success(moment(input.value, "YYYY-MM-DD").format("YYYY-MM-DD"));
         } else {
@@ -368,7 +368,7 @@ let datetime_Editor = function (cell, onRendered, success, cancel) {
 
     function onChange() {
         if (input.value != cellValue) {
-            console.log('input.value=', input.value);
+            // console.log('input.value=', input.value);
             //console.log(moment(input.value, "DD.MM.YYYY").format("YYYY-MM-DD"));
             success(moment(input.value, "YYYY-MM-DD HH:mm:ss").format("YYYY-MM-DD HH:mm:ss"));
         } else {
@@ -465,7 +465,7 @@ function dialogYESNO(text) {
         document.getElementById("YES").focus();
 
         div_modal.onkeyup = function (e) {
-            console.log('key=', e.key);
+            // console.log('key=', e.key);
             if (e.key == 'Escape') {
                 div_modal.remove();
                 div_modal.onkeyup = function (e) { };
@@ -564,7 +564,7 @@ function activateModalWindow(modal) {
     document.getElementById(modal + "Body").style.height = null;
     modal_object.style.display = "block";
     document.onkeyup = function (e) {
-        console.log('onkeyup');
+        // console.log('onkeyup');
         if (e.key == 'Escape') {
             modal_object.style.display = "none";
             modal_object.onkeyup = function (e) { };

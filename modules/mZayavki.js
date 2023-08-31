@@ -14,55 +14,6 @@ let m_operTypes = []
 // статусы заявок--------------------------------------------------------------
 let m_statusTypes = []
 
-// // пустая заявка --------------------------------------------------------------
-// const empty_zayavka = {
-//     id: 0,
-//     id_type: 0,
-//     id_user: g_user.id,
-//     id_user_otd: 0,
-//     id_user_it: 0,
-//     id_user_ib: 0,
-//     id_user_ruk: 0,
-//     id_user_isp: 0,
-//     id_depart: g_user.id_depart,
-//     id_status: 0,
-//     status: '',
-//     date: moment().format("YYYY-MM-DD"),
-//     type: '',
-//     user: g_user.name,
-//     user_otd: '<выбрать>',
-//     user_it: '<выбрать>',
-//     user_ib: '<выбрать>',
-//     user_ruk: '<выбрать>',
-//     user_isp: '<выбрать>',
-//     depart: g_user.depart,
-//     comment: '',
-//     io_it: '0',
-//     io_ib: '0',
-//     io_otd: '0',
-//     io_ruk: '0',
-//     user_title: '',
-//     user_isp_title: '',
-// }
-
-// пустое MTS -----------------------------------------------------------------
-// const empty_MTS = {
-//     id: '0',
-//     id_zayavka: '0',
-//     id_status: '0',
-//     id_user: '0',
-//     id_mts: '0',
-//     id_oper: '',
-//     dsp: '0',
-//     mts_SN: '',
-//     size_gb: '0',
-//     size2: '0',
-//     user: '<выбрать>',
-//     oper: '',
-//     reson: '',
-//     comment: '',
-// }
-
 // пустой компьютер -----------------------------------------------------------
 const empty_ARM = {
     id: -1,
@@ -73,6 +24,10 @@ const empty_ARM = {
     comp_user: '',
     comment: '',
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///                                            МОДУЛЬ mZayavki                                            ///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 async function mZayavki() {
     m_operTypes = await getTypes('операции с МТС')
@@ -85,12 +40,10 @@ async function mZayavki() {
     const bMOD = `<button id='modZayavki' title='Изменить заявку'                 class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
 
     // верхнее меню с кнопками печати, просмотра, удаления, редактирования и изменения заявки
-    const tTopMenu =
-        '<div id="tabTopMenu" style="display: inline-block; margin: 2px; padding: 0; width: 100%;">' + bDEL + bMOD + bADD + "</div>"
+    const tTopMenu = '<div id="tabTopMenu" style="display: inline-block; margin: 2px; padding: 0; width: 100%;">' + bDEL + bMOD + bADD + "</div>"
 
     // пустой контейнер для табулятора
-    const tZayavki =
-        '<div id="tabZayavki" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black;"></div>'
+    const tZayavki = '<div id="tabZayavki" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black;"></div>'
 
     // шаблон экрана: меню + контейнер
     id2e("appBody").innerHTML = tTopMenu + "<br>" + tZayavki
@@ -98,38 +51,6 @@ async function mZayavki() {
     const appHeight = appBodyHeight() - id2e("tabTopMenu").offsetHeight - 8
 
     createTabZayavki("tabZayavki", appHeight)
-}
-
-
-//=======================================================================================
-function getStatusName(id_status) {
-    return m_statusTypes.find(t => t.id == id_status).name
-}
-
-//=======================================================================================
-function getOperName(id_oper) {
-    return m_operTypes.find(t => t.id == id_oper).name
-}
-
-//=======================================================================================
-function customFilterZayavki(data, filterParams) {
-    return true
-
-    let dt = moment().format("YYYY-MM-DD")
-    let cENA = id2e("cENA").checked
-    let cDIS = id2e("cDIS").checked
-
-    return (cENA && data.dt_stop >= dt) || (cDIS && data.dt_stop <= dt)
-}
-
-//=======================================================================================
-function tabZayavkiSetFilter() {
-    tableZayavki.setFilter(customFilterZayavki, "")
-}
-
-//=======================================================================================
-function cb_onclick() {
-    tableZayavki.setFilter(customFilterZayavki, "")
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,7 +81,6 @@ function createTabZayavki(id_div, appH) {
     // let d = {}
 
     const id_depart = isRole('tex') ? g_user.id_depart : 0
-
 
     tableZayavki = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/getZayavki.php",
@@ -229,20 +149,10 @@ function createTabZayavki(id_div, appH) {
         },
     })
 
-    function mutFio(v) {
-        return fio2fio0(v)
-    }
-
-    // id2e("prtZayavki").onclick = function () {
-    //     printZayavka("print")
-    // }
-    // id2e("vewZayavki").onclick = function () {
-    //     printZayavka("view")
-    // }
-    id2e("delZayavki").onclick = function () {
+    id2e("delZayavki").onclick = () => {
         delZayavkaYESNO()
     }
-    id2e("modZayavki").onclick = function () {
+    id2e("modZayavki").onclick = () => {
         editZayavka(tableZayavki.getSelectedData()[0])
     }
     id2e("addZayavki").onclick = async function () {
@@ -329,10 +239,6 @@ function createTabZayavki(id_div, appH) {
             depart: g_user.depart,
         }
 
-
-        console.log('depart_it = ', depart_it)
-        console.log('d.id_user_it = ', d.id_user_it)
-
         newZayavka(d).then((id_zayavka) => {
             d.id = id_zayavka
             m_id_zayavka = d.id
@@ -364,9 +270,9 @@ function createTabZayavki(id_div, appH) {
         }
     }
 
-    //=======================================================================================
-    // модальное окно редактора заявки на получение/возврат/замену МТС
-    //=======================================================================================
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                   модальное окно редактора заявки 1                                   ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     async function editZayavkaMTS1(id_zayavka, mode, type = '', id_type) {
         let allow = getAllows()
@@ -390,13 +296,7 @@ function createTabZayavki(id_div, appH) {
         const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
         const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0; width: 100%;">${bDELMTS + bMODMTS + bADDMTS}</div>`
 
-        // const bDELARM = "<button id='delARM' title='Удаление компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
-        // const bADDARM = "<button id='addARM' title='Создание компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
-        // const bMODARM = `<button id='modARM' title='Изменить компьютера' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
-        // const menuARM = `<div id="tabARMmenu" style="display: inline-block; margin: 0px; padding: 0; width: 50%;">${bDELARM + bADDARM} Список рабочих станций</div>`
-
         const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: white"></div>`
-        // const tabARM = `<div id="tabARM" style="display: inline-block; margin: 0 0 0 -1px; padding: 0; height: 100%; width: 50%; border: 1px solid black; background: powderblue"></div>`
 
         const bodyZayavka = `<div id="" style="margin: 0; padding: 1%;" class="w3-container">
                             <div id="userIT" style="position: absolute; right: 0;width: 400px;">
@@ -487,11 +387,10 @@ function createTabZayavki(id_div, appH) {
         }
 
         // кнопка ENTER ---------------------------------------------------------------------
-        id2e("b_ENTER").onclick = function () {
+        id2e("b_ENTER").onclick = () => {
             d.date = id2e("z_date").value
             d.comment = id2e("z_comm").value
             d.status = getStatusName(d.id_status)
-            console.log(`d2 = `, d)
             saveZayavka(d)
             verInc('zayavki', g_user.id_depart, 'id_depart')
             removeModalWindow("editZayavka")
@@ -499,7 +398,7 @@ function createTabZayavki(id_div, appH) {
         }
 
         // кнопка ACTION ---------------------------------------------------------------------
-        id2e("b_ACTION").onclick = function () {
+        id2e("b_ACTION").onclick = () => {
             d.date = id2e("z_date").value
             d.comment = id2e("z_comm").value
             d.id_status++
@@ -510,9 +409,8 @@ function createTabZayavki(id_div, appH) {
             tableZayavki.updateRow(d.id, d)
         }
 
-
         // кнопка CANCEL --------------------------------------------------------------------
-        id2e("b_CANCEL").onclick = function () {
+        id2e("b_CANCEL").onclick = () => {
             if (mode == "new") {
                 let id_zayavka = tableZayavki.getSelectedData()[0].id
                 delZayavka(id_zayavka)
@@ -524,13 +422,12 @@ function createTabZayavki(id_div, appH) {
         }
 
         // кнопка PRINT1 --------------------------------------------------------------------
-        id2e("b_PRINT1").onclick = function () {
+        id2e("b_PRINT1").onclick = () => {
             const id_zayavka = tableZayavki.getSelectedData()[0].id
             printZayavka(id_zayavka, 'view')
         }
 
-
-    } // editZayavkaMTS
+    } // editZayavkaMTS1
 
 
     //=======================================================================================
@@ -540,8 +437,6 @@ function createTabZayavki(id_div, appH) {
         const zay_data = tableZayavki.getSelectedData()[0]
         const mts_data = tableMTS.getData()
         const title_it = ((zay_data.io_it == '0') ? 'Начальнику\n' : 'И.о. начальника\n') + 'отдела информационных технологий\n' + 'УФНС России по Ростовской области\n'
-        console.log('zay_data = ', zay_data)
-        console.log('mts_data = ', mts_data)
 
         let table = []
         let table_content = []
@@ -624,9 +519,10 @@ function createTabZayavki(id_div, appH) {
     }
 
 
-    //=======================================================================================
-    // модальное окно редактора заявки (mode = 'edit'/'new')
-    //=======================================================================================
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                   модальное окно редактора заявки 2                                   ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     function editZayavkaMTS2(id_zayavka, mode, type = '', id_type) {
         let allow = getAllows()
         let d = tableZayavki.getSelectedData()[0]
@@ -691,38 +587,17 @@ function createTabZayavki(id_div, appH) {
         id2e("z_date").select()
 
         // кнопка ENTER ---------------------------------------------------------------------
-        id2e("b_ENTER").onclick = function () {
+        id2e("b_ENTER").onclick = () => {
             d.date = id2e("z_date").value
             d.comment = id2e("z_comm").value
-            runSQL_p(
-                `UPDATE zayavka SET 
-                    date="${d.date}", 
-                    id_type=${d.id_type},
-                    id_status=${d.id_status},
-                    id_depart=${d.id_depart},
-                    id_user_ruk=${d.id_user_ruk},
-                    id_user_it=${d.id_user_it},
-                    id_user_ib=${d.id_user_ib},
-                    id_user_otd=${d.id_user_otd},
-                    id_user=${d.id_user},
-                    id_user_isp=${d.id_user_isp},
-                    io_ruk='${d.io_ruk}',
-                    io_it='${d.io_it}',
-                    io_ib='${d.io_ib}',
-                    io_otd='${d.io_otd}',
-                    user_title='${d.user_title}',
-                    user_isp_title='${d.user_isp_title}',
-                    status='${d.status}',             
-                    comment="${d.comment}"} 
-                WHERE id=${d.id}`
-            )
+            saveZayavka(d)
             verInc('zayavki', g_user.id_depart, 'id_depart')
             removeModalWindow("editZayavka")
             tableZayavki.updateRow(d.id, d)
         }
 
         // кнопка CANCEL --------------------------------------------------------------------
-        id2e("b_CANCEL").onclick = function () {
+        id2e("b_CANCEL").onclick = () => {
             if (mode == "new") {
                 let id_zayavka = tableZayavki.getSelectedData()[0].id
                 delZayavka(id_zayavka)
@@ -732,7 +607,7 @@ function createTabZayavki(id_div, appH) {
             }
             removeModalWindow("editZayavka")
         }
-    } // editZayavkaMTS
+    } // editZayavkaMTS2
 
     //=======================================================================================
     // модальное окно удаления заявки
@@ -763,12 +638,12 @@ function createTabZayavki(id_div, appH) {
         runSQL_p(`DELETE FROM zayavka WHERE id=${id_zayavka}`)
         runSQL_p(`DELETE FROM zayavka2mts WHERE id_zayavka=${id_zayavka}`)
         runSQL_p(`DELETE FROM mts2comp WHERE id_zayavka=${id_zayavka}`)
-        runSQL_p(
-            `DELETE FROM mts WHERE id_zayavka=${id_zayavka} AND status="заказ"`
-        )
+        // runSQL_p(
+        //     `DELETE FROM mts WHERE id_zayavka=${id_zayavka} AND status="заказ"`
+        // )
     }
 
-} // createTabZayavki
+} ///////// createTabZayavki
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -782,7 +657,6 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     //let dt_now = moment().format('YYYY-MM-DDTHH:mm')
     let dt_now = new Date(moment().format("YYYY-MM-DD"))
     dt_now = dt_now.getTime()
-    console.log('id_zayavka = ', id_zayavka)
 
     tableMTS = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/loadDataZayavkaMTS.php",
@@ -822,14 +696,14 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 title: "Фактически выдано",
                 columns: [
                     { title: "Гб", field: "mts_size1", width: 30 },
-                    { title: "SN1", field: "mts_SN1", widthGrow: 1 },
+                    { title: "SN", field: "mts_SN1", widthGrow: 1 },
                 ],
             },
             {//create column group
                 title: "Выдано в качестве замены",
                 columns: [
                     { title: "Гб", field: "mts_size2", width: 30 },
-                    { title: "SN2", field: "mts_SN2", widthGrow: 1 },
+                    { title: "SN", field: "mts_SN2", widthGrow: 1 },
                 ],
             },
             { title: "выполнено", field: "date_vidano", width: 100 },
@@ -862,10 +736,10 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         },
     })
 
-    id2e("delMTS").onclick = function () {
+    id2e("delMTS").onclick = () => {
         delMTSYESNO()
     }
-    id2e("modMTS").onclick = function () {
+    id2e("modMTS").onclick = () => {
         editMTS(tableMTS.getSelectedData()[0].id, "edit", syncWithARM)
     }
     id2e("addMTS").onclick = () => {
@@ -939,9 +813,10 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
     }
 
 
-    //=======================================================================================
-    // модальное окно редактора МТС (mode = 'edit'/'new')
-    //=======================================================================================
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///                                   модальное окно редактора МТС                                        ///
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     async function editMTS(id_mts, mode, syncWithARM = false) {
         const allow = getAllows()
         const d = tableMTS.getSelectedData()[0]
@@ -951,15 +826,13 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         d.mts_SN1 = (!!!d.mts_SN1) ? '' : d.mts_SN1
         d.mts_SN2 = (!!!d.mts_SN2) ? '' : d.mts_SN2
 
-        console.log('d = ', d)
-
         if (d.user === null) d.user = '<выбрать>'
 
         const headerZayavkaMTS = `<h4>параметры МТС</h4>`
 
         const bodyZayavkaMTS =
             `<div id="vEditMTS" style="margin: 0; padding: 1%;" class="w3-container">
-                <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button></center>
+                <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" :disabled="disUser">${d.user}</button></center>
                 <br>                                    
 
                 <span style="display: flex; align-items: center;" v-for="o in operTypes">
@@ -1043,6 +916,9 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 showBtnMTS2() {
                     return (this.oper == 'замена')
                 },
+                disUser() {
+                    return this.tex
+                },
                 disOper() {
                     return this.mo
                 },
@@ -1071,21 +947,21 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         const e_selectUser = id2e("selectUser")
         const e_selectMTS1 = id2e("selectMTS1")
         const e_selectMTS2 = id2e("selectMTS2")
-        const e_MTS_dsp = id2e('MTS_dsp')
-        const e_MTS_size = id2e('MTS_size')
-        const e_MTS_size1 = id2e('MTS_size1')
-        const e_MTS_size2 = id2e('MTS_size2')
-        const e_MTS_SN1 = id2e('MTS_SN1')
-        const e_MTS_SN2 = id2e('MTS_SN2')
-        const e_MTS_reson = id2e('MTS_reson')
-        const e_MTS_comm = id2e('MTS_comm')
+        const e_MTS_dsp    = id2e('MTS_dsp')
+        const e_MTS_size   = id2e('MTS_size')
+        const e_MTS_size1  = id2e('MTS_size1')
+        const e_MTS_size2  = id2e('MTS_size2')
+        const e_MTS_SN1    = id2e('MTS_SN1')
+        const e_MTS_SN2    = id2e('MTS_SN2')
+        const e_MTS_reson  = id2e('MTS_reson')
+        const e_MTS_comm   = id2e('MTS_comm')
 
         e_MTS_dsp.focus()
         e_MTS_dsp.select()
         e_MTS_dsp.checked = d.dsp == "1"
 
         // кнопка selectUser ---------------------------------------------------------------------
-        e_selectUser.onclick = function () {
+        e_selectUser.onclick = () => {
             selectUser('6100', '', g_user.id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%')
                 .then(selectedUsers => {
                     selectedUsers.forEach((u) => {
@@ -1111,6 +987,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 sklad = 1
             }
 
+            d.id_mts_old = d.id_mts
             const mts = await selectMTS("6100", id_otdel, sklad, selectable = 1, mode = 'select')
             d.id_mts = mts.id
             d.mts_size1 = mts.size_gb
@@ -1144,6 +1021,13 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             d.id_oper = v1.$data.id_oper
             d.oper = getOperName(d.id_oper)
 
+            console.log('d.id_mts_old = ', d.id_mts_old)
+            console.log('d.id_mts = ', d.id_mts)
+
+            if (d.id_mts_old != d.id_mts) {
+                mts_4_User(d.id_mts_old, d.id_user, false)
+                mts_4_User(d.id_mts, d.id_user, true)
+            }
             saveZayavka2mts(d)
 
             removeModalWindow("editMTS")
@@ -1266,15 +1150,15 @@ function createTabComp(id_div, appH, id_zayavka = 0) {
         },
     })
 
-    id2e("delARM").onclick = function () {
+    id2e("delARM").onclick = () => {
         delARMYESNO()
     }
 
-    // id2e("modARM").onclick = function () {
+    // id2e("modARM").onclick = () => {
     //     //editARM(tableARM.getSelectedData()[0].id, id_zayavka, 'edit')
     // }
 
-    id2e("addARM").onclick = function () {
+    id2e("addARM").onclick = () => {
         editARM(id_zayavka, "new")
     }
 
@@ -1377,8 +1261,26 @@ function createTabComp(id_div, appH, id_zayavka = 0) {
 ///                          ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ                                  ///
 /////////////////////////////////////////////////////////////////////////////////////////
 
+///////////////////// привязать МТС (id_mts) к пользователю (id_user) ///////////////////
+function mts_4_User(id_mts, id_user, on_off) {
+    if (on_off) {
+        return runSQL_p(
+            `UPDATE mts SET
+                id_user=${id_user}
+            WHERE id=${id_mts}`
+        )
+    } else {
+        return runSQL_p(
+            `UPDATE mts SET
+                id_user=0
+            WHERE id=${id_mts}`
+        )
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
 function saveZayavka(d) {
-    runSQL_p(
+    return runSQL_p(
         `UPDATE zayavka SET 
             date="${d.date}", 
             id_type=${d.id_type},
@@ -1402,9 +1304,9 @@ function saveZayavka(d) {
     )
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////
 function saveZayavka2mts(d) {
-    runSQL_p(
+    return runSQL_p(
         `UPDATE zayavka2mts SET 
             dsp=${d.dsp}, 
             size_gb=${d.size_gb}, 
@@ -1418,6 +1320,7 @@ function saveZayavka2mts(d) {
     )
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
 function newZayavka(d) {
     const sql = `INSERT INTO zayavka (
         date, 
@@ -1461,4 +1364,35 @@ function newZayavka(d) {
     )`
 
     return runSQL_p(sql)
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function getStatusName(id_status) {
+    return m_statusTypes.find(t => t.id == id_status).name
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function getOperName(id_oper) {
+    return m_operTypes.find(t => t.id == id_oper).name
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function customFilterZayavki(data, filterParams) {
+    return true
+
+    let dt = moment().format("YYYY-MM-DD")
+    let cENA = id2e("cENA").checked
+    let cDIS = id2e("cDIS").checked
+
+    return (cENA && data.dt_stop >= dt) || (cDIS && data.dt_stop <= dt)
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function tabZayavkiSetFilter() {
+    tableZayavki.setFilter(customFilterZayavki, "")
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function cb_onclick() {
+    tableZayavki.setFilter(customFilterZayavki, "")
 }
