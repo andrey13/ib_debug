@@ -7,32 +7,40 @@ function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select
         newModalWindow('selectMTS', '', formSelectMTS, '', width = "80%", marginLeft = "10%", marginTop = "10%", win_return)
 
         let msgFooterSelecttUser = `<span id="select-stats"></span>
-                                    <button id='addSel' class='w3-button w3-white w3-border w3-hover-teal'>Выбрать помеченные записи</button>`
+                                    <button id='btnDelMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Удалить</button>
+                                    <button id='btnAddMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Добавить</button>
+                                    <button id='btnModMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Изменить</button>
+                                    <button id='btnSelMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Выбрать</button>`
 
         appHeight = appBodyHeight() * 0.7;
         createTabulatorSelectMTS(sono, "#selectMTSBody", appHeight, msgFooterSelecttUser, resolve, reject, id_otdel, sklad, selectable, mode);
+        id2e('selectMTSMain').focus()
     });
 }
 
 //=======================================================================================
-// табулятор справочника компьютеров
+// табулятор справочника МТС
 //=======================================================================================
 function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select') {
-    let cols = [];
+    let cols = []
+
     let cols1 = [
         { title: "СОНО", field: "sono", widthGrow: 1, headerFilter: true, topCalc: "count" },
-    ];
+    ]
+
     let cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true },
+        { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true },
         { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true },
         { title: "описание", field: "desc", widthGrow: 6, headerFilter: true },
         { title: "склад", field: "sklad", widthGrow: 1, headerFilter: true },
         { title: "отдел", field: "id_otdel", widthGrow: 1, headerFilter: true },
-    ];
+    ]
+
     cols = cols1.concat(cols2)
 
-    tableSelectUser = new Tabulator(id_div, {
+    const tableMTSVocab = new Tabulator(id_div, {
         ajaxURL: "myphp/getAllMTS.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -49,22 +57,28 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
         columns: cols2,
 
         rowSelectionChanged: function (data, rows) {
-            // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length;
+            // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length
             if (data.length == 0) {
-                $("#addSel").prop('disabled', true);
+                console.log('OFF')
+                id2e('btnDelMTSVocab').disabled = true
+                id2e('btnAddMTSVocab').disabled = true
+                id2e('btnModMTSVocab').disabled = true
+                id2e('btnSelMTSVocab').disabled = true
             } else {
-                $("#addSel").prop('disabled', false);
+                console.log('ON')
+                id2e('btnDelMTSVocab').disabled = false
+                id2e('btnAddMTSVocab').disabled = false
+                id2e('btnModMTSVocab').disabled = false
+                id2e('btnSelMTSVocab').disabled = false
             }
         },
 
         cellDblClick: function (e, cell) {
-            let div_modal = id2e('selectMTSMain');
-            // console.log(tableSelectUser.getSelectedData())
+            const div_modal = id2e('selectMTSMain')
+            div_modal.style.display = "none"
+            div_modal.remove()
 
-            div_modal.style.display = "none";
-            div_modal.remove();
-
-            // resolve(tableSelectUser.getSelectedData())
+            // resolve(tableMTSVocab.getSelectedData())
             resolve(cell.getRow().getData())
         },
 
@@ -72,29 +86,85 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
         footerElement: msgF,
     });
 
-    $("#onoffSel").click(function () {
-        if ($("#onoffSel").text() == "Показать помеченные записи") {
-            tableSelectUser.setFilter(filterSelect);
-            $("#onoffSel").text("Показать все записи");
-        } else {
-            tableSelectUser.setFilter();
-            $("#onoffSel").text("Показать помеченные записи");
-        }
+    // $("#onoffSel").click(function () {
+    //     if ($("#onoffSel").text() == "Показать помеченные записи") {
+    //         tableMTSVocab.setFilter(filterSelect)
+    //         $("#onoffSel").text("Показать все записи")
+    //     } else {
+    //         tableMTSVocab.setFilter()
+    //         $("#onoffSel").text("Показать помеченные записи")
+    //     }
 
-    });
+    // });
 
-    $("#addSel").click(function () {
-        let div_modal = id2e('selectMTSMain');
-        div_modal.style.display = "none";
-        div_modal.remove();
-        resolve(tableSelectUser.getSelectedData()[0]);
-    });
+    id2e("btnSelMTSVocab").onclick = () => {
+        const div_modal = id2e('selectMTSMain')
+        div_modal.style.display = "none"
+        div_modal.remove()
+        resolve(tableMTSVocab.getSelectedData()[0])
+    }
+
+    id2e('btnAddMTSVocab').onclick = () => { }
+
+    id2e('btnModMTSVocab').onclick = async () => {
+        const res = await modMTSVocab(tableMTSVocab.getSelectedData()[0])
+        console.log('res = ', res)
+    }
+
+    id2e('btnDelMTSVocab').onclick = () => { }
+
+    //-----------------------------------------------------------------------------------
+    function modMTSVocab(d) {
+        return new Promise(function (resolve, reject) {
+            const headerMTSVocab = `<h4>параметры МТС</h4>`
+
+            const bodyMTSVocab =
+                `<div id="modMTSVocab" style="margin: 0; padding: 1%;" class="w3-container">
+                id: ${d.id}
+                <br>
+                <button id="btnEnterMTSVocab"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
+                <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
+            </div>`
+
+            const footMTSVocab = ``
+
+            newModalWindow(
+                "editMTSVocab", 
+                headerMTSVocab, 
+                bodyMTSVocab, 
+                footMTSVocab, 
+                width = "60%", 
+                marginLeft = "5%", 
+                marginTop = "10%", 
+                "selectMTSMain"
+            )
+
+            id2e('editMTSVocabMain').focus()
+
+            resolve('OK')
+        })
+    }
+
+
+
+
+
+
+
+
 
 
 }
 
-function filterSelect(data, filterParams) {
-    let id = data.id;
-    let row = tableSelectMTS.searchRows("id", "=", data.id)[0];
-    return row.isSelected();
-}
+
+
+
+
+
+
+
+// function filterSelect(data, filterParams) {
+//     let id = data.id
+//     let row = tableMTSVocab.searchRows("id", "=", data.id)[0]
+//     return row.isSelected()
+// }

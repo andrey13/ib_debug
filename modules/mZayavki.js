@@ -40,7 +40,7 @@ async function mZayavki() {
     const bMOD = `<button id='modZayavki' title='Изменить заявку'                 class='w3-btn w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
 
     // верхнее меню с кнопками печати, просмотра, удаления, редактирования и изменения заявки
-    const tTopMenu = '<div id="tabTopMenu" style="display: inline-block; margin: 2px; padding: 0; width: 100%;">' + bDEL + bMOD + bADD + "</div>"
+    const tTopMenu = '<div id="tabTopMenu" style="display: inline-block; margin: 0px; padding: 0; width: 100%;">' + bDEL + bMOD + bADD + "</div>"
 
     // пустой контейнер для табулятора
     const tZayavki = '<div id="tabZayavki" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black;"></div>'
@@ -290,11 +290,16 @@ function createTabZayavki(id_div, appH) {
 
         const appH = window.innerHeight - 600
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
+                         
+        const bDELMTS = `<button id='delMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>удалить</i></button>`
+        const bADDMTS = `<button id='addMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>добавить</i></button>`
+        const bMODMTS = `<button id='modMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>изменить</i></button>`
 
-        const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
-        const bADDMTS = "<button id='addMTS' title='Создание устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
-        const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
-        const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0; width: 100%;">${bDELMTS + bMODMTS + bADDMTS}</div>`
+        // const bDELMTS = "<button id='delMTS' title='Удаление устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-minus'></i></button>"
+        // const bADDMTS = "<button id='addMTS' title='Создание устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-plus'></i></button>"
+        // const bMODMTS = `<button id='modMTS' title='Изменить устройства' class='w3-button w3-tiny w3-padding-small w3-white o3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`
+
+        const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0px; width: 100%;">${bDELMTS + bMODMTS + bADDMTS}</div>`
 
         const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: white"></div>`
 
@@ -956,7 +961,8 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         const e_MTS_reson  = id2e('MTS_reson')
         const e_MTS_comm   = id2e('MTS_comm')
 
-        e_MTS_dsp.focus()
+        id2e('editMTSMain').focus()
+        // e_MTS_dsp.focus()
         e_MTS_dsp.select()
         e_MTS_dsp.checked = d.dsp == "1"
 
@@ -988,18 +994,21 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             }
 
             d.id_mts_old = d.id_mts
+            // console.log('d1 = ', d)
+
             const mts = await selectMTS("6100", id_otdel, sklad, selectable = 1, mode = 'select', 'editMTSMain')
+            // console.log('mts = ', mts)
             d.id_mts = mts.id
             d.mts_size1 = mts.size_gb
             d.mts_SN1 = mts.SN
             e_MTS_size1.value = mts.size_gb
             e_MTS_SN1.value = mts.SN
+            // console.log('d2 = ', d)
         }
 
         // кнопка выбора МТС выданного в качестве замены ------------------------------------
         if (!!e_selectMTS2) {
             e_selectMTS2.onclick = async () => {
-                // const mts = await selectMTS("6100", g_user.id_otdel, selectable = 1)
                 const id_otdel = (isRole('su') || isRole('tex')) ? 0 : g_user.id_otdel
                 const mts = await selectMTS("6100", id_otdel, sklad = 0, selectable = 1, mode = 'select', 'editMTSMain')
                 d.id_mts2 = mts.id
@@ -1021,8 +1030,9 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             d.id_oper = v1.$data.id_oper
             d.oper = getOperName(d.id_oper)
 
-            console.log('d.id_mts_old = ', d.id_mts_old)
-            console.log('d.id_mts = ', d.id_mts)
+            // console.log('d3 = ', d)
+            console.log('d3.id_mts_old = ', d.id_mts_old)
+            console.log('d3.id_mts = ', d.id_mts)
 
             if (d.id_mts_old != d.id_mts) {
                 mts_4_User(d.id_mts_old, d.id_user, false)

@@ -43,9 +43,9 @@ function fio2dat(fio) {
 function fam2dat(wrd) {
     let out = wrd
 
-    if (wrd.slice(-2) == 'ин')   out = wrd.slice(0,-2) + 'ину'
-    if (wrd.slice(-2) == 'ва')   out = wrd.slice(0,-2) + 'вой'
-    if (wrd.slice(-2) == 'ев')   out = wrd.slice(0,-2) + 'еву'
+    if (wrd.slice(-2) == 'ин') out = wrd.slice(0, -2) + 'ину'
+    if (wrd.slice(-2) == 'ва') out = wrd.slice(0, -2) + 'вой'
+    if (wrd.slice(-2) == 'ев') out = wrd.slice(0, -2) + 'еву'
 
     return out
 }
@@ -61,11 +61,11 @@ function wrd2dat(wrd) {
     if (wrd == 'Отдел') out = 'отдела'
     if (wrd == 'начальник') out = 'Начальнику'
     if (wrd == 'Начальник') out = 'Начальнику'
-    if (wrd.slice(-4) == 'ский')  out = wrd.slice(0,-4) + 'ского'
-    if (wrd.slice(-3) == 'вой')   out = wrd.slice(0,-3) + 'вого'
-    if (wrd.slice(-3) == 'вый')   out = wrd.slice(0,-3) + 'вого'
-    if (wrd.slice(-3) == 'ный')   out = wrd.slice(0,-3) + 'ного'
-    if (wrd.slice(-3) == 'щий')   out = wrd.slice(0,-3) + 'щего'
+    if (wrd.slice(-4) == 'ский') out = wrd.slice(0, -4) + 'ского'
+    if (wrd.slice(-3) == 'вой') out = wrd.slice(0, -3) + 'вого'
+    if (wrd.slice(-3) == 'вый') out = wrd.slice(0, -3) + 'вого'
+    if (wrd.slice(-3) == 'ный') out = wrd.slice(0, -3) + 'ного'
+    if (wrd.slice(-3) == 'щий') out = wrd.slice(0, -3) + 'щего'
 
     return out
 }
@@ -509,12 +509,12 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
     console.log('win_return1 = ', win_return)
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------   
-    let modalMain = modal + "Main";
-    let modalContent = modal + "Content";
-    let modalHeader = modal + "Header";
-    let modalBody = modal + "Body";
-    let modalFooter = modal + "Footer";
-    let modal_html = `
+    const modalMain = modal + "Main";
+    const modalContent = modal + "Content";
+    const modalHeader = modal + "Header";
+    const modalBody = modal + "Body";
+    const modalFooter = modal + "Footer";
+    const modal_html = `
            <div         id="${modalMain}"    class="modal" style="display:none;" tabindex="0">
                <div     id="${modalContent}" class="modal-content">
                    <div id="${modalHeader}"  class="modal-header w3-teal" style="display: flex; align-items: center;">${html_header}</div>
@@ -524,30 +524,33 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
            </div>`;
 
     // вставить модальное окно в конец BODY ---------------------------------------------
-    let body_el = document.getElementsByTagName('body')[0];
+    const body_el = document.getElementsByTagName('body')[0];
     body_el.insertAdjacentHTML("beforeend", modal_html);
 
     // задать ширину и положение модального окна ----------------------------------------
-    document.getElementById(modalContent).style.width = width;
-    document.getElementById(modalContent).style.marginLeft = marginLeft;
-    document.getElementById(modalContent).style.marginTop = marginTop;
+    id2e(modalContent).style.width = width;
+    id2e(modalContent).style.marginLeft = marginLeft;
+    id2e(modalContent).style.marginTop = marginTop;
     id2e(modalMain).style.padding = 0;
 
-    let div_modal = document.getElementById(modalMain);
+    console.log('modalMain = ', modalMain)
+    const div_modal = id2e(modalMain);
     div_modal.style.display = "block";
 
     // при нажатии ESC удалять модальное окно -------------------------------------------
     // document.onkeyup = function (e) {
-    div_modal.onkeyup = function (e) {    
+    console.log(' div_modal1 = ', div_modal)
+    div_modal.onkeyup = function (e) {
+        console.log(' div_modal2 = ', div_modal)
         if (e.key == 'Escape') {
             div_modal.style.display = "none";
             div_modal.onkeyup = function (e) { };
-            console.log(' = ', div_modal)
+
             div_modal.remove();
             console.log('win_return2 = ', win_return)
             if (!!win_return) {
                 const e = id2e(win_return)
-                console.log('e = ', e)
+                // console.log('e = ', e)
                 e.focus()
             }
         }
@@ -558,7 +561,7 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
 // удаление модального окна ==========================================================
 function removeModalWindow(modal, win_return = null) {
     let modalMain = modal + "Main";
-    let div_modal = document.getElementById(modalMain);
+    let div_modal = id2e(modalMain);
     div_modal.style.display = "none";
     div_modal.onkeyup = function (e) { };
     div_modal.remove();
