@@ -505,7 +505,8 @@ function getAllows() {
 }
 
 // активация модального окна ============================================================
-function newModalWindow(modal, html_header, html_body, html_footer, width, marginLeft, marginTop) {
+function newModalWindow(modal, html_header, html_body, html_footer, width, marginLeft, marginTop, win_return = null) {
+    console.log('win_return1 = ', win_return)
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------   
     let modalMain = modal + "Main";
@@ -514,7 +515,7 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
     let modalBody = modal + "Body";
     let modalFooter = modal + "Footer";
     let modal_html = `
-           <div         id="${modalMain}"    class="modal" style="display:none;">
+           <div         id="${modalMain}"    class="modal" style="display:none;" tabindex="0">
                <div     id="${modalContent}" class="modal-content">
                    <div id="${modalHeader}"  class="modal-header w3-teal" style="display: flex; align-items: center;">${html_header}</div>
                    <div id="${modalBody}"    class="modal-body tabulator">${html_body}</div>
@@ -536,23 +537,35 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
     div_modal.style.display = "block";
 
     // при нажатии ESC удалять модальное окно -------------------------------------------
-    document.onkeyup = function (e) {
+    // document.onkeyup = function (e) {
+    div_modal.onkeyup = function (e) {    
         if (e.key == 'Escape') {
             div_modal.style.display = "none";
             div_modal.onkeyup = function (e) { };
+            console.log(' = ', div_modal)
             div_modal.remove();
+            console.log('win_return2 = ', win_return)
+            if (!!win_return) {
+                const e = id2e(win_return)
+                console.log('e = ', e)
+                e.focus()
+            }
         }
     };
     //});
 }
 
 // удаление модального окна ==========================================================
-function removeModalWindow(modal) {
+function removeModalWindow(modal, win_return = null) {
     let modalMain = modal + "Main";
     let div_modal = document.getElementById(modalMain);
     div_modal.style.display = "none";
     div_modal.onkeyup = function (e) { };
     div_modal.remove();
+    if (!!win_return) {
+        const e = id2e(win_return)
+        e.focus()
+    }
 }
 
 

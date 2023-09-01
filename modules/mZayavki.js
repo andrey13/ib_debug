@@ -355,7 +355,7 @@ function createTabZayavki(id_div, appH) {
             const id_depart_it = depart_it.id
             const id_boss = (await getBoss(id_depart_it)).id
 
-            selectUser('6100', '', id_depart_it, 1, header = 'Выбор начальника (и.о. начальника) ОИТ', width = '40%', marginLeft = '40%', marginTop = '5%')
+            selectUser('6100', '', id_depart_it, 1, header = 'Выбор начальника (и.о. начальника) ОИТ', width = '40%', marginLeft = '40%', marginTop = '5%', 'editZayavkaMain')
                 .then(selectedUsers => {
                     selectedUsers.forEach((u) => {
                         d.id_user_it = u.id
@@ -374,7 +374,7 @@ function createTabZayavki(id_div, appH) {
             const header_otd = 'Выбор начальника (и.о. начальника) ' + txt2dat(depart_name)
             const id_boss = (await getBoss(d.id_depart)).id
 
-            selectUser('6100', '', d.id_depart, 1, header = header_otd, width = '40%', marginLeft = '20%', marginTop = '5%')
+            selectUser('6100', '', d.id_depart, 1, header = header_otd, width = '40%', marginLeft = '20%', marginTop = '5%', 'editZayavkaMain')
                 .then(selectedUsers => {
                     selectedUsers.forEach((u) => {
                         d.id_user_ib = u.id
@@ -886,7 +886,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
 
         footZayavkaMTS = ``
 
-        newModalWindow("editMTS", headerZayavkaMTS, bodyZayavkaMTS, footZayavkaMTS, width = "60%", marginLeft = "5%", marginTop = "10%")
+        newModalWindow("editMTS", headerZayavkaMTS, bodyZayavkaMTS, footZayavkaMTS, width = "60%", marginLeft = "5%", marginTop = "10%", "editZayavkaMain")
 
         // ViewModel ------------------------------------------------------------------------
         v1 = Vue.createApp({
@@ -917,7 +917,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                     return (this.oper == 'замена')
                 },
                 disUser() {
-                    return this.tex
+                    return this.mo
                 },
                 disOper() {
                     return this.mo
@@ -962,7 +962,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
 
         // кнопка selectUser ---------------------------------------------------------------------
         e_selectUser.onclick = () => {
-            selectUser('6100', '', g_user.id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%')
+            selectUser('6100', '', g_user.id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%', 'editMTSMain')
                 .then(selectedUsers => {
                     selectedUsers.forEach((u) => {
                         d.id_user = u.id
@@ -988,7 +988,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             }
 
             d.id_mts_old = d.id_mts
-            const mts = await selectMTS("6100", id_otdel, sklad, selectable = 1, mode = 'select')
+            const mts = await selectMTS("6100", id_otdel, sklad, selectable = 1, mode = 'select', 'editMTSMain')
             d.id_mts = mts.id
             d.mts_size1 = mts.size_gb
             d.mts_SN1 = mts.SN
@@ -1001,7 +1001,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             e_selectMTS2.onclick = async () => {
                 // const mts = await selectMTS("6100", g_user.id_otdel, selectable = 1)
                 const id_otdel = (isRole('su') || isRole('tex')) ? 0 : g_user.id_otdel
-                const mts = await selectMTS("6100", id_otdel, sklad = 0, selectable = 1, mode = 'select')
+                const mts = await selectMTS("6100", id_otdel, sklad = 0, selectable = 1, mode = 'select', 'editMTSMain')
                 d.id_mts2 = mts.id
                 d.mts_size2 = mts.size_gb
                 d.mts_SN2 = mts.SN
@@ -1030,7 +1030,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             }
             saveZayavka2mts(d)
 
-            removeModalWindow("editMTS")
+            removeModalWindow("editMTS", "editZayavkaMain")
             tableMTS.updateRow(d.id, d)
         }
 
@@ -1045,7 +1045,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 m_id_MTS = tableMTS.getSelectedData().id_mts
                 if (syncWithARM) tableARM.setFilter("id_mts", "=", m_id_MTS)
             }
-            removeModalWindow("editMTS")
+            removeModalWindow("editMTS", "editZayavkaMain")
         }
 
     } ///////// editMTS

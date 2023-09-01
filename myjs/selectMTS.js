@@ -1,10 +1,10 @@
 //=======================================================================================
 // модальное окно выбора МТС
 //=======================================================================================
-function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select') {
+function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select', win_return = null) {
     return new Promise(function (resolve, reject) {
         let formSelectMTS = `<div id="selectMTS" class="w3-container"></div>`;
-        newModalWindow('selectMTS', '', formSelectMTS, '', width = "80%", marginLeft = "10%", marginTop = "10%")
+        newModalWindow('selectMTS', '', formSelectMTS, '', width = "80%", marginLeft = "10%", marginTop = "10%", win_return)
 
         let msgFooterSelecttUser = `<span id="select-stats"></span>
                                     <button id='addSel' class='w3-button w3-white w3-border w3-hover-teal'>Выбрать помеченные записи</button>`

@@ -9,12 +9,12 @@ let s_pwd = ""
 //=======================================================================================
 // модальное окно выбора пользователя ===================================================
 //=======================================================================================
-function selectUser(sono, esk, id_depart = 0, selectable = true, header = '', width = '600px', marginLeft = '50%', marginTop = '5%') {
+function selectUser(sono, esk, id_depart = 0, selectable = true, header = '', width = '600px', marginLeft = '50%', marginTop = '5%', win_return = null) {
     return new Promise(function (resolve, reject) {
         console.log('id_depart=', id_depart)
         // создание модального окна ----------------------------------------------------------
         const formSelectUser  = `<div id="selectUser" class="w3-container"></div>`
-        newModalWindow('selectUser', header, formSelectUser, '', width, marginLeft, marginTop)
+        newModalWindow('selectUser', header, formSelectUser, '', width, marginLeft, marginTop, win_return)
 
         // const msgFooterSelecttUser = `<span id="select-stats"></span>
         //                             <button id='onoffSel' class='w3-btn w3-white o3-border w3-hover-teal'>Показать помеченные записи</button> 
@@ -25,6 +25,7 @@ function selectUser(sono, esk, id_depart = 0, selectable = true, header = '', wi
 
         appHeight = appBodyHeight() * 0.7
         createTabulatorSelectUser(sono, esk, id_depart, "#selectUserBody", appHeight, msgFooterSelecttUser, resolve, reject, selectable)
+        id2e('selectUserMain').focus()
     })
 }
 
