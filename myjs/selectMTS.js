@@ -1,5 +1,5 @@
 //=======================================================================================
-// модальное окно выбора МТС 
+// модальное окно выбора МТС
 //=======================================================================================
 function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select', win_return = null) {
     return new Promise(function (resolve, reject) {
@@ -59,13 +59,13 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
         rowSelectionChanged: function (data, rows) {
             // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length
             if (data.length == 0) {
-                console.log('OFF')
+                // console.log('OFF')
                 id2e('btnDelMTSVocab').disabled = true
                 id2e('btnAddMTSVocab').disabled = true
                 id2e('btnModMTSVocab').disabled = true
                 id2e('btnSelMTSVocab').disabled = true
             } else {
-                console.log('ON')
+                // console.log('ON')
                 id2e('btnDelMTSVocab').disabled = false
                 id2e('btnAddMTSVocab').disabled = false
                 id2e('btnModMTSVocab').disabled = false
@@ -120,7 +120,38 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
             const bodyMTSVocab =
                 `<div id="modMTSVocab" style="margin: 0; padding: 1%;" class="w3-container">
-                id: ${d.id}
+                id: ${d.id}<br>
+                SN: ${d.SN}<br>
+                id_user: ${d.id_user}<br>
+                user: ${d.user}<br>
+
+                id_comp: ${d.id_comp}<br>
+                id_depart: ${d.id_depart}<br>
+                id_otdel: ${d.id_otdel}<br>
+                otdel: ${d.otdel}<br>
+
+                id_status: ${d.id_status}<br>
+                id_oper: ${d.id_oper}<br>
+                id_zayavka: ${d.id_zayavka}<br>
+                id_vendor: ${d.id_vendor}<br>
+                sono: ${d.sono}<br>
+                dsp: ${d.dsp}<br>
+                sklad: ${d.sklad}<br>
+                status1: ${d.status1}<br>
+
+                comment: ${d.comment}<br>
+                size_gb: ${d.size_gb}<br>
+                size: ${d.size}<br>
+
+                date_status: ${d.date_status}<br>
+                eko: ${d.eko}<br>
+                date2: ${d.date2}<br>
+                date: ${d.date}<br>
+                manufacturer: ${d.manufacturer}<br>
+                product_model: ${d.product_model}<br>
+                revision: ${d.revision}<br>
+                desc: ${d.desc}<br>
+                status: ${d.status}<br>
                 <br>
                 <button id="btnEnterMTSVocab"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
                 <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
@@ -141,7 +172,15 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
             id2e('editMTSVocabMain').focus()
 
-            resolve('OK')
+            id2e('btnEnterMTSVocab').onclick = () => {
+                removeModalWindow("editMTSVocab", "selectMTSMain")
+                resolve('OK')
+            }
+
+            id2e('btnCancelMTSVocab').onclick = () => {
+                removeModalWindow("editMTSVocab", "selectMTSMain")
+                resolve('CANCEL')
+            }
         })
     }
 

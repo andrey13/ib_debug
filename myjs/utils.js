@@ -18,7 +18,7 @@ async function start_app() {
     //                g_moduleActive = 'mNews';
     //                mNews();
     //            }
-    //        }); //
+    //        });
     let res = await identUser();
     g_moduleActive = 'mNews';
     mNews();
@@ -506,7 +506,7 @@ function getAllows() {
 
 // активация модального окна ============================================================
 function newModalWindow(modal, html_header, html_body, html_footer, width, marginLeft, marginTop, win_return = null) {
-    console.log('win_return1 = ', win_return)
+    // console.log('win_return1 = ', win_return)
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------   
     const modalMain = modal + "Main";
@@ -533,13 +533,13 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
     id2e(modalContent).style.marginTop = marginTop;
     id2e(modalMain).style.padding = 0;
 
-    console.log('modalMain = ', modalMain)
+    // console.log('modalMain = ', modalMain)
     const div_modal = id2e(modalMain);
     div_modal.style.display = "block";
 
     // при нажатии ESC удалять модальное окно -------------------------------------------
     // document.onkeyup = function (e) {
-    console.log(' div_modal1 = ', div_modal)
+    // console.log(' div_modal1 = ', div_modal)
     div_modal.onkeyup = function (e) {
         console.log(' div_modal2 = ', div_modal)
         if (e.key == 'Escape') {
@@ -547,7 +547,7 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
             div_modal.onkeyup = function (e) { };
 
             div_modal.remove();
-            console.log('win_return2 = ', win_return)
+            // console.log('win_return2 = ', win_return)
             if (!!win_return) {
                 const e = id2e(win_return)
                 // console.log('e = ', e)
@@ -560,8 +560,10 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
 
 // удаление модального окна ==========================================================
 function removeModalWindow(modal, win_return = null) {
-    let modalMain = modal + "Main";
-    let div_modal = id2e(modalMain);
+    const modalMain = modal + "Main";
+    // console.log('modalMain = ', modalMain)
+    const div_modal = id2e(modalMain);
+    // console.log('div_modal = ', div_modal)
     div_modal.style.display = "none";
     div_modal.onkeyup = function (e) { };
     div_modal.remove();
