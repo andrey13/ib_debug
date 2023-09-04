@@ -32,16 +32,21 @@ $sql = "SELECT
             m.revision,
             m.size,
             m.usb_device_id,
-            m.desc,
+            m.descr,
             m.sklad,
             m.status1,
             m.comment,
             m.dsp,
             m.size_gb,
             m.status,
-            u.name  AS uname
+            u.name AS uname,
+            u.esk_status AS user_esk_status,
+            c.name AS cname,
+            d.name AS dname
         FROM mts AS m 
-        LEFT JOIN user AS u ON u.id = m.id_user ";
+        LEFT JOIN user AS u ON u.id = m.id_user
+        LEFT JOIN comp AS c ON u.id = m.id_comp
+        LEFT JOIN depart AS d ON d.id = m.id_depart ";
         
 $sql = $sql.$sfx;
 

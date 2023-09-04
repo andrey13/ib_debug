@@ -541,7 +541,7 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
     // document.onkeyup = function (e) {
     // console.log(' div_modal1 = ', div_modal)
     div_modal.onkeyup = function (e) {
-        console.log(' div_modal2 = ', div_modal)
+        //console.log(' div_modal2 = ', div_modal)
         if (e.key == 'Escape') {
             div_modal.style.display = "none";
             div_modal.onkeyup = function (e) { };

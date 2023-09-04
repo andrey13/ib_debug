@@ -1,20 +1,31 @@
 //=======================================================================================
 // модальное окно выбора МТС
 //=======================================================================================
-function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select', win_return = null) {
+function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select', win_return = null, div = '') {
     return new Promise(function (resolve, reject) {
-        let formSelectMTS = `<div id="selectMTS" class="w3-container"></div>`;
-        newModalWindow('selectMTS', '', formSelectMTS, '', width = "80%", marginLeft = "10%", marginTop = "10%", win_return)
+        console.log('win_return = ', win_return)
+        let formSelectMTS = `<div id="selectMTS" class="w3-container"></div>`
+        if (div == '') {
+            newModalWindow('selectMTS', '', formSelectMTS, '', width = "90%", marginLeft = "5%", marginTop = "3%", win_return)
+        }
 
-        let msgFooterSelecttUser = `<span id="select-stats"></span>
-                                    <button id='btnDelMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Удалить</button>
-                                    <button id='btnAddMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Добавить</button>
-                                    <button id='btnModMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Изменить</button>
-                                    <button id='btnSelMTSVocab' class='w3-button w3-white w3-border w3-hover-teal' disabled>Выбрать</button>`
+        let msgFooter = `<span id="select-stats"></span>` +
+            `<div style="width: 100%; text-align: left;">` +
+            `<button id='btnSelMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
+            `<button id='btnModMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
+            `<button id='btnAddMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
+            `<button id='btnDelMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
+            `</div>`
 
-        appHeight = appBodyHeight() * 0.7;
-        createTabulatorSelectMTS(sono, "#selectMTSBody", appHeight, msgFooterSelecttUser, resolve, reject, id_otdel, sklad, selectable, mode);
-        id2e('selectMTSMain').focus()
+        appHeight = appBodyHeight() * 0.9
+
+        const id_div = (div == '') ? 'selectMTSBody' : div
+
+        createTabulatorSelectMTS(sono, id_div, appHeight, msgFooter, resolve, reject, id_otdel, sklad, selectable, mode);
+
+        console.log('id_div = ', id_div)
+        if (mode == 'select') id2e('selectMTSMain').focus()
+        console.log('focus = ', document.activeElement)
     });
 }
 
@@ -33,14 +44,16 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true },
         { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true },
         { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true },
-        { title: "описание", field: "desc", widthGrow: 6, headerFilter: true },
+        { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
+        { title: "комментарий", field: "comment", widthGrow: 6, headerFilter: true },
+        { title: "esk", field: "user_esk_status", widthGrow: 1, headerFilter: true },
         { title: "склад", field: "sklad", widthGrow: 1, headerFilter: true },
         { title: "отдел", field: "id_otdel", widthGrow: 1, headerFilter: true },
     ]
 
     cols = cols1.concat(cols2)
 
-    const tableMTSVocab = new Tabulator(id_div, {
+    tableMTSVocab = new Tabulator('#' + id_div, {
         ajaxURL: "myphp/getAllMTS.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -55,6 +68,10 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
         headerFilterPlaceholder: "",
         selectable: selectable,
         columns: cols2,
+        rowFormatter: function (row) {
+            if (row.getData().user_esk_status == 1) { row.getCell("uname").getElement().style.backgroundColor = "#ff7575"; }
+        },
+
 
         rowSelectionChanged: function (data, rows) {
             // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length
@@ -69,7 +86,8 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                 id2e('btnDelMTSVocab').disabled = false
                 id2e('btnAddMTSVocab').disabled = false
                 id2e('btnModMTSVocab').disabled = false
-                id2e('btnSelMTSVocab').disabled = false
+                if (mode == 'select')
+                    id2e('btnSelMTSVocab').disabled = false
             }
         },
 
@@ -86,17 +104,6 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
         footerElement: msgF,
     });
 
-    // $("#onoffSel").click(function () {
-    //     if ($("#onoffSel").text() == "Показать помеченные записи") {
-    //         tableMTSVocab.setFilter(filterSelect)
-    //         $("#onoffSel").text("Показать все записи")
-    //     } else {
-    //         tableMTSVocab.setFilter()
-    //         $("#onoffSel").text("Показать помеченные записи")
-    //     }
-
-    // });
-
     id2e("btnSelMTSVocab").onclick = () => {
         const div_modal = id2e('selectMTSMain')
         div_modal.style.display = "none"
@@ -108,7 +115,7 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
     id2e('btnModMTSVocab').onclick = async () => {
         const res = await modMTSVocab(tableMTSVocab.getSelectedData()[0])
-        console.log('res = ', res)
+        // console.log('res = ', res)
     }
 
     id2e('btnDelMTSVocab').onclick = () => { }
@@ -119,39 +126,106 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
             const headerMTSVocab = `<h4>параметры МТС</h4>`
 
             const bodyMTSVocab =
-                `<div id="modMTSVocab" style="margin: 0; padding: 1%;" class="w3-container">
-                id: ${d.id}<br>
-                SN: ${d.SN}<br>
-                id_user: ${d.id_user}<br>
-                user: ${d.user}<br>
+                `<div id="modMTSVocab" style="margin: 0; padding: 1%;">
 
-                id_comp: ${d.id_comp}<br>
-                id_depart: ${d.id_depart}<br>
-                id_otdel: ${d.id_otdel}<br>
-                otdel: ${d.otdel}<br>
+                <table class="w3-table-all">
+                    <tr>
+                      <th>id</th>
+                      <th>новое значение</th>
+                      <th>старое значение</th>
+                    </tr>
 
-                id_status: ${d.id_status}<br>
-                id_oper: ${d.id_oper}<br>
-                id_zayavka: ${d.id_zayavka}<br>
-                id_vendor: ${d.id_vendor}<br>
-                sono: ${d.sono}<br>
-                dsp: ${d.dsp}<br>
-                sklad: ${d.sklad}<br>
-                status1: ${d.status1}<br>
+                    <tr>
+                      <td>id: {{dv.id}}</td>
+                      <td></td>
+                      <td></td>
+                    </tr>
 
-                comment: ${d.comment}<br>
-                size_gb: ${d.size_gb}<br>
-                size: ${d.size}<br>
+                    <tr>
+                      <td></td>
+                      <td>SN: <input class="o3-border" type="text" id="MTS_SN1" v-model="dv.SN" style="width: 300px;"></td>
+                      <td></td>
+                    </tr>
 
-                date_status: ${d.date_status}<br>
-                eko: ${d.eko}<br>
+                    <tr>
+                      <td>id_user: {{dv.id_user}}</td>
+                      <td><button id="selectMtsUser" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{uname}}</button></td>
+                      <td>{{dv.user}}</td>
+                    </tr>
+
+                    <tr>
+                      <td>id_comp: {{dv.id_comp}}</td>
+                      <td><button id="selectMtsComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button></td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>id_depart: {{dv.id_depart}}</td>
+                      <td><button id="selectMtsDepart" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{dname}}</button></td>
+                      <td>{{dv.otdel}}</td>
+                    </tr>
+
+                    <tr>
+                      <td></td>
+                      <td>объем:<input class="o3-border" type="number" v-model="dv.size_gb" style="width: 100px;"></td>
+                      <td>{{dv.size}}</td>
+                    </tr>
+
+                    <tr>
+                      <td>id_status: {{dv.id_status}}</td>
+                      <td>{{dv.status}}</td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>id_oper: {{dv.id_oper}}</td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>id_zayavka: {{dv.id_zayavka}}</td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td></td>
+                      <td>дсп: {{ dv.dsp }}</td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>sklad:{{dv.sklad}}</td>
+                      <td>
+                      <span style="display: flex; align-items: center;">
+                        <input type="radio" id="sklad-0" name="skaldSatus" value="0" v-model="dv.sklad">-неизвестно&nbsp;&nbsp;
+                        <input type="radio" id="sklad-1" name="skaldSatus" value="1" v-model="dv.sklad">-склад&nbsp;&nbsp;
+                        <input type="radio" id="sklad-2" name="skaldSatus" value="2" v-model="dv.sklad">-выдано&nbsp;&nbsp;
+                      </span>
+                      </td>
+                      <td>{{dv.status1}}</td>
+                    </tr>
+
+                    </table>
+                производитель: 
+                <input class="o3-border" type="text" v-model="dv.manufacturer"><br>
+                модель:
+                <input class="o3-border" type="text" v-model="dv.product_model"><br>
+                ревизия:
+                <input class="o3-border" type="text" v-model="dv.revision"><br>
+                ЕКО: <input class="o3-border" type="text" v-model="dv.eko" style="width: 100px;"><br>
+
+                Описание: <br>
+                <textarea rows="3" style="width:100%" v-model="dv.descr"></textarea>
+                <br>
+
+                Комментарии:<br>
+                <textarea rows="3" style="width:100%" v-model="dv.comment"></textarea>
+                <br>
+
                 date2: ${d.date2}<br>
                 date: ${d.date}<br>
-                manufacturer: ${d.manufacturer}<br>
-                product_model: ${d.product_model}<br>
-                revision: ${d.revision}<br>
-                desc: ${d.desc}<br>
-                status: ${d.status}<br>
                 <br>
                 <button id="btnEnterMTSVocab"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
                 <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
@@ -160,42 +234,109 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
             const footMTSVocab = ``
 
             newModalWindow(
-                "editMTSVocab", 
-                headerMTSVocab, 
-                bodyMTSVocab, 
-                footMTSVocab, 
-                width = "60%", 
-                marginLeft = "5%", 
-                marginTop = "10%", 
-                "selectMTSMain"
+                "editMTSVocab",
+                headerMTSVocab,
+                bodyMTSVocab,
+                footMTSVocab,
+                width = "60%",
+                marginLeft = "5%",
+                marginTop = "5%",
+                (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab'
             )
+
+            const vapp = Vue.createApp({
+                data() {
+                    return {
+                        dv: d,
+                    }
+                },
+                computed: {
+                    uname() { return (!!!this.dv.uname) ? '<выбрать пользователя>' : this.dv.uname },
+                    cname() { return (!!!this.dv.cname) ? '<выбрать компьютер>' : this.dv.cname },
+                    dname() { return (!!!this.dv.dname) ? '<выбрать отдел>' : this.dv.dname },
+                    dsp() {
+                        if (!!!this.dsp) return ''
+                        return (this.dv.dsp == '1') ? 'дсп' : ''
+                    },
+                }
+            })
+
+            const vm = vapp.mount('#modMTSVocab')
+
+            // кнопка selectUser ---------------------------------------------------------------------
+            id2e('selectMtsUser').onclick = () => {
+                const id_depart = isRole('tex') ? g_user.id_depart : 0
+                selectUser('6100', '', id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%', 'editMTSVocabMain')
+                    .then(selectedUsers => {
+                        selectedUsers.forEach((u) => {
+                            vm.$data.dv.id_user = u.id
+                            vm.$data.dv.uname = u.name
+                            vm.$data.dv.user_esk_status = u.esk_status
+                            id2e('selectMtsUser').innerHTML = vm.$data.dv.uname
+                        })
+                    })
+            }
+
 
             id2e('editMTSVocabMain').focus()
 
             id2e('btnEnterMTSVocab').onclick = () => {
-                removeModalWindow("editMTSVocab", "selectMTSMain")
+                const d = vm.$data.dv
+                vapp.unmount()
+                save_mts(d)
+                removeModalWindow("editMTSVocab", (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab')
+                tableMTSVocab.updateRow(d.id, d)
+                tableMTSVocab.redraw()
                 resolve('OK')
             }
 
             id2e('btnCancelMTSVocab').onclick = () => {
-                removeModalWindow("editMTSVocab", "selectMTSMain")
+                vapp.unmount()
+                removeModalWindow("editMTSVocab", (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab')
                 resolve('CANCEL')
             }
         })
     }
-
-
-
-
-
-
-
-
-
-
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////
+async function new_mts() {
+    const id = await runSQL_p('INSERT INTO mts () VALUES ()')
+    return id
+}
 
+/////////////////////////////////////////////////////////////////////////////////////////
+async function save_mts(d) {
+    const sql =
+        `UPDATE mts SET 
+    SN="${d.SN}", 
+    id_user=${nn(d.id_user)},
+    id_comp=${nn(d.id_comp)},
+    id_otdel=${nn(d.id_otdel)},
+    id_depart=${nn(d.id_depart)},
+    id_status=${nn(d.id_status)},
+    id_oper=${nn(d.id_oper)},
+    id_zayavka=${nn(d.id_zayavka)},
+    id_vendor=${nn(d.id_vendor)},
+    size_gb=${nn(d.size_gb)},
+    dsp=${nn(d.dsp)},
+    sono='${d.sono}',
+    sklad=${nn(d.sklad)},
+    descr='${d.descr}',
+    comment='${d.comment}',
+    status='${d.status}',
+    manufacturer='${d.manufacturer}',
+    product_model='${d.product_model}',
+    revision='${d.revision}',
+    usb_device_id='${d.usb_device_id}',
+    eko='${d.eko}'
+    WHERE id=${d.id}`
+    // console.log('sql = ', sql)
+    return runSQL_p(sql)
+    // date_status="${d.date_status}",
+}
+
+function nn(n) { return !!!n ? 0 : n }
 
 
 

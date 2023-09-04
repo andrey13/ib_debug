@@ -20,7 +20,10 @@ function selectUser(sono, esk, id_depart = 0, selectable = true, header = '', wi
         //                             <button id='onoffSel' class='w3-btn w3-white o3-border w3-hover-teal'>Показать помеченные записи</button> 
         //                             <button id='addSel' class='w3-btn w3-white o3-border w3-hover-teal'>Выбрать помеченные записи</button>`
 
-        const msgFooterSelecttUser = `<button id='addSel' class='w3-btn w3-white o3-border w3-hover-teal'>Выбрать помеченные записи</button>`
+        const msgFooterSelecttUser = 
+        `<div style="width: 100%; text-align: left;">
+         <button id='addSel' class='w3-btn w3-white o3-border w3-hover-teal'>Выбрать</button>
+         </div>`
 
 
         appHeight = appBodyHeight() * 0.7
@@ -54,7 +57,8 @@ function createTabulatorSelectUser(sono, esk, id_depart, id_div, appH, msgF, res
 
         columns: [
             //{ title: "id", field: "id", widthGrow: 1, headerFilter: true, },
-            // { title: "СОНО", field: "sono", widthGrow: 1, headerFilter: true, topCalc: "count" },
+            // { title: "СОНО", field: "sono", widthGrow: 1, headerFilter: true, topCalc: "count" },            
+            { title: "ЕСК", field: "esk_status", widthGrow: 1, headerFilter: true, topCalc: "count" },
             { title: "логин", field: "Account", widthGrow: 2, headerFilter: true },
             { title: "ФИО", field: "name", widthGrow: 4, headerFilter: true },
         ],

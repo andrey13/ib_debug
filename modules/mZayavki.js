@@ -290,7 +290,7 @@ function createTabZayavki(id_div, appH) {
 
         const appH = window.innerHeight - 600
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
-                         
+
         const bDELMTS = `<button id='delMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>удалить</i></button>`
         const bADDMTS = `<button id='addMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>добавить</i></button>`
         const bMODMTS = `<button id='modMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>изменить</i></button>`
@@ -894,7 +894,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
         newModalWindow("editMTS", headerZayavkaMTS, bodyZayavkaMTS, footZayavkaMTS, width = "60%", marginLeft = "5%", marginTop = "10%", "editZayavkaMain")
 
         // ViewModel ------------------------------------------------------------------------
-        v1 = Vue.createApp({
+        const vapp = Vue.createApp({
             data() {
                 return {
                     operTypes: m_operTypes,
@@ -946,20 +946,21 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                     return this.tex
                 },
             }
-        }).mount('#vEditMTS')
-
+        })
+        
+        const v1 = vapp.mount('#vEditMTS')
 
         const e_selectUser = id2e("selectUser")
         const e_selectMTS1 = id2e("selectMTS1")
         const e_selectMTS2 = id2e("selectMTS2")
-        const e_MTS_dsp    = id2e('MTS_dsp')
-        const e_MTS_size   = id2e('MTS_size')
-        const e_MTS_size1  = id2e('MTS_size1')
-        const e_MTS_size2  = id2e('MTS_size2')
-        const e_MTS_SN1    = id2e('MTS_SN1')
-        const e_MTS_SN2    = id2e('MTS_SN2')
-        const e_MTS_reson  = id2e('MTS_reson')
-        const e_MTS_comm   = id2e('MTS_comm')
+        const e_MTS_dsp = id2e('MTS_dsp')
+        const e_MTS_size = id2e('MTS_size')
+        const e_MTS_size1 = id2e('MTS_size1')
+        const e_MTS_size2 = id2e('MTS_size2')
+        const e_MTS_SN1 = id2e('MTS_SN1')
+        const e_MTS_SN2 = id2e('MTS_SN2')
+        const e_MTS_reson = id2e('MTS_reson')
+        const e_MTS_comm = id2e('MTS_comm')
 
         id2e('editMTSMain').focus()
         // e_MTS_dsp.focus()
@@ -1037,9 +1038,9 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
             if (d.id_mts_old != d.id_mts) {
                 mts_4_User(d.id_mts_old, d.id_user, false)
                 mts_4_User(d.id_mts, d.id_user, true)
-            }
+            }            
             saveZayavka2mts(d)
-
+            vapp.unmount()
             removeModalWindow("editMTS", "editZayavkaMain")
             tableMTS.updateRow(d.id, d)
         }
@@ -1055,6 +1056,7 @@ function createTabZMTS(id_div, appH, id_zayavka = 0, syncWithARM = false) {
                 m_id_MTS = tableMTS.getSelectedData().id_mts
                 if (syncWithARM) tableARM.setFilter("id_mts", "=", m_id_MTS)
             }
+            vapp.unmount()
             removeModalWindow("editMTS", "editZayavkaMain")
         }
 

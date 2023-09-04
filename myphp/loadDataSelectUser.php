@@ -4,7 +4,7 @@
     $esk        = $_GET['e'];
     $id_depart  = $_GET['d'];
 
-    $sql = "SELECT id,name,Account,sono FROM user WHERE esk_status='2' ORDER BY name";
+    $sql = "SELECT id,name,Account,sono,esk_status FROM user WHERE esk_status='2' ORDER BY name";
     if ($id_depart == "0") {
         if ($sono=='' and $esk=='') $sql = "SELECT id,name,Account,id_depart,id_title,title,sono,esk_status FROM user ORDER BY name";
         if ($sono=='' and $esk!='') $sql = "SELECT id,name,Account,id_depart,id_title,title,sono,esk_status FROM user WHERE esk_status='$esk' ORDER BY name";
