@@ -18,7 +18,7 @@ async function start_app() {
     //                g_moduleActive = 'mNews';
     //                mNews();
     //            }
-    //        });
+    //        }); //
     let res = await identUser();
     g_moduleActive = 'mNews';
     mNews();
