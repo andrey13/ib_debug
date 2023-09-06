@@ -335,6 +335,7 @@ function tabulator_Select_MTS(
             id2e('selectMtsUser').onclick = () => {
                 const id_depart = isRole('tex') ? g_user.id_depart : 0
 
+                console.log(`1) win_current, win_return = ${win_current}, ${win_return}`)
                 selectUser(
                     '6100',
                     '',
@@ -344,10 +345,11 @@ function tabulator_Select_MTS(
                     width = '40%',
                     marginLeft = '30%',
                     marginTop = '5%',
-                    win_return = win_current,
+                    win_current,
                     vm.$data.dv.id_user
                 )
                     .then(selectedUsers => {
+                        console.log(`2) win_current, win_return = ${win_current}, ${win_return}`)
                         selectedUsers.forEach(async (u) => {
                             vm.$data.dv.id_user = u.id
                             vm.$data.dv.uname = u.name
@@ -371,7 +373,7 @@ function tabulator_Select_MTS(
                     width = "60%",
                     marginLeft = "20%",
                     marginTop = "5%",
-                    win_return = win_current
+                    win_current
                 )
                     .then(selected => {
                         id_2_set_focus(win_current)
@@ -385,6 +387,7 @@ function tabulator_Select_MTS(
                 const d = vm.$data.dv
                 vapp.unmount()
                 save_mts(d)
+                console.log(`3) win_current, win_return = ${win_current}, ${win_return}`)
                 removeModalWindow(win_current, win_return)
                 tableMTSVocab.updateRow(d.id, d)
                 tableMTSVocab.redraw()
