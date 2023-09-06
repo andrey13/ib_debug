@@ -1,13 +1,35 @@
 //=======================================================================================
 // модальное окно выбора МТС
 //=======================================================================================
-function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select', win_return = null, div = '') {
+function selectMTS(
+    sono = '6100',
+    id_otdel = 0,
+    sklad = 0,
+    selectable = 1,
+    mode = 'select',
+    win_return = null,
+) {
     return new Promise(function (resolve, reject) {
+
+        const win_current = 'selectMTS' /////////////////////////////
+
         console.log('selectMTS ==================== ')
+        console.log('win_current = ', win_current)
         console.log('win_return = ', win_return)
-        let formSelectMTS = `<div id="selectMTS" class="w3-container"></div>`
-        if (div == '') {
-            newModalWindow('selectMTS', '', formSelectMTS, '', width = "90%", marginLeft = "5%", marginTop = "3%", win_return)
+
+        if (mode == 'select') {
+            const formSelectMTS = `<div class="w3-container"></div>`
+
+            newModalWindow(
+                modal = win_current,
+                html_header = '',
+                html_body = formSelectMTS,
+                html_footer = '',
+                width = "90%",
+                marginLeft = "5%",
+                marginTop = "3%",
+                win_return
+            )
         }
 
         let msgFooter = `<span id="select-stats"></span>` +
@@ -20,20 +42,43 @@ function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select
 
         appHeight = appBodyHeight() * 0.9
 
-        const id_div = (div == '') ? 'selectMTSBody' : div
+        tabulator_Select_MTS(
+            div = 'selectMTSBody',
+            sono,
+            appHeight,
+            msgFooter,
+            resolve,
+            reject,
+            id_otdel,
+            sklad,
+            selectable,
+            mode,
+            win_current,
+            win_return
+        )
 
-        createTabulatorSelectMTS(sono, id_div, appHeight, msgFooter, resolve, reject, id_otdel, sklad, selectable, mode);
-
-        console.log('id_div = ', id_div)
-        if (mode == 'select') id2e('selectMTSMain').focus()
-        console.log('focus = ', document.activeElement)
-    });
+        if (mode == 'select') id_2_set_focus('selectMTS')
+    })
 }
 
 //=======================================================================================
 // табулятор справочника МТС
 //=======================================================================================
-function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select') {
+function tabulator_Select_MTS(
+    div,
+    sono,
+    appH,
+    msgF,
+    resolve,
+    reject,
+    id_otdel = 0,
+    sklad = 0,
+    selectable = 1,
+    mode = 'select',
+    win_current = null,
+    win_return = null
+) {
+
     let cols = []
 
     let cols1 = [
@@ -55,7 +100,7 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
     cols = cols1.concat(cols2)
 
-    tableMTSVocab = new Tabulator('#' + id_div, {
+    const tableMTSVocab = new Tabulator('#' + div, {
         ajaxURL: "myphp/getAllMTS.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -76,7 +121,6 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
 
         rowSelectionChanged: function (data, rows) {
-            // document.getElementById("select-stats").innerHTML = 'Выбрано: ' + data.length
             if (data.length == 0) {
                 // console.log('OFF')
                 id2e('btnDelMTSVocab').disabled = true
@@ -95,38 +139,46 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
 
         cellDblClick: async function (e, cell) {
             if (mode = 'select') {
-                div_modal.style.display = "none"
-                div_modal.remove()
-
+                removeModalWindow(win_current, win_return)
                 resolve(cell.getRow().getData())
             } else {
-                const res = await modMTSVocab(tableMTSVocab.getSelectedData()[0])
+                const res = await edit_MTS_Vocab(
+                    tableMTSVocab.getSelectedData()[0],
+                    win_return = win_current
+                )
             }
         },
 
-
         footerElement: msgF,
-    });
+    })
 
     id2e("btnSelMTSVocab").onclick = () => {
-        const div_modal = id2e('selectMTSMain')
-        div_modal.style.display = "none"
-        div_modal.remove()
+        removeModalWindow(win_current, win_return)
         resolve(tableMTSVocab.getSelectedData()[0])
     }
 
     id2e('btnAddMTSVocab').onclick = () => { }
 
     id2e('btnModMTSVocab').onclick = async () => {
-        const res = await modMTSVocab(tableMTSVocab.getSelectedData()[0])
-        // console.log('res = ', res)
+        const res = await edit_MTS_Vocab(
+            tableMTSVocab.getSelectedData()[0],
+            win_return = win_current
+        )
     }
 
-    id2e('btnDelMTSVocab').onclick = () => { }
+    id2e('btnDelMTSVocab').onclick = async () => {
+        const ans = await dialogYESNO(
+            text = 'Удалить МТС',
+            win_return = win_current
+        )
+    }
 
     //-----------------------------------------------------------------------------------
-    function modMTSVocab(d) {
+    function edit_MTS_Vocab(d, win_return = null) {
         return new Promise(function (resolve, reject) {
+
+            const win_current = 'editMTSVocab' ///////////////////////////////////////////
+
             const headerMTSVocab = `<h4>параметры МТС</h4>`
 
             const bodyMTSVocab =
@@ -241,14 +293,14 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
             const footMTSVocab = ``
 
             newModalWindow(
-                "editMTSVocab",
+                win_current,
                 headerMTSVocab,
                 bodyMTSVocab,
                 footMTSVocab,
                 width = "60%",
                 marginLeft = "5%",
                 marginTop = "5%",
-                (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab'
+                win_return
             )
 
             const vapp = Vue.createApp({
@@ -282,7 +334,19 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
             // кнопка выбора пользователя -----------------------------------------------
             id2e('selectMtsUser').onclick = () => {
                 const id_depart = isRole('tex') ? g_user.id_depart : 0
-                selectUser('6100', '', id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%', 'editMTSVocabMain', vm.$data.dv.id_user)
+
+                selectUser(
+                    '6100',
+                    '',
+                    id_depart,
+                    1,
+                    header = 'Выбор ответственного лица',
+                    width = '40%',
+                    marginLeft = '30%',
+                    marginTop = '5%',
+                    win_return = win_current,
+                    vm.$data.dv.id_user
+                )
                     .then(selectedUsers => {
                         selectedUsers.forEach(async (u) => {
                             vm.$data.dv.id_user = u.id
@@ -291,7 +355,7 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                             vm.$data.dv.id_depart = u.id_depart
                             vm.$data.dv.dname = (await id_depart_2_data(u.id_depart)).name
                             id2e('selectMtsUser').innerHTML = vm.$data.dv.uname
-                            id2e('editMTSVocabMain').focus()
+                            id_2_set_focus(win_current)
                         })
                     })
             }
@@ -307,24 +371,21 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                     width = "60%",
                     marginLeft = "20%",
                     marginTop = "5%",
-                    win_return = 'editMTSVocabMain'
+                    win_return = win_current
                 )
                     .then(selected => {
-                        id2e('editMTSVocabMain').focus()
-                        return
-                        runSQL_p(`UPDATE kadri_change_detail SET id_depart = ${selected.id} WHERE id=${id}`)
-                        tableD[id_type].updateData([{ id: id, id_depart: selected.id, d1name: selected.name }])
+                        id_2_set_focus(win_current)
                     })
             }
 
-            id2e('editMTSVocabMain').focus()
+            id_2_set_focus(win_current)
 
             // кнопка сохраниния и выхода -----------------------------------------------
             id2e('btnEnterMTSVocab').onclick = () => {
                 const d = vm.$data.dv
                 vapp.unmount()
                 save_mts(d)
-                removeModalWindow("editMTSVocab", (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab')
+                removeModalWindow(win_current, win_return)
                 tableMTSVocab.updateRow(d.id, d)
                 tableMTSVocab.redraw()
                 resolve('OK')
@@ -333,7 +394,7 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
             // кнопка отмены изменений --------------------------------------------------
             id2e('btnCancelMTSVocab').onclick = () => {
                 vapp.unmount()
-                removeModalWindow("editMTSVocab", (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab')
+                removeModalWindow(win_current, win_return)
                 resolve('CANCEL')
             }
 

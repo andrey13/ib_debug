@@ -13,7 +13,7 @@ function selectVocab(table, sort, ok, title, allow = '', width = "600px", margin
         appHeight = appBodyHeight() * 0.7
 
         createTabulatorSelectVocab("#selectVocabBody", table, sort, ok, appHeight, allow, resolve, reject)
-        id2e('selectVocabMain').focus()
+        id2e('selectVocab').focus()
     });
 }
 
@@ -28,7 +28,7 @@ function selectVocab(table, sort, ok, title, allow = '', width = "600px", margin
 //=======================================================================================
 
 function createTabulatorSelectVocab(id_div, table, sort, ok, appH, allow, resolve, reject) {
-    let div_modal = id2e('selectVocabMain');
+    let div_modal = id2e('selectVocab');
     allow = getAllows();
     let ed = (allow.A == 1) ? "input" : "";
     let ed_date = (allow.A == 1) ? date_Editor : "";
