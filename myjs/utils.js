@@ -506,7 +506,9 @@ function getAllows() {
 
 // активация модального окна ============================================================
 function newModalWindow(modal, html_header, html_body, html_footer, width, marginLeft, marginTop, win_return = null) {
-    // console.log('win_return1 = ', win_return)
+    console.log('newModalWindow ==================== ')
+    console.log('win_return = ', win_return)
+// console.log('win_return1 = ', win_return)
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------   
     const modalMain = modal + "Main";
@@ -554,7 +556,13 @@ function newModalWindow(modal, html_header, html_body, html_footer, width, margi
                 e.focus()
             }
         }
-    };
+    }
+
+    div_modal.oncancel = () => {
+        console.log('oncancel = ', div_modal)
+    }
+
+
     //});
 }
 

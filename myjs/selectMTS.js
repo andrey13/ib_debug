@@ -3,6 +3,7 @@
 //=======================================================================================
 function selectMTS(sono, id_otdel = 0, sklad = 0, selectable = 1, mode = 'select', win_return = null, div = '') {
     return new Promise(function (resolve, reject) {
+        console.log('selectMTS ==================== ')
         console.log('win_return = ', win_return)
         let formSelectMTS = `<div id="selectMTS" class="w3-container"></div>`
         if (div == '') {
@@ -42,6 +43,7 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
     let cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true },
+        { title: "Гб", field: "size_gb", widthGrow: 1, headerFilter: true, editor: "input" },
         { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true },
         { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true },
         { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
@@ -91,13 +93,15 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
             }
         },
 
-        cellDblClick: function (e, cell) {
-            const div_modal = id2e('selectMTSMain')
-            div_modal.style.display = "none"
-            div_modal.remove()
+        cellDblClick: async function (e, cell) {
+            if (mode = 'select') {
+                div_modal.style.display = "none"
+                div_modal.remove()
 
-            // resolve(tableMTSVocab.getSelectedData())
-            resolve(cell.getRow().getData())
+                resolve(cell.getRow().getData())
+            } else {
+                const res = await modMTSVocab(tableMTSVocab.getSelectedData()[0])
+            }
         },
 
 
@@ -228,7 +232,10 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                 date: ${d.date}<br>
                 <br>
                 <button id="btnEnterMTSVocab"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
-                <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
+                <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
+                <button id="btnApplayMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-teal">применить</button>
+                <button id="btnPrevMTSVocab"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущее МТС</button>
+                <button id="btnNextMTSVocab"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующее МТС</button>
             </div>`
 
             const footMTSVocab = ``
@@ -248,6 +255,7 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                 data() {
                     return {
                         dv: d,
+                        chg: false,
                     }
                 },
                 computed: {
@@ -258,28 +266,60 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                         if (!!!this.dsp) return ''
                         return (this.dv.dsp == '1') ? 'дсп' : ''
                     },
+                },
+                watch: {
+                    dv: {
+                        handler(newValue, oldValue) {
+                            this.chg = true
+                        },
+                        deep: true
+                    }
                 }
             })
 
             const vm = vapp.mount('#modMTSVocab')
 
-            // кнопка selectUser ---------------------------------------------------------------------
+            // кнопка выбора пользователя -----------------------------------------------
             id2e('selectMtsUser').onclick = () => {
                 const id_depart = isRole('tex') ? g_user.id_depart : 0
-                selectUser('6100', '', id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%', 'editMTSVocabMain')
+                selectUser('6100', '', id_depart, 1, header = 'Выбор ответственного лица', width = '40%', marginLeft = '30%', marginTop = '5%', 'editMTSVocabMain', vm.$data.dv.id_user)
                     .then(selectedUsers => {
-                        selectedUsers.forEach((u) => {
+                        selectedUsers.forEach(async (u) => {
                             vm.$data.dv.id_user = u.id
                             vm.$data.dv.uname = u.name
                             vm.$data.dv.user_esk_status = u.esk_status
+                            vm.$data.dv.id_depart = u.id_depart
+                            vm.$data.dv.dname = (await id_depart_2_data(u.id_depart)).name
                             id2e('selectMtsUser').innerHTML = vm.$data.dv.uname
+                            id2e('editMTSVocabMain').focus()
                         })
                     })
             }
 
+            // кнопка выбора отдела -----------------------------------------------------
+            id2e('selectMtsDepart').onclick = () => {
+                selectVocab(
+                    table = 'depart',
+                    sort = 'name',
+                    ok = 1,
+                    tite = 'отдел',
+                    allow = '',
+                    width = "60%",
+                    marginLeft = "20%",
+                    marginTop = "5%",
+                    win_return = 'editMTSVocabMain'
+                )
+                    .then(selected => {
+                        id2e('editMTSVocabMain').focus()
+                        return
+                        runSQL_p(`UPDATE kadri_change_detail SET id_depart = ${selected.id} WHERE id=${id}`)
+                        tableD[id_type].updateData([{ id: id, id_depart: selected.id, d1name: selected.name }])
+                    })
+            }
 
             id2e('editMTSVocabMain').focus()
 
+            // кнопка сохраниния и выхода -----------------------------------------------
             id2e('btnEnterMTSVocab').onclick = () => {
                 const d = vm.$data.dv
                 vapp.unmount()
@@ -290,11 +330,81 @@ function createTabulatorSelectMTS(sono, id_div, appH, msgF, resolve, reject, id_
                 resolve('OK')
             }
 
+            // кнопка отмены изменений --------------------------------------------------
             id2e('btnCancelMTSVocab').onclick = () => {
                 vapp.unmount()
                 removeModalWindow("editMTSVocab", (mode == 'select') ? 'selectMTSMain' : 'tabMTSVocab')
                 resolve('CANCEL')
             }
+
+            // кнопка сохраниния без выхода ---------------------------------------------
+            id2e('btnApplayMTSVocab').onclick = () => {
+                const d = vm.$data.dv
+                save_mts(d)
+                tableMTSVocab.updateRow(d.id, d)
+                tableMTSVocab.redraw()
+            }
+
+            // кнопка перехода на предыдущее МТС ----------------------------------------
+            id2e('btnPrevMTSVocab').onclick = () => {
+                const d = vm.$data.dv
+                save_mts(d)
+                tableMTSVocab.updateRow(d.id, d)
+                tableMTSVocab.redraw()
+                // if (vm.$data.chg) {
+                //     dialogYESNO('Данные были изменены<br>сохранить изменения')
+                //         .then(ans => {
+                //             if (ans == "YES") {
+                //                 const d = vm.$data.dv
+                //                 save_mts(d)
+                //                 tableMTSVocab.updateRow(d.id, d)
+                //                 tableMTSVocab.redraw()
+                //             } else {
+                //                 return
+                //             }
+                //         })
+                // }
+                const selected_row = tableMTSVocab.getSelectedRows()[0]
+                const id_curr = selected_row.id
+                const id_prev = selected_row.getPrevRow().getData().id
+                tableMTSVocab.deselectRow(id_curr)
+                tableMTSVocab.selectRow(id_prev)
+                tableMTSVocab.scrollToRow(id_prev, "center", false)
+                const d_prev = tableMTSVocab.getSelectedData()[0]
+                vm.$data.dv = d_prev
+                vm.$data.chg = false
+            }
+
+            // кнопка перехода на следующее МТС -----------------------------------------
+            id2e('btnNextMTSVocab').onclick = () => {
+                const d = vm.$data.dv
+                save_mts(d)
+                tableMTSVocab.updateRow(d.id, d)
+                tableMTSVocab.redraw()
+                // if (vm.$data.chg) {
+                //     dialogYESNO('Данные были изменены<br>сохранить изменения')
+                //         .then(ans => {
+                //             if (ans == "YES") {
+                //                 const d = vm.$data.dv
+                //                 save_mts(d)
+                //                 tableMTSVocab.updateRow(d.id, d)
+                //                 tableMTSVocab.redraw()
+                //             } else {
+                //                 return
+                //             }
+                //         })
+                // }
+                const selected_row = tableMTSVocab.getSelectedRows()[0]
+                const id_curr = selected_row.id
+                const id_next = selected_row.getNextRow().getData().id
+                tableMTSVocab.deselectRow(id_curr)
+                tableMTSVocab.selectRow(id_next)
+                tableMTSVocab.scrollToRow(id_next, "center", false)
+                const d_next = tableMTSVocab.getSelectedData()[0]
+                vm.$data.dv = d_next
+                vm.$data.chg = false
+            }
+
         })
     }
 }

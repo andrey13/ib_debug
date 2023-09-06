@@ -4,15 +4,16 @@ let id_select = 0;
 //=======================================================================================
 // модальное окно словаяря            ===================================================
 //=======================================================================================
-function selectVocab(table, sort, ok, title, allow) {
+function selectVocab(table, sort, ok, title, allow = '', width = "600px", marginLeft = "50%", marginTop = "5%", win_return = '') {
     return new Promise(function (resolve, reject) {
-        let formVocab  = `<div id="selectVocab" class="w3-container"></div>`;
+        let formVocab  = `<div id="selectVocab" class="w3-container"></div>`
 
-        newModalWindow('selectVocab', title, formVocab, '', '600px', '50%', '5%');
+        newModalWindow('selectVocab', title, formVocab, '', width, marginLeft, marginTop, win_return)
 
-        appHeight = appBodyHeight() * 0.7;
+        appHeight = appBodyHeight() * 0.7
 
-        createTabulatorSelectVocab("#selectVocabBody", table, sort, ok, appHeight, allow, resolve, reject);
+        createTabulatorSelectVocab("#selectVocabBody", table, sort, ok, appHeight, allow, resolve, reject)
+        id2e('selectVocabMain').focus()
     });
 }
 
