@@ -57,7 +57,7 @@ async function mZayavki() {
 ///                                            ТАБУЛЯТОР ОБРАЩЕНИЙ                                        ///
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function tabulator_Zayavki(id_div, appH) {
-    
+
     const win_current = 'tabZayavki'  /////////////////////////////////////
 
     // // очистка таймера -----------------------------------------------------------------
@@ -85,7 +85,7 @@ function tabulator_Zayavki(id_div, appH) {
 
     const id_depart = isRole('tex') ? g_user.id_depart : 0
 
-    const tableZayavki = new Tabulator("#" + id_div, {
+    tableZayavki = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/getZayavki.php",
         ajaxParams: { d: id_depart },
         ajaxConfig: "GET",
@@ -148,8 +148,8 @@ function tabulator_Zayavki(id_div, appH) {
         },
 
         cellDblClick: function (e, cell) {
-            editZayavka(
-                tableZayavki.getSelectedData()[0], 
+            edit_Zayavka(
+                tableZayavki.getSelectedData()[0],
                 win_return = win_current
             )
         },
@@ -159,8 +159,8 @@ function tabulator_Zayavki(id_div, appH) {
         delZayavkaYESNO()
     }
     id2e("modZayavki").onclick = () => {
-        editZayavka(
-            tableZayavki.getSelectedData()[0], 
+        edit_Zayavka(
+            tableZayavki.getSelectedData()[0],
             win_return = win_current
         )
     }
@@ -190,15 +190,15 @@ function tabulator_Zayavki(id_div, appH) {
             switch (selected.id) {
                 case '1':
                     createZayavkaMTS(
-                        type = selected.name, 
-                        id_type = '1', 
+                        type = selected.name,
+                        id_type = '1',
                         win_return
                     )
                     break
                 case '2':
                     createZayavkaMTS(
-                        type = selected.name, 
-                        id_type = '2', 
+                        type = selected.name,
+                        id_type = '2',
                         win_return
                     )
                     break
@@ -265,19 +265,19 @@ function tabulator_Zayavki(id_div, appH) {
             switch (id_type) {
                 case '1':
                     edit_Zayavka_MTS1(
-                        id_zayavka, 
-                        'new', 
-                        type, 
-                        id_type, 
+                        id_zayavka,
+                        'new',
+                        type,
+                        id_type,
                         win_return
                     )
                     break
                 case '2':
                     edit_Zayavka_MTS2(
-                        id_zayavka, 
-                        'new', 
-                        type, 
-                        id_type, 
+                        id_zayavka,
+                        'new',
+                        type,
+                        id_type,
                         win_return
                     )
                     break
@@ -288,23 +288,23 @@ function tabulator_Zayavki(id_div, appH) {
     //=======================================================================================
     // редактирование заявки
     //=======================================================================================
-    function editZayavka(d, win_return = null) {
+    function edit_Zayavka(d, win_return = null) {
         switch (d.id_type) {
             case '1':
                 edit_Zayavka_MTS1(
-                    d.id, 
-                    'edit', 
-                    d.type, 
-                    d.id_type, 
+                    d.id,
+                    'edit',
+                    d.type,
+                    d.id_type,
                     win_return
                 )
                 break
             case '2':
                 edit_Zayavka_MTS2(
-                    d.id, 
-                    'edit', 
-                    d.type, 
-                    d.id_type, 
+                    d.id,
+                    'edit',
+                    d.type,
+                    d.id_type,
                     win_return
                 )
                 break
@@ -316,9 +316,9 @@ function tabulator_Zayavki(id_div, appH) {
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     async function edit_Zayavka_MTS1(id_zayavka, mode, type = '', id_type, win_return = null) {
-        
+
         const win_current = 'editZayavka'  /////////////////////////////////////
-        
+
         const allow = getAllows()
         const d = tableZayavki.getSelectedData()[0]
         m_id_zayavka = d.id
@@ -329,7 +329,10 @@ function tabulator_Zayavki(id_div, appH) {
         const title_ib = (d.io_ib == '0') ? 'Начальник отдела информационной безопасности' : 'И.о. начальника отдела информационной безопасности'
         const title_usr = ((await id_user_2_data(d.id_user)).title.toLowerCase()) + ' ' + txt2dat(d.depart.toLowerCase())
         const title_otd = ((d.io_otd == '0') ? 'Начальник ' : 'И.о. начальника ') + txt2dat(d.depart.toLowerCase())
-        const title_isp = ''
+
+        // const depart_name_isp = await idUser2TitleDepart(d.id_user_isp)
+
+        const title_depart_isp = await id_user_2_title_depart(d.id_user_isp)
 
         const appH = window.innerHeight - 600
         const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
@@ -369,11 +372,13 @@ function tabulator_Zayavki(id_div, appH) {
                             <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
                             <br>
 
-                            Заявитель: ${title_usr}:<br>
+                            Заявитель:  <span id="title-usr">${title_usr}</span>
+                            <br>
                             <button id="selAuthor" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button>
                             <br>
 
-                            Исполнитель: ${title_isp}:<br>
+                            Исполнитель: <span id="title-isp">${title_depart_isp}</span>
+                            <br>
                             <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
                             <br>
                             
@@ -437,7 +442,7 @@ function tabulator_Zayavki(id_div, appH) {
         // кнопка выбора начальника отдела -------------------------------------------------------
         id2e("selOtd").onclick = async function () {
             const depart_name = (await id_depart_2_data(d.id_depart)).name
-            const deaprt_name_dat = txt2dat(depart_name)
+            const depart_name_dat = txt2dat(depart_name)
             const header_otd = 'Выбор начальника (и.о. начальника) ' + txt2dat(depart_name)
             const id_boss = (await getBoss(d.id_depart)).id
 
@@ -457,8 +462,66 @@ function tabulator_Zayavki(id_div, appH) {
                     d.id_user_ib = u.id
                     d.user_ib = u.name
                     id2e('selOtd').innerHTML = d.user_ib
-                    id2e('title-otd').innerHTML = ((id_boss != u.id) ? 'И.о. начальника ' : 'Начальник ') + deaprt_name_dat
+                    id2e('title-otd').innerHTML = ((id_boss != u.id) ? 'И.о. начальника ' : 'Начальник ') + depart_name_dat
                     d.io_otd = (id_boss != u.id) ? '1' : '0'
+                })
+            })
+        }
+
+        // кнопка выбора автора обращения (заявителя) -----------------------------------
+        id2e("selAuthor").onclick = async function () {
+            const depart_name = (await id_depart_2_data(d.id_depart)).name
+            const depart_name_dat = txt2dat(depart_name)
+
+            selectUser(
+                sono = '6100',
+                esk = '',
+                '0', // id_depart
+                selectable = 1,
+                header = 'Выбор заявителя (автора обращения)',
+                width = '40%',
+                marginLeft = '20%',
+                marginTop = '5%',
+                win_return = win_current,
+                d.id_user
+            ).then(selectedUsers => {
+                selectedUsers.forEach((u) => {
+                    console.log('u = ', u)
+                    d.id_user = u.id
+                    d.user = u.name
+                    id2e('selAuthor').innerHTML = u.name
+                    id2e('title-usr').innerHTML = u.title + " " + depart_name_dat
+                })
+            })
+        }
+
+        // кнопка выбора исполнителя обращения (м/о лицо ОИТ) -----------------------------------
+        id2e("selIsp").onclick = async function () {
+
+
+            selectUser(
+                sono = '6100',
+                esk = '',
+                '0', // id_depart
+                selectable = 1,
+                header = 'Выбор исполнителя обращения (м/о лицо ОИТ)',
+                width = '40%',
+                marginLeft = '20%',
+                marginTop = '5%',
+                win_return = win_current,
+                d.id_user_isp
+            ).then(selectedUsers => {
+                selectedUsers.forEach(async (u) => {
+                    console.log('u = ', u)
+                    d.id_user_isp = u.id
+                    d.user_isp = u.name
+
+                    const depart_name = (await id_depart_2_data(u.id_depart)).name
+                    // const depart_name_dat = txt2dat(depart_name)
+                    const title_depart_isp = await id_user_2_title_depart(d.id_user_isp)
+
+                    id2e('selIsp').innerHTML = u.name
+                    id2e('title-isp').innerHTML = title_depart_isp
                 })
             })
         }
@@ -501,6 +564,8 @@ function tabulator_Zayavki(id_div, appH) {
         // кнопка PRINT1 --------------------------------------------------------------------
         id2e("b_PRINT1").onclick = () => {
             const id_zayavka = tableZayavki.getSelectedData()[0].id
+            // const zay_data = tableZayavki.getSelectedData()[0]
+            // const mts_data = tableMTS.getData()
             printZayavka(id_zayavka, 'view')
         }
 
@@ -513,6 +578,7 @@ function tabulator_Zayavki(id_div, appH) {
     function printZayavka(id_zayavka, mode) {
         const zay_data = tableZayavki.getSelectedData()[0]
         const mts_data = tableMTS.getData()
+
         const title_it = ((zay_data.io_it == '0') ? 'Начальнику\n' : 'И.о. начальника\n') + 'отдела информационных технологий\n' + 'УФНС России по Ростовской области\n'
 
         let table = []
@@ -548,7 +614,7 @@ function tabulator_Zayavki(id_div, appH) {
             },
             footer: {
                 columns: [
-                    { text: g_user.name + '\n' + g_user.tel, style: ['footer6'] },
+                    { text: zay_data.user + '\n' + g_user.tel, style: ['footer6'] },
                 ]
             },
         }
@@ -559,26 +625,27 @@ function tabulator_Zayavki(id_div, appH) {
         ]
 
         pdf_file_name = 'Служебная записка МТС.pdf'
-        content0.push({ text: 'Прошу осуществить выдачу/возврат/замену МТС следующим сотрудникам:\n\n', style: ['header5'] })
+        content0.push({ text: 'Прошу осуществить выдачу/возврат МТС следующим сотрудникам:\n\n', style: ['header5'] })
 
         table = [{
             style: 'table',
             table: {
-                widths: [35, 14, 14, 100, 100, 100, 100], headerRows: 1,
-                body: [[{ text: 'операция', style: 'tableHeader' },
-                { text: 'дсп', style: 'tableHeader' },
-                { text: 'Гб', style: 'tableHeader' },
-                { text: 'ответственный', style: 'tableHeader' },
-                { text: 'заводской номер', style: 'tableHeader' },
-                { text: 'обоснование', style: 'tableHeader' },
-                { text: 'комментарий', style: 'tableHeader' },
+                widths: [100, 35, 14, 14, 100, 100, 100, 100], headerRows: 1,
+                body: [[
+                    { text: 'ответственный', style: 'tableHeader' },
+                    { text: 'операция', style: 'tableHeader' },
+                    { text: 'дсп', style: 'tableHeader' },
+                    { text: 'Гб', style: 'tableHeader' },
+                    { text: 'обоснование', style: 'tableHeader' },
+                    { text: 'заводской номер', style: 'tableHeader' },
+                    { text: 'комментарий', style: 'tableHeader' },
                 ]]
             }
         }]
 
         mts_data.forEach((d) => {
             const dsp = (d.dsp == '1') ? 'дсп' : ''
-            table_content[i] = [d.oper, dsp, d.size_gb, d.user, d.mts_SN1, d.reson, d.comment]
+            table_content[i] = [d.user, d.oper, dsp, d.size_gb, d.reson, d.mts_SN1, d.comment]
             i += 1
         })
 
@@ -655,7 +722,7 @@ function tabulator_Zayavki(id_div, appH) {
         footZayavka = ``
 
         newModalWindow(
-            "editZayavka",
+            'editZayavka',
             headerZayavka,
             bodyZayavka,
             footZayavka,
@@ -753,7 +820,7 @@ function tabulator_Zayavka_MTS(
     let dt_now = new Date(moment().format("YYYY-MM-DD"))
     dt_now = dt_now.getTime()
 
-    const tableMTS = new Tabulator("#" + id_div, {
+    tableMTS = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/loadDataZayavkaMTS.php",
         ajaxParams: { z: id_zayavka },
         ajaxConfig: "GET",
@@ -791,16 +858,16 @@ function tabulator_Zayavka_MTS(
                 title: "Фактически выдано",
                 columns: [
                     { title: "Гб", field: "mts_size1", width: 30 },
-                    { title: "SN", field: "mts_SN1", widthGrow: 1 },
+                    { title: "SN", field: "mts_SN1", widthGrow: 2 },
                 ],
             },
-            {//create column group
-                title: "Выдано в качестве замены",
-                columns: [
-                    { title: "Гб", field: "mts_size2", width: 30 },
-                    { title: "SN", field: "mts_SN2", widthGrow: 1 },
-                ],
-            },
+            // {//create column group
+            //     title: "Выдано в качестве замены",
+            //     columns: [
+            //         { title: "Гб", field: "mts_size2", width: 30 },
+            //         { title: "SN", field: "mts_SN2", widthGrow: 1 },
+            //     ],
+            // },
             { title: "выполнено", field: "date_vidano", width: 100 },
             { title: "подключено", field: "date_podkl", width: 100 },
             { title: "комментарии", field: "comment", widthGrow: 2, formatter: "textarea" },
@@ -828,8 +895,8 @@ function tabulator_Zayavka_MTS(
 
         cellDblClick: function (e, cell) {
             edit_MTS(
-                tableMTS.getSelectedData()[0].id, 
-                mode = 'edit', 
+                tableMTS.getSelectedData()[0].id,
+                mode = 'edit',
                 win_return = win_current
             )
         },
@@ -840,16 +907,16 @@ function tabulator_Zayavka_MTS(
     }
     id2e("modMTS").onclick = () => {
         edit_MTS(
-            tableMTS.getSelectedData()[0].id, 
-            mode = "edit", 
-            win_return = win_current, 
+            tableMTS.getSelectedData()[0].id,
+            mode = "edit",
+            win_return = win_current,
             syncWithARM
         )
     }
     id2e("addMTS").onclick = () => {
         // createMTS(id_zayavka)
         createMTS(
-            id_zayavka, 
+            id_zayavka,
             win_return = win_current
         )
     }
@@ -928,9 +995,9 @@ function tabulator_Zayavka_MTS(
         win_return = null,
         syncWithARM = false
     ) {
-        
+
         const win_current = 'editMTS' /////////////////////////////////////
-        
+
         const allow = getAllows()
         const d = tableMTS.getSelectedData()[0]
 
@@ -955,19 +1022,15 @@ function tabulator_Zayavka_MTS(
                 
                 <br>
                 
-                <input type="checkbox" id="MTS_dsp" :disabled="disDsp">
-                <label for="MTS_dsp"> ДСП</label>
+                <input type="checkbox" id="MTS_dsp" :disabled="disDsp"> ДСП&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <input v-show="showSize" class="o3-border" type="number" id="MTS_size" value="${d.size_gb}" :disabled="disSize">
+                <label v-show="showSize" for="MTS_size"> Гб запрошено</label>
                 <br>
+
                 <label for="MTS_reson"><b>Обоснование:</b></label><br>
                 <textarea id="MTS_reson" rows="3" style="width:100%" :disabled="disReson">${d.reson}</textarea>
                 <br>
                 <br>
-                <div v-show="showSize">
-                    &nbsp;Запрошено:<br>
-                    <input class="o3-border" type="text" id="MTS_size" value="${d.size_gb}" :disabled="disSize">
-                    <label for="MTS_size">  Объем (Гб)</label>
-                    <br><br>
-                </div>
 
                 <button id="selectMTS1" class="w3-btn w3-padding-small o3-border w3-hover-teal" style="text-align: left;" :disabled="disMTS1">{{ txtBtnMTS1 }}</button><br>
                 <input class="o3-border" type="text" id="MTS_size1" value="${d.mts_size1}" style="width: 100px;" disabled>
@@ -1243,7 +1306,7 @@ function tabulator_Zayavka_MTS(
     }
 
 
-}
+} // tabulator_Zayavka_MTS
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///                                      ТАБУЛЯТОР РАБОЧИХ СТАНЦИЙ                                          /

@@ -37,18 +37,26 @@ async function getTypes(taxonomy) {
 //=======================================================================================
 // id_user (id пользователя) -> должность (нач или и.о.) + отдел
 //=======================================================================================
-async function idUser2TitleDepart(id_user) {
-    const title = await idUser2Title(id_user)
-    const depart = await idUser2Depart(id_user)
+async function id_user_2_title_depart(id_user) {
+    const d_user = await id_user_2_data(id_user)
+    const d_depart = await id_depart_2_data(d_user.id_depart)
+    return (d_user.title + ' ' + txt2dat(d_depart.name)).toLowerCase()
 }
 
 //=======================================================================================
 // id_user (id пользователя) -> должность
 //=======================================================================================
 async function id_user_2_data(id_user) {
+    if (!!!id_user || id_user == 0) return {id: 0, name: '', title: ''}
     let response = await fetch(`myphp/id_user_2_data.php?u=${id_user}`)
     let data = await response.json()
     return data[0]
+}
+
+//=======================================================================================
+// id_user (id пользователя) -> должность
+//=======================================================================================
+async function idUser2Title(id_user) {
 }
 
 //=======================================================================================

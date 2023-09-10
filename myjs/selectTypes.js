@@ -3,23 +3,51 @@
 //=======================================================================================
 // модальное окно списка типов для таксонимии id_taxonomy
 //=======================================================================================
-function selectTypes(id_taxonomy, ok, title, width, marginLeft, marginTop) {
+function selectTypes(
+    id_taxonomy,
+    ok, title,
+    width,
+    marginLeft,
+    marginTop,
+    selectable = 1,
+    mode = 'select',
+    win_return = null,
+) {
     return new Promise(function (resolve, reject) {
-        const formTypes  = `<div id="selectTypes" class="w3-container"></div>`
 
-        newModalWindow(
-            modal = 'selectTypes', 
-            html_header = title, 
-            html_body = formTypes, 
-            html_footer= '', 
-            width = width, 
-            marginLeft = marginLeft, 
-            marginTop = marginTop
-        )
+        const win_current = 'selectTypes' /////////////////////////////
+
+        if (mode == 'select') {
+            const formTypes = `<div class="w3-container"></div>`
+
+            newModalWindow(
+                modal = win_current,
+                html_header = title,
+                html_body = formTypes,
+                html_footer = '',
+                width = width,
+                marginLeft = marginLeft,
+                marginTop = marginTop,
+                win_return
+            )
+        }
 
         appHeight = appBodyHeight() * 0.7
 
-        createTabulatorSelectTypes("#selectTypesBody", id_taxonomy, ok, appHeight, resolve, reject)
+        tabulator_Select_Types(
+            div = 'selectTypesBody',
+            id_taxonomy,
+            ok,
+            appHeight,
+            resolve,
+            reject,
+            selectable,
+            mode,
+            win_current,
+            win_return
+        )
+
+        if (mode == 'select') id_2_set_focus(win_current)
     })
 }
 
@@ -30,9 +58,20 @@ function selectTypes(id_taxonomy, ok, title, width, marginLeft, marginTop) {
 // appH   - высота блока DIV
 //=======================================================================================
 
-function createTabulatorSelectTypes(id_div, id_taxonomy, ok, appH, resolve, reject) {
-    const div_modal = id2e('selectTypesMain')
-    
+function tabulator_Select_Types(
+    div,
+    id_taxonomy,
+    ok,
+    appH,
+    resolve,
+    reject,
+    selectable = 1,
+    mode = 'select',
+    win_current = null,
+    win_return = null
+) {
+    // const div_modal = id2e('selectTypesMain')
+
     const allow = getAllows()
     const ed = (allow.A == 1) ? "input" : ""
     const ed_date = (allow.A == 1) ? date_Editor : ""
@@ -49,7 +88,7 @@ function createTabulatorSelectTypes(id_div, id_taxonomy, ok, appH, resolve, reje
         { title: "описание", field: "comment", editor: ed, widthGrow: 10, headerFilter: true },
     ]
 
-    const tableTypes = new Tabulator(id_div, {
+    const tableTypes = new Tabulator('#' + div, {
         ajaxURL: "myphp/loadDataTypes.php",
         ajaxParams: { t: id_taxonomy, o: ok },
         ajaxConfig: "GET",
@@ -68,8 +107,8 @@ function createTabulatorSelectTypes(id_div, id_taxonomy, ok, appH, resolve, reje
         selectableRangeMode: "click",
 
         dataLoaded: function (data) {
-            let id = getFirstID( tableTypes );
-            tableTypes.selectRow( id )
+            let id = getFirstID(tableTypes);
+            tableTypes.selectRow(id)
         },
 
         cellClick: function (e, cell) {
@@ -82,7 +121,7 @@ function createTabulatorSelectTypes(id_div, id_taxonomy, ok, appH, resolve, reje
             //     tableTypes.selectRow(  id_dd_new )
             // }
         },
-     
+
         cellEdited: function (cell) {
             // let o = cell.getRow().getData();
             // if (table == 'kadri_prikaz') {
@@ -92,55 +131,70 @@ function createTabulatorSelectTypes(id_div, id_taxonomy, ok, appH, resolve, reje
             // }
         },
 
-        cellDblClick: function (e, cell) {
-            const id = getCurrentID( tableTypes )
-            const r = tableTypes.searchRows("id", "=", id)[0].getData()
-            div_modal.style.display = "none"
-            div_modal.remove()
-            resolve(r)
+        cellDblClick: async function (e, cell) {
+            if (mode = 'select') {
+                removeModalWindow(win_current, win_return)
+                resolve(cell.getRow().getData())
+            } else {
+                const res = await edit_Type(
+                    tableTypes.getSelectedData()[0],
+                    win_return = win_current
+                )
+            }
+
+            // const id = getCurrentID( tableTypes )
+            // const r = tableTypes.searchRows("id", "=", id)[0].getData()
+            // div_modal.style.display = "none"
+            // div_modal.remove()
+            // resolve(r)
         },
 
     });
 
     id2e('bSel').onclick = () => {
-        const id = getCurrentID( tableTypes )
-        const r = tableTypes.searchRows("id", "=", id)[0].getData()
-        div_modal.style.display = "none"
-        div_modal.remove()
-        resolve(r)
+        removeModalWindow(win_current, win_return)
+        resolve(tableTypes.getSelectedData()[0])
+
+        // const id = getCurrentID( tableTypes )
+        // const r = tableTypes.searchRows("id", "=", id)[0].getData()
+        // div_modal.style.display = "none"
+        // div_modal.remove()
+        // resolve(r)
     }
 
     // id2e('bAdd').onclick  = () => {
-        // runSQL_p(`INSERT INTO ${table} VALUES ()`)
-        //     .then((id) => {
-        //         //tableTypes.replaceData()
-        //         tableTypes.addData([{ id: id }], true)
-        //         //g_tableTypes.id_current = parseInt(id)
-        //         tableTypes.scrollToRow(id, "top", false)
-        //         tableTypes.deselectRow()
-        //         tableTypes.selectRow(id)
-        //     })
+    // runSQL_p(`INSERT INTO ${table} VALUES ()`)
+    //     .then((id) => {
+    //         //tableTypes.replaceData()
+    //         tableTypes.addData([{ id: id }], true)
+    //         //g_tableTypes.id_current = parseInt(id)
+    //         tableTypes.scrollToRow(id, "top", false)
+    //         tableTypes.deselectRow()
+    //         tableTypes.selectRow(id)
+    //     })
     // }
 
 
     // id2e('bDel').onclick = () => {
-        // const r = tableTypes.getSelectedData()[0];
-        // dialogYESNO(`запись:<br>id:${r.id}<br>«${r.name}»</b><br>будет удалена, вы уверены?<br>`)
-        //     .then(ans => {
-        //         if (ans == "YES") {
-        //             runSQL_p(`DELETE FROM ${table} WHERE id=${r.id}`)
-        //             .then((id) => {                
-        //                 tableTypes.replaceData()
-        //                         //.then((rows)=>{
-        //                         //    tableTypes.scrollToRow(id, "top", false)
-        //                         //    tableTypes.deselectRow()
-        //                         //    tableTypes.selectRow(id)
-        //                         //})
-        //             })
-        //         }
-        //     })
+    // const r = tableTypes.getSelectedData()[0];
+    // dialogYESNO(`запись:<br>id:${r.id}<br>«${r.name}»</b><br>будет удалена, вы уверены?<br>`)
+    //     .then(ans => {
+    //         if (ans == "YES") {
+    //             runSQL_p(`DELETE FROM ${table} WHERE id=${r.id}`)
+    //             .then((id) => {                
+    //                 tableTypes.replaceData()
+    //                         //.then((rows)=>{
+    //                         //    tableTypes.scrollToRow(id, "top", false)
+    //                         //    tableTypes.deselectRow()
+    //                         //    tableTypes.selectRow(id)
+    //                         //})
+    //             })
+    //         }
+    //     })
     // }
 
-
+    function edit_Type(d, win_return = null) {
+        console.log('edit_Type')
+    }
 }
 
