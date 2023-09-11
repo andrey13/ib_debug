@@ -14,11 +14,11 @@ async function mMTS() {
     id2e('appBody').innerHTML = tMTS;
     id2e('appBody').style.height = appHeight;
 
-    const mts = await selectMTS(
+    const mts = await select_mts(
         sono = '6100', 
         id_otdel, 
         sklad, 
-        selectable = 1, 
+        selectable = true, 
         mode = 'edit', 
         win_return = '', 
     )

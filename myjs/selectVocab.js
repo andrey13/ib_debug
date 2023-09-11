@@ -8,11 +8,12 @@ function selectVocab(
     sort,
     ok,
     title,
-    allow = "",
-    width = "600px",
-    marginLeft = "50%",
-    marginTop = "5%",
-    win_return = ""
+    allow = '',
+    width = '600px',
+    marginLeft = '50%',
+    marginTop = '5%',
+    win_return = '',
+    sono = ''
 ) {
     return new Promise(function (resolve, reject) {
         let formVocab = `<div id="selectVocab" class="w3-container"></div>`
@@ -38,7 +39,8 @@ function selectVocab(
             appHeight,
             allow,
             resolve,
-            reject
+            reject,
+            sono
         )
         id2e("selectVocab").focus()
     })
@@ -60,24 +62,27 @@ function createTabulatorSelectVocab(
     appH,
     allow,
     resolve,
-    reject
+    reject,
+    sono = ''
 ) {
     let div_modal = id2e("selectVocab")
     allow = getAllows()
+    console.log('allow = ', allow)
+
     let ed = allow.A == 1 ? "input" : ""
     let ed_date = allow.A == 1 ? date_Editor : ""
-    let bSel =
-        allow.E == 1
-            ? `<button id='bSel' class='w3-button w3-white w3-border w3-hover-teal'>Выбрать</button>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp`
-            : ``
-    let bDel =
-        allow.A == 1
-            ? `<button id='bDel' class='w3-button w3-white w3-border w3-hover-teal'>Удалить</button>`
-            : ``
-    let bAdd =
-        allow.A == 1
-            ? `<button id='bAdd' class='w3-button w3-white w3-border w3-hover-teal'>Добавить</button>`
-            : ``
+
+    let bSel = allow.E == 1
+        ? `<button id='bSel' class='w3-button w3-white w3-border w3-hover-teal'>Выбрать</button>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp`
+        : ``
+
+    let bDel = allow.A == 1
+        ? `<button id='bDel' class='w3-button w3-white w3-border w3-hover-teal'>Удалить</button>`
+        : ``
+
+    let bAdd = allow.A == 1
+        ? `<button id='bAdd' class='w3-button w3-white w3-border w3-hover-teal'>Добавить</button>`
+        : ``
 
     let msgFooter = bSel + bDel + bAdd
 
@@ -91,7 +96,28 @@ function createTabulatorSelectVocab(
             headerFilter: true,
             topCalc: "count",
         },
-    ]
+    ]   
+
+    if (table == 'depart') {
+        cols = [
+            {
+                title: '№',
+                field: 'id_otdel',
+                editor: ed,
+                width: 50,
+                headerFilter: true,
+                topCalc: "count",
+            },
+            {
+                title: "",
+                field: "name",
+                editor: ed,
+                widthGrow: 10,
+                headerFilter: true,
+                topCalc: "count",
+            },
+        ]
+    }
 
     if (table == "kadri_prikaz") {
         cols = [
@@ -121,10 +147,10 @@ function createTabulatorSelectVocab(
     }
 
     tableVocab = new Tabulator(id_div, {
-        ajaxURL: "myphp/loadDataVocab.php",
+        ajaxURL: "myphp/get_all_vocab.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
-        ajaxParams: { t: table, s: sort, o: ok },
+        ajaxParams: { t: table, s: sort, o: ok, n: sono },
         height: appH,
         layout: "fitColumns",
         tooltipsHeader: true,
@@ -190,7 +216,7 @@ function createTabulatorSelectVocab(
     })
 
     $("#bDel").click(async () => {
-        const  r = tableVocab.getSelectedData()[0]
+        const r = tableVocab.getSelectedData()[0]
         const ans = await dialogYESNO(`запись:<br>id:${r.id}<br>«${r.name}»</b><br>будет удалена, вы уверены?<br>`)
 
         if (ans == "YES") {

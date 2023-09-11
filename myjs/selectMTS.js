@@ -1,7 +1,7 @@
 //=======================================================================================
 // модальное окно выбора МТС
 //=======================================================================================
-function selectMTS(
+function select_mts(
     sono = "6100",
     id_otdel = 0,
     sklad = 0,
@@ -42,7 +42,7 @@ function selectMTS(
 
         appHeight = appBodyHeight() * 0.9
 
-        tabulator_Select_MTS(
+        tabulator_select_mts(
             (div = "selectMTSBody"),
             sono,
             appHeight,
@@ -64,7 +64,7 @@ function selectMTS(
 //=======================================================================================
 // табулятор справочника МТС
 //=======================================================================================
-function tabulator_Select_MTS(
+function tabulator_select_mts(
     div,
     sono,
     appH,
@@ -101,6 +101,14 @@ function tabulator_Select_MTS(
             editor: "input",
         },
         {
+            title: "ЕСК",
+            field: "user_esk_status",
+            formatter: "lookup",
+            formatterParams: { 0: "?", 1: "отключен", 2: "Активен" },
+            widthGrow: 2,
+            headerFilter: true,
+        },
+        {
             title: "пользователь",
             field: "uname",
             widthGrow: 6,
@@ -120,18 +128,20 @@ function tabulator_Select_MTS(
             headerFilter: true,
         },
         {
-            title: "esk",
-            field: "user_esk_status",
-            widthGrow: 1,
-            headerFilter: true,
+            title: "склад",
+            field: "sklad",
+            formatter: "lookup",
+            formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
+            widthGrow: 2,
+            headerFilter: true
         },
-        { title: "склад", field: "sklad", widthGrow: 1, headerFilter: true },
-        { title: "отдел", field: "id_otdel", widthGrow: 1, headerFilter: true },
+        { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
+        { title: "отдел", field: "dname", widthGrow: 4, headerFilter: true },
     ]
 
     cols = cols1.concat(cols2)
 
-    const table_mts_vocab = new Tabulator("#" + div, {
+    table_select_mts = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_mts.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -145,11 +155,13 @@ function tabulator_Select_MTS(
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
         selectable: selectable,
+        selectableRangeMode: "click",
+        reactiveData: true,
         columns: cols2,
         rowFormatter: function (row) {
             if (row.getData().user_esk_status == 1) {
-                row.getCell("uname").getElement().style.backgroundColor =
-                    "#ff7575"
+                row.getCell("user_esk_status").getElement().style.backgroundColor = '#ff7575'
+                row.getCell("uname").getElement().style.backgroundColor = '#ff7575'                
             }
         },
 
@@ -168,12 +180,12 @@ function tabulator_Select_MTS(
         },
 
         cellDblClick: async function (e, cell) {
-            if ((mode = "select")) {
+            if ((mode == "select")) {
                 removeModalWindow(win_current, win_return)
                 resolve(cell.getRow().getData())
             } else {
-                const res = await edit_MTS_Vocab(
-                    table_mts_vocab.getSelectedData()[0],
+                const res = await edit_mts_vocab(
+                    table_select_mts.getSelectedData()[0],
                     (win_return = win_current)
                 )
             }
@@ -184,16 +196,16 @@ function tabulator_Select_MTS(
 
     id2e("btnSelMTSVocab").onclick = () => {
         removeModalWindow(win_current, win_return)
-        resolve(table_mts_vocab.getSelectedData()[0])
+        resolve(table_select_mts.getSelectedData()[0])
     }
 
     id2e("btnAddMTSVocab").onclick = async () => {
         const d = factory_MTS()
         d.id = await save_mts(d)
 
-        addTabRow(table_mts_vocab, d, (top = true))
+        addTabRow(table_select_mts, d, (top = true))
 
-        const res = await edit_MTS_Vocab(
+        const res = await edit_mts_vocab(
             d,
             (win_return = win_current),
             (mode = "new")
@@ -203,8 +215,8 @@ function tabulator_Select_MTS(
     }
 
     id2e("btnModMTSVocab").onclick = async () => {
-        const res = await edit_MTS_Vocab(
-            table_mts_vocab.getSelectedData()[0],
+        const res = await edit_mts_vocab(
+            table_select_mts.getSelectedData()[0],
             (win_return = win_current),
             (mode = "mod")
         )
@@ -215,10 +227,23 @@ function tabulator_Select_MTS(
             (text = "Удалить МТС"),
             (win_return = win_current)
         )
+
+        if (ans == 'YES') {
+            const data = table_select_mts.getSelectedData()
+            data.forEach((d) => {               
+                del_mts_vocab(d.id)
+                table_select_mts.deleteRow(d.id)
+            })
+            const id_mts = getFirstID(table_select_mts)
+            table_select_mts.selectRow(id_mts)
+            // const d = table_select_mts.getSelectedData()
+            // id2e("delZayavki").disabled = d.length == 0
+            // id2e("modZayavki").disabled = d.length == 0
+        }
     }
 
     //-----------------------------------------------------------------------------------
-    function edit_MTS_Vocab(d, win_return = null, mode = "") {
+    function edit_mts_vocab(d, win_return = null, mode = "") {
         return new Promise(function (resolve, reject) {
             const win_current = "editMTSVocab" ///////////////////////////////////////////
 
@@ -334,6 +359,10 @@ function tabulator_Select_MTS(
 
             const footMTSVocab = ``
 
+            const esc_mts_vocab = mode == "new"
+                ? () => { remove_selected_mts_vocab() }
+                : () => { console.log("esc_callback") }
+
             newModalWindow(
                 win_current,
                 headerMTSVocab,
@@ -342,7 +371,8 @@ function tabulator_Select_MTS(
                 (width = "60%"),
                 (marginLeft = "5%"),
                 (marginTop = "5%"),
-                win_return
+                win_return,
+                esc_mts_vocab
             )
 
             const vapp = Vue.createApp({
@@ -389,9 +419,6 @@ function tabulator_Select_MTS(
             id2e("selectMtsUser").onclick = async () => {
                 const id_depart = isRole("tex") ? g_user.id_depart : 0
 
-                // console.log(
-                //     `1) win_current, win_return = ${win_current}, ${win_return}`
-                // )
                 const selectedUsers = await selectUser(
                     "6100",
                     "",
@@ -404,17 +431,23 @@ function tabulator_Select_MTS(
                     win_current,
                     vm.$data.dv.id_user
                 )
-                // console.log(
-                //     `2) win_current, win_return = ${win_current}, ${win_return}`
-                // )
+
                 selectedUsers.forEach(async (u) => {
                     vm.$data.dv.id_user = u.id
                     vm.$data.dv.uname = u.name
                     vm.$data.dv.user_esk_status = u.esk_status
-                    vm.$data.dv.id_depart = u.id_depart
-                    vm.$data.dv.dname = (
-                        await id_depart_2_data(u.id_depart)
-                    ).name
+
+                    if (u.esk_status == 2) {
+                        console.log('u.esk_status == 2')
+                        vm.$data.dv.id_depart = u.id_depart
+                        vm.$data.dv.id_otdel = u.id_otdel
+                        vm.$data.dv.dname = (await id_depart_2_data(u.id_depart)).name
+                    } else {
+                        console.log('u.esk_status != 2')
+                        vm.$data.dv.id_depart = 0
+                        vm.$data.dv.dname = 'отключен'
+                    }
+
                     id2e("selectMtsUser").innerHTML = vm.$data.dv.uname
                     id_2_set_focus(win_current)
                 })
@@ -422,17 +455,25 @@ function tabulator_Select_MTS(
 
             // кнопка выбора отдела -----------------------------------------------------
             id2e("selectMtsDepart").onclick = async () => {
-                const selected = await selectVocab(
+                const dep = await selectVocab(
                     (table = "depart"),
-                    (sort = "name"),
-                    (ok = 1),
+                    (sort = "id_otdel"),
+                    (ok = -1),
                     (tite = "отдел"),
                     (allow = ""),
                     (width = "60%"),
                     (marginLeft = "20%"),
                     (marginTop = "5%"),
-                    win_current
+                    win_current,
+                    sono = g_user.sono
                 )
+
+                console.log('dep = ', dep)
+
+                vm.$data.dv.id_depart = dep.id
+                vm.$data.dv.id_otdel = dep.id_otdel
+                vm.$data.dv.dname = (await id_depart_2_data(dep.id)).name
+
                 id_2_set_focus(win_current)
             }
 
@@ -444,23 +485,15 @@ function tabulator_Select_MTS(
                 vapp.unmount()
                 save_mts(d)
                 removeModalWindow(win_current, win_return)
-                table_mts_vocab.updateRow(d.id, d)
-                table_mts_vocab.redraw()
+                table_select_mts.updateRow(d.id, d)
+                table_select_mts.redraw()
                 resolve("OK")
             }
 
             // кнопка отмены изменений --------------------------------------------------
             id2e("btnCancelMTSVocab").onclick = () => {
                 vapp.unmount()
-
-                if (mode == "new") {
-                    let id_mts = table_mts_vocab.getSelectedData()[0].id
-                    del_mts_vocab(id_mts)
-                    table_mts_vocab.deleteRow(id_mts)
-                    id_mts = getFirstID(table_mts_vocab)
-                    table_mts_vocab.selectRow(id_mts)
-                }
-
+                if (mode == "new") remove_selected_mts_vocab()
                 removeModalWindow(win_current, win_return)
                 resolve("CANCEL")
             }
@@ -469,36 +502,36 @@ function tabulator_Select_MTS(
             id2e("btnApplayMTSVocab").onclick = () => {
                 const d = vm.$data.dv
                 save_mts(d)
-                table_mts_vocab.updateRow(d.id, d)
-                table_mts_vocab.redraw()
+                table_select_mts.updateRow(d.id, d)
+                table_select_mts.redraw()
             }
 
             // кнопка перехода на предыдущее МТС ----------------------------------------
             id2e("btnPrevMTSVocab").onclick = () => {
                 const d = vm.$data.dv
                 save_mts(d)
-                table_mts_vocab.updateRow(d.id, d)
-                table_mts_vocab.redraw()
+                table_select_mts.updateRow(d.id, d)
+                table_select_mts.redraw()
                 // if (vm.$data.chg) {
                 //     dialogYESNO('Данные были изменены<br>сохранить изменения')
                 //         .then(ans => {
                 //             if (ans == "YES") {
                 //                 const d = vm.$data.dv
                 //                 save_mts(d)
-                //                 table_mts_vocab.updateRow(d.id, d)
-                //                 table_mts_vocab.redraw()
+                //                 table_select_mts.updateRow(d.id, d)
+                //                 table_select_mts.redraw()
                 //             } else {
                 //                 return
                 //             }
                 //         })
                 // }
-                const selected_row = table_mts_vocab.getSelectedRows()[0]
+                const selected_row = table_select_mts.getSelectedRows()[0]
                 const id_curr = selected_row.id
                 const id_prev = selected_row.getPrevRow().getData().id
-                table_mts_vocab.deselectRow(id_curr)
-                table_mts_vocab.selectRow(id_prev)
-                table_mts_vocab.scrollToRow(id_prev, "center", false)
-                const d_prev = table_mts_vocab.getSelectedData()[0]
+                table_select_mts.deselectRow(id_curr)
+                table_select_mts.selectRow(id_prev)
+                table_select_mts.scrollToRow(id_prev, "center", false)
+                const d_prev = table_select_mts.getSelectedData()[0]
                 vm.$data.dv = d_prev
                 vm.$data.chg = false
             }
@@ -507,33 +540,42 @@ function tabulator_Select_MTS(
             id2e("btnNextMTSVocab").onclick = () => {
                 const d = vm.$data.dv
                 save_mts(d)
-                table_mts_vocab.updateRow(d.id, d)
-                table_mts_vocab.redraw()
+                table_select_mts.updateRow(d.id, d)
+                table_select_mts.redraw()
                 // if (vm.$data.chg) {
                 //     dialogYESNO('Данные были изменены<br>сохранить изменения')
                 //         .then(ans => {
                 //             if (ans == "YES") {
                 //                 const d = vm.$data.dv
                 //                 save_mts(d)
-                //                 table_mts_vocab.updateRow(d.id, d)
-                //                 table_mts_vocab.redraw()
+                //                 table_select_mts.updateRow(d.id, d)
+                //                 table_select_mts.redraw()
                 //             } else {
                 //                 return
                 //             }
                 //         })
                 // }
-                const selected_row = table_mts_vocab.getSelectedRows()[0]
+                const selected_row = table_select_mts.getSelectedRows()[0]
                 const id_curr = selected_row.id
                 const id_next = selected_row.getNextRow().getData().id
-                table_mts_vocab.deselectRow(id_curr)
-                table_mts_vocab.selectRow(id_next)
-                table_mts_vocab.scrollToRow(id_next, "center", false)
-                const d_next = table_mts_vocab.getSelectedData()[0]
+                table_select_mts.deselectRow(id_curr)
+                table_select_mts.selectRow(id_next)
+                table_select_mts.scrollToRow(id_next, "center", false)
+                const d_next = table_select_mts.getSelectedData()[0]
                 vm.$data.dv = d_next
                 vm.$data.chg = false
             }
         })
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function remove_selected_mts_vocab() {
+    let id_mts = table_select_mts.getSelectedData()[0].id
+    del_mts_vocab(id_mts)
+    table_select_mts.deleteRow(id_mts)
+    id_mts = getFirstID(table_select_mts)
+    table_select_mts.selectRow(id_mts)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -625,9 +667,9 @@ function nn(n) {
 //=======================================================================================
 // удаление MTS
 //=======================================================================================
-function del_mts_vocab(d) {
-    runSQL_p(`DELETE FROM mts WHERE id=${d.id}`)
-    runSQL_p(`DELETE FROM mts2comp WHERE id_mts=${d.id}`)
+function del_mts_vocab(id) {
+    runSQL_p(`DELETE FROM mts WHERE id=${id}`)
+    runSQL_p(`DELETE FROM mts2comp WHERE id_mts=${id}`)
 }
 
 //=======================================================================================
@@ -669,6 +711,6 @@ function factory_MTS() {
 
 // function filterSelect(data, filterParams) {
 //     let id = data.id
-//     let row = table_mts_vocab.searchRows("id", "=", data.id)[0]
+//     let row = table_select_mts.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
 // }

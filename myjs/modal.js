@@ -8,7 +8,7 @@ function newModalWindow(
     marginLeft, 
     marginTop, 
     win_return = null,
-    esc_fun = () => { console.log('esc_fun') }
+    esc_callback = () => { console.log('esc_callback') }
 ) {
 
     console.log('newModalWindow ==================== ')
@@ -47,8 +47,8 @@ function newModalWindow(
     // при нажатии ESC удалять модальное окно -------------------------------------------
     div_modal.onkeyup = function (e) {
         if (e.key == 'Escape') {
-            // console.log('esc_fun = ', esc_fun)
-            esc_fun()
+            // console.log('esc_callback = ', esc_callback)
+            esc_callback()
             div_modal.style.display = "none";
             div_modal.onkeyup = function (e) { };
             div_modal.remove();
