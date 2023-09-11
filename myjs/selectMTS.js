@@ -157,12 +157,21 @@ function tabulator_Select_MTS(
         resolve(tableMTSVocab.getSelectedData()[0])
     }
 
-    id2e('btnAddMTSVocab').onclick = () => { }
+    id2e('btnAddMTSVocab').onclick = async () => {
+        const d_mts = factory_MTS()
+        
+        const res = await edit_MTS_Vocab(
+            d_mts,
+            win_return = win_current,
+            mode = 'new'
+        )
+    }
 
     id2e('btnModMTSVocab').onclick = async () => {
         const res = await edit_MTS_Vocab(
             tableMTSVocab.getSelectedData()[0],
-            win_return = win_current
+            win_return = win_current,
+            mode = 'mod'
         )
     }
 
@@ -174,7 +183,11 @@ function tabulator_Select_MTS(
     }
 
     //-----------------------------------------------------------------------------------
-    function edit_MTS_Vocab(d, win_return = null) {
+    function edit_MTS_Vocab(
+        d, 
+        win_return = null,
+        mode = ''
+    ) {
         return new Promise(function (resolve, reject) {
 
             const win_current = 'editMTSVocab' ///////////////////////////////////////////
@@ -481,39 +494,73 @@ async function new_mts() {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 async function save_mts(d) {
+    
     const sql =
         `UPDATE mts SET 
-    SN="${d.SN}", 
-    id_user=${nn(d.id_user)},
-    id_comp=${nn(d.id_comp)},
-    id_otdel=${nn(d.id_otdel)},
-    id_depart=${nn(d.id_depart)},
-    id_status=${nn(d.id_status)},
-    id_oper=${nn(d.id_oper)},
-    id_zayavka=${nn(d.id_zayavka)},
-    id_vendor=${nn(d.id_vendor)},
-    size_gb=${nn(d.size_gb)},
-    dsp=${nn(d.dsp)},
-    sono='${d.sono}',
-    sklad=${nn(d.sklad)},
-    descr='${d.descr}',
-    comment='${d.comment}',
-    status='${d.status}',
-    manufacturer='${d.manufacturer}',
-    product_model='${d.product_model}',
-    revision='${d.revision}',
-    usb_device_id='${d.usb_device_id}',
-    eko='${d.eko}'
-    WHERE id=${d.id}`
-    // console.log('sql = ', sql)
+            SN="${d.SN}", 
+            id_user=${nn(d.id_user)},
+            id_comp=${nn(d.id_comp)},
+            id_otdel=${nn(d.id_otdel)},
+            id_depart=${nn(d.id_depart)},
+            id_status=${nn(d.id_status)},
+            id_oper=${nn(d.id_oper)},
+            id_zayavka=${nn(d.id_zayavka)},
+            id_vendor=${nn(d.id_vendor)},
+            size_gb=${nn(d.size_gb)},
+            dsp=${nn(d.dsp)},
+            sono='${d.sono}',
+            sklad=${nn(d.sklad)},
+            descr='${d.descr}',
+            comment='${d.comment}',
+            status='${d.status}',
+            manufacturer='${d.manufacturer}',
+            product_model='${d.product_model}',
+            revision='${d.revision}',
+            usb_device_id='${d.usb_device_id}',
+            eko='${d.eko}'
+        WHERE id=${d.id}`
+
     return runSQL_p(sql)
-    // date_status="${d.date_status}",
 }
 
 function nn(n) { return !!!n ? 0 : n }
 
-
-
+//=======================================================================================
+// фабрика МТС
+//=======================================================================================
+function factory_MTS() {
+    return {
+        id: 0,
+        SN: '',
+        id_user: 0,
+        id_comp: 0,
+        id_otdel: 0,
+        id_depart: 0,
+        id_status: 0,
+        id_oper: 0,
+        id_zayavka: 0,
+        id_vendor: 0,
+        date_status: '',
+        otdel: '',
+        sono: '',
+        eko: '',
+        date2: '',
+        date: '',
+        user: '',
+        manufacturer: '',
+        product_model: '',
+        revision: '',
+        size: '',
+        usb_device_id: '',
+        descr: '',
+        sklad: 0,
+        status1: '',
+        comment: '',
+        dsp: '',
+        size_gb: 0,
+        status: '',
+    }
+}
 
 
 
