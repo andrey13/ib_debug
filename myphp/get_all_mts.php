@@ -48,7 +48,7 @@ $sql = "SELECT
         LEFT JOIN comp AS c ON u.id = m.id_comp
         LEFT JOIN depart AS d ON d.id = m.id_depart ";
         
-$sql = $sql.$sfx;
+$sql = $sql . $sfx . " ORDER BY id DESC";
 
 // echo $sql;        
 

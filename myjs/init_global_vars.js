@@ -6,6 +6,10 @@ const SELECTABLE_ON  = true;
 const SELECTABLE_OFF = false;
 const SELECTABLE_1   = 1;
 
+// // функция, выполняемая после нажания на клавишу ESC ------------------------------------
+// let esc_fun = () => { console.log('esc_fun') }
+
+
 // параметры пользователя ---------------------------------------------------------------
 let g_user =  {usr:"", pwd:"", name:"", account:""};
 

@@ -7,7 +7,8 @@ function newModalWindow(
     width, 
     marginLeft, 
     marginTop, 
-    win_return = null
+    win_return = null,
+    esc_fun = () => { console.log('esc_fun') }
 ) {
 
     console.log('newModalWindow ==================== ')
@@ -40,34 +41,24 @@ function newModalWindow(
     id2e(modalContent).style.marginTop = marginTop;
     id2e(modalMain).style.padding = 0;
 
-    // console.log('modalMain = ', modalMain)
     const div_modal = id2e(modalMain);
     div_modal.style.display = "block";
 
     // при нажатии ESC удалять модальное окно -------------------------------------------
-    // document.onkeyup = function (e) {
-    // console.log(' div_modal1 = ', div_modal)
     div_modal.onkeyup = function (e) {
-        //console.log(' div_modal2 = ', div_modal)
         if (e.key == 'Escape') {
+            // console.log('esc_fun = ', esc_fun)
+            esc_fun()
             div_modal.style.display = "none";
             div_modal.onkeyup = function (e) { };
             div_modal.remove();
             id_2_set_focus(win_return)
-
-            // if (!!win_return) {
-            //     const e = id2e(win_return)
-            //     e.focus()
-            // }
         }
     }
 
     div_modal.oncancel = () => {
         console.log('oncancel = ', div_modal)
     }
-
-
-    //});
 }
 
 // удаление модального окна ==========================================================

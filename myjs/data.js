@@ -47,6 +47,7 @@ async function getTypes(taxonomy) {
 // id_user (id пользователя) -> должность (нач или и.о.) + отдел
 //=======================================================================================
 async function id_user_2_title_depart(id_user) {
+    if (id_user == 0) return ''
     const d_user = await id_user_2_data(id_user)
     const d_depart = await id_depart_2_data(d_user.id_depart)
     return (d_user.title + ' ' + txt2dat(d_depart.name)).toLowerCase()

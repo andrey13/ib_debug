@@ -28,7 +28,7 @@ async function start_app() {
 
 
 function addTabRow(table, d, top = true) {
-    table.addRow(d, false)
+    table.addRow(d, top)
     table.redraw()
     table.scrollToRow(d.id, "top", false)
     table.deselectRow()
