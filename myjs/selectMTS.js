@@ -253,73 +253,62 @@ function tabulator_select_mts(
 
                 <table class="w3-table-all">
                     <tr>
-                      <th>id</th>
-                      <th>новое значение</th>
-                      <th>старое значение</th>
-                    </tr>
-
-                    <tr>
-                      <td>id: {{dv.id}}</td>
-                      <td></td>
+                      <td>id:{{dv.id}} id_zayavka:{{dv.id_zayavka}} id_oper:{{dv.id_oper}} id_status:{{dv.id_status}} status:{{dv.status}}</td>
                       <td></td>
                     </tr>
 
+                    <!--
                     <tr>
-                      <td></td>
+                      <td>
+                      <v-switch
+                          v-model="dv.dsp"
+                          color="blue"
+                          hide-details
+                          true-value="1"
+                          false-value="0"
+                          label="ДСП"
+                        ></v-switch>
+                      </td>
+                      <td>
+                        <v-switch 
+                          v-model="dv.bad"
+                          color="red"
+                          hide-details
+                          true-value="1"
+                          false-value="0"
+                          label="неисправно"
+                        ></v-switch>
+                      </td>
+                    </tr>
+                    -->
+
+                    <tr>
+                      <td>
+                        ДСП
+                        <n-switch
+                          size="small"
+                          checked-value="1"
+                          unchecked-value="0"
+                          v-model:value="dv.dsp"
+                        />                        
+                      </td>
+                      <td>
+                        {{ (dv.bad == "0") ? "исправно" : "неисправно" }}
+                        <n-switch :rail-style="railStyle"
+                          size="small"                          
+                          checked-value="1"
+                          unchecked-value="0"
+                          v-model:value="dv.bad"
+                        />                        
+                      </td>
+                    </tr>
+
+                    <tr>
                       <td>SN: <input class="o3-border" type="text" id="MTS_SN1" v-model="dv.SN" style="width: 300px;"></td>
                       <td></td>
                     </tr>
 
                     <tr>
-                      <td>id_user: {{dv.id_user}}</td>
-                      <td><button id="selectMtsUser" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{uname}}</button></td>
-                      <td>{{dv.user}}</td>
-                    </tr>
-
-                    <tr>
-                      <td>id_comp: {{dv.id_comp}}</td>
-                      <td><button id="selectMtsComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button></td>
-                      <td></td>
-                    </tr>
-
-                    <tr>
-                      <td>id_depart: {{dv.id_depart}}</td>
-                      <td><button id="selectMtsDepart" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{dname}}</button></td>
-                      <td>{{dv.otdel}}</td>
-                    </tr>
-
-                    <tr>
-                      <td></td>
-                      <td>объем:<input class="o3-border" type="number" v-model="dv.size_gb" style="width: 100px;"></td>
-                      <td>{{dv.size}}</td>
-                    </tr>
-
-                    <tr>
-                      <td>id_status: {{dv.id_status}}</td>
-                      <td>{{dv.status}}</td>
-                      <td></td>
-                    </tr>
-
-                    <tr>
-                      <td>id_oper: {{dv.id_oper}}</td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-
-                    <tr>
-                      <td>id_zayavka: {{dv.id_zayavka}}</td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-
-                    <tr>
-                      <td></td>
-                      <td>дсп: {{ dv.dsp }}</td>
-                      <td></td>
-                    </tr>
-
-                    <tr>
-                      <td>sklad:{{dv.sklad}}</td>
                       <td>
                       <span style="display: flex; align-items: center;">
                         <input type="radio" id="sklad-0" name="skaldSatus" value="0" v-model="dv.sklad">-неизвестно&nbsp;&nbsp;
@@ -330,14 +319,52 @@ function tabulator_select_mts(
                       <td>{{dv.status1}}</td>
                     </tr>
 
-                    </table>
-                производитель: 
-                <input class="o3-border" type="text" v-model="dv.manufacturer"><br>
-                модель:
-                <input class="o3-border" type="text" v-model="dv.product_model"><br>
-                ревизия:
-                <input class="o3-border" type="text" v-model="dv.revision"><br>
-                ЕКО: <input class="o3-border" type="text" v-model="dv.eko" style="width: 100px;"><br>
+                    <tr>
+                      <td>
+                        <button id="selectMtsUser" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{uname}}</button>
+                        id_user: {{dv.id_user}}
+                      </td>
+                      <td>{{dv.user}}</td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <button id="selectMtsComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
+                        id_comp: {{dv.id_comp}}
+                      </td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        <button id="selectMtsDepart" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{dname}}</button>
+                        id_depart: {{dv.id_depart}}
+                      </td>
+                      <td>{{dv.otdel}}</td>
+                    </tr>
+
+                    <tr>
+                      <td>объем:<input class="o3-border" type="number" v-model="dv.size_gb" style="width: 100px;"></td>
+                      <td>{{dv.size}}</td>
+                    </tr>
+
+                    <tr>
+                      <td></td>
+                      <td></td>
+                    </tr>
+
+                    <tr>
+                      <td>
+                        производитель: <input class="o3-border" type="text" v-model="dv.manufacturer">
+                        модель: <input class="o3-border" type="text" v-model="dv.product_model">
+                        ревизия: <input class="o3-border" type="text" v-model="dv.revision">
+                      </td>
+                      <td>
+                        ЕКО: <input class="o3-border" type="text" v-model="dv.eko">
+                      </td>
+                    </tr>
+
+                    </table>                      
 
                 Описание: <br>
                 <textarea rows="3" style="width:100%" v-model="dv.descr"></textarea>
@@ -380,6 +407,25 @@ function tabulator_select_mts(
                     return {
                         dv: d,
                         chg: false,
+                        dsp: d.dsp,
+                        railStyle: ({
+                            focused,
+                            checked
+                          }) => {
+                            const style = {}
+                            if (checked) {
+                              style.background = "red"
+                              if (focused) {
+                                style.boxShadow = "0 0 0 2px #d0305040"
+                              }
+                            } else {
+                              style.background = "green"
+                              if (focused) {
+                                style.boxShadow = "0 0 0 2px #2080f040"
+                              }
+                            }
+                            return style
+                          }
                     }
                 },
                 computed: {
@@ -398,10 +444,10 @@ function tabulator_select_mts(
                             ? "<выбрать отдел>"
                             : this.dv.dname
                     },
-                    dsp() {
-                        if (!!!this.dsp) return ""
-                        return this.dv.dsp == "1" ? "дсп" : ""
-                    },
+                    // dsp() {
+                    //     if (!!!this.dsp) return ""
+                    //     return this.dv.dsp == "1" ? "дсп" : ""
+                    // },
                 },
                 watch: {
                     dv: {
@@ -411,9 +457,15 @@ function tabulator_select_mts(
                         deep: true,
                     },
                 },
+                
             })
 
-            const vm = vapp.mount("#modMTSVocab")
+            // const vuetify = Vuetify.createVuetify()
+
+            // console.log('vuetify = ', vuetify)
+
+            // const vm = vapp.use(vuetify).mount("#modMTSVocab")
+            const vm = vapp.use(naive).mount("#modMTSVocab")
 
             // кнопка выбора пользователя -----------------------------------------------
             id2e("selectMtsUser").onclick = async () => {
@@ -609,7 +661,8 @@ async function save_mts(d) {
             product_model,
             revision,
             usb_device_id,
-            eko
+            eko,
+            bad
         ) VALUES (
            "${d.SN}", 
             ${nn(d.id_user)},
@@ -631,7 +684,8 @@ async function save_mts(d) {
            '${d.product_model}',
            '${d.revision}',
            '${d.usb_device_id}',
-           '${d.eko}'
+           '${d.eko}',
+            ${d.bad}
         )`
             : `UPDATE mts SET 
             SN="${d.SN}", 
@@ -654,7 +708,8 @@ async function save_mts(d) {
             product_model='${d.product_model}',
             revision='${d.revision}',
             usb_device_id='${d.usb_device_id}',
-            eko='${d.eko}'
+            eko='${d.eko}',
+            bad=${d.bad}
         WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -678,7 +733,7 @@ function del_mts_vocab(id) {
 function factory_MTS() {
     return {
         id: 0,
-        SN: "",
+        SN: '',
         id_user: 0,
         id_comp: 0,
         id_otdel: 0,
@@ -687,25 +742,26 @@ function factory_MTS() {
         id_oper: 0,
         id_zayavka: 0,
         id_vendor: 0,
-        date_status: "",
-        otdel: "",
-        sono: "",
-        eko: "",
-        date2: "",
-        date: "",
-        user: "",
-        manufacturer: "",
-        product_model: "",
-        revision: "",
-        size: "",
-        usb_device_id: "",
-        descr: "",
+        date_status: '',
+        otdel: '',
+        sono: '',
+        eko: '',
+        date2: '',
+        date: '',
+        user: '',
+        manufacturer: '',
+        product_model: '',
+        revision: '',
+        size: '',
+        usb_device_id: '',
+        descr: '',
         sklad: 0,
-        status1: "",
-        comment: "",
-        dsp: "",
+        status1: '',
+        comment: '',
+        dsp: '',
         size_gb: 0,
-        status: "",
+        status: '',
+        bad: 0
     }
 }
 

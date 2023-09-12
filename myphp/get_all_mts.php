@@ -39,6 +39,7 @@ $sql = "SELECT
             m.dsp,
             m.size_gb,
             m.status,
+            m.bad,
             u.name AS uname,
             u.esk_status AS user_esk_status,
             c.name AS cname,
