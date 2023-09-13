@@ -35,37 +35,22 @@ function addTabRow(table, d, top = true) {
     table.selectRow(d.id)
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//                            ФУНКЦИИ ФИО                                    //
+///////////////////////////////////////////////////////////////////////////////
 
+//
 function fio2dat(fio) {
     return fio2fio2(fio).split(' ').map(w => fam2dat(w)).join(' ')
 }
 
+// перевод ФИО в дательный падеж (кому) ///////////////////////////////////////
 function fam2dat(wrd) {
     let out = wrd
 
     if (wrd.slice(-2) == 'ин') out = wrd.slice(0, -2) + 'ину'
     if (wrd.slice(-2) == 'ва') out = wrd.slice(0, -2) + 'вой'
     if (wrd.slice(-2) == 'ев') out = wrd.slice(0, -2) + 'еву'
-
-    return out
-}
-
-function txt2dat(txt) {
-    return txt.split(' ').map(w => wrd2dat(w)).join(' ').toLowerCase()
-}
-
-function wrd2dat(wrd) {
-    let out = wrd
-
-    if (wrd == 'отдел') out = 'отдела'
-    if (wrd == 'Отдел') out = 'отдела'
-    if (wrd == 'начальник') out = 'Начальнику'
-    if (wrd == 'Начальник') out = 'Начальнику'
-    if (wrd.slice(-4) == 'ский') out = wrd.slice(0, -4) + 'ского'
-    if (wrd.slice(-3) == 'вой') out = wrd.slice(0, -3) + 'вого'
-    if (wrd.slice(-3) == 'вый') out = wrd.slice(0, -3) + 'вого'
-    if (wrd.slice(-3) == 'ный') out = wrd.slice(0, -3) + 'ного'
-    if (wrd.slice(-3) == 'щий') out = wrd.slice(0, -3) + 'щего'
 
     return out
 }
@@ -102,6 +87,27 @@ function fio2fio2(fio) {
     return arrayOffio[1].substring(0, 1) + '.' + arrayOffio[2].substring(0, 1) + '. ' + arrayOffio[0];
 }
 
+
+
+function txt2dat(txt) {
+    return txt.split(' ').map(w => wrd2dat(w)).join(' ').toLowerCase()
+}
+
+function wrd2dat(wrd) {
+    let out = wrd
+
+    if (wrd == 'отдел') out = 'отдела'
+    if (wrd == 'Отдел') out = 'отдела'
+    if (wrd == 'начальник') out = 'Начальнику'
+    if (wrd == 'Начальник') out = 'Начальнику'
+    if (wrd.slice(-4) == 'ский') out = wrd.slice(0, -4) + 'ского'
+    if (wrd.slice(-3) == 'вой') out = wrd.slice(0, -3) + 'вого'
+    if (wrd.slice(-3) == 'вый') out = wrd.slice(0, -3) + 'вого'
+    if (wrd.slice(-3) == 'ный') out = wrd.slice(0, -3) + 'ного'
+    if (wrd.slice(-3) == 'щий') out = wrd.slice(0, -3) + 'щего'
+
+    return out
+}
 
 
 //=======================================================================================

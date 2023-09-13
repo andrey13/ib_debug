@@ -29,11 +29,11 @@ function mKadri() {
 //=======================================================================================
 // модальное окно редактора служебки (mode = 'edit'/'new')
 //=======================================================================================
-async function editSZ( mode ) {
+async function editSZ(mode) {
     let allow = getAllows();
-    let d = (mode=='edit') ? tableSZ.getSelectedData()[0] : {ok: 0, date: moment().format('YYYY-MM-DD'), numb: '', dt_start: '0000-00-00', dt_stop: '0000-00-00'};
+    let d = (mode == 'edit') ? tableSZ.getSelectedData()[0] : { ok: 0, date: moment().format('YYYY-MM-DD'), numb: '', dt_start: '0000-00-00', dt_stop: '0000-00-00' };
 
-    let formSZ  = `<div id="vEditSZ" class="w3-container">
+    let formSZ = `<div id="vEditSZ" class="w3-container">
                               <br><br>
                               <input type="checkbox" id="sz_ok" tabindex="1">
                               <label for="sz_ok">  Формирование служебной записки завершено</label>
@@ -53,22 +53,22 @@ async function editSZ( mode ) {
                   </div>`;
 
     newModalWindow('editSZ', '', formSZ, '', '400px', '5%');
-  
-    document.getElementById("sz_ok").checked = (d.ok == 1);   
+
+    document.getElementById("sz_ok").checked = (d.ok == 1);
     document.getElementById("sz_ok").focus();
     document.getElementById("sz_ok").select();
 
     // кнопка ENTER ---------------------------------------------------------------------
     document.getElementById("b_ENTER").onclick = function () {
-        d.ok       = (document.getElementById("sz_ok").checked) ? 1: 0;
-        d.date     =  document.getElementById("sz_date").value;
-        d.numb     =  document.getElementById("sz_numb").value;
-        d.dt_start =  document.getElementById("sz_dt_start").value;
-        d.dt_stop  =  document.getElementById("sz_dt_stop").value;
+        d.ok = (document.getElementById("sz_ok").checked) ? 1 : 0;
+        d.date = document.getElementById("sz_date").value;
+        d.numb = document.getElementById("sz_numb").value;
+        d.dt_start = document.getElementById("sz_dt_start").value;
+        d.dt_stop = document.getElementById("sz_dt_stop").value;
 
-        if (mode=='edit') {
+        if (mode == 'edit') {
             // корректировка записи -----------------------------------------------------
-            runSQL_p(`UPDATE kadri_change SET date="${d.date}", numb="${d.numb}", ok=${d.ok}, dt_start="${d.dt_start}", dt_stop="${d.dt_stop}" WHERE id=${d.id}`);        
+            runSQL_p(`UPDATE kadri_change SET date="${d.date}", numb="${d.numb}", ok=${d.ok}, dt_start="${d.dt_start}", dt_stop="${d.dt_stop}" WHERE id=${d.id}`);
             tableSZ.updateData([{ id: d.id, ok: d.ok, date: d.date, numb: d.numb, dt_start: d.dt_start, dt_stop: d.dt_stop }]);
             createTabulatorDD(appBodyHeight(), d.id);
         } else {
@@ -76,12 +76,12 @@ async function editSZ( mode ) {
             let today = moment().format('YYYY-MM-DD');
             runSQL_p(`INSERT INTO kadri_change (ok, date, numb, dt_start, dt_stop) VALUES (${d.ok}, '${d.date}', '${d.numb}', '${d.dt_start}', '${d.dt_stop}')`)
                 .then((id_sz_new) => {
-                    tableSZ.addData([{ id: id_sz_new, date: d.date, numb: d.numb, dt_start: d.dt_start, dt_stop: d.dt_stop, ok: d.ok }], true);    
+                    tableSZ.addData([{ id: id_sz_new, date: d.date, numb: d.numb, dt_start: d.dt_start, dt_stop: d.dt_stop, ok: d.ok }], true);
                     tableSZ.scrollToRow(id_sz_new, "top", false);
                     tableSZ.deselectRow();
                     tableSZ.selectRow(id_sz_new);
                     createTabulatorDD(appBodyHeight(), id_sz_new);
-                });    
+                });
         }
         removeModalWindow('editSZ');
     }
@@ -89,7 +89,7 @@ async function editSZ( mode ) {
     // кнопка CANCEL --------------------------------------------------------------------
     document.getElementById("b_CANCEL").onclick = function () {
         removeModalWindow('editSZ');
-    }   
+    }
 }
 
 
@@ -101,13 +101,13 @@ function createTabulatorSZ(id_div, appH) {
     let ed = (allow.E == 1) ? "input" : "";
     let ed_date = (allow.E == 1) ? date_Editor : "";
     let bCFG = (allow.E == 1) ? `<button id='cfgSZ' title='Настроить поля служебной записки'           class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-cog'></i></button>` : ``;
-    let bVEW =                  "<button id='vewSZ' title='Предварительеый просмотр служебной записки' class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-eye'></i></button>";
-    let bPRT =                  "<button id='prtSZ' title='Сохранение в файле PDF служебной записки'   class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-download'></i></button>";
+    let bVEW = "<button id='vewSZ' title='Предварительеый просмотр служебной записки' class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-eye'></i></button>";
+    let bPRT = "<button id='prtSZ' title='Сохранение в файле PDF служебной записки'   class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-download'></i></button>";
     let bDEL = (allow.D == 1) ? "<button id='delSZ' title='Удаление служебной записки'                 class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-minus'></i></button>" : "";
     let bADD = (allow.C == 1) ? "<button id='addSZ' title='Создание служебной записки'                 class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-plus'></i></button>" : "";
     let ms = bCFG + bVEW + bPRT + bDEL + bADD;
 
-    tableSZ = new Tabulator('#'+id_div, {
+    tableSZ = new Tabulator('#' + id_div, {
         ajaxURL: "myphp/loadDataSZ.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -124,31 +124,32 @@ function createTabulatorSZ(id_div, appH) {
 
         columns: [
             //{ title: "id", field: "id", widthGrow: 1, },
-            { title: "",   field: "ok", formatter:"tickCross"},
-            { title: "дата", field: "date", width: 100, headerFilter: true, topCalc: "count", 
-              //sorter: "date",
-              formatter: "datetime", formatterParams: {
-                  inputFormat: "YYYY-MM-DD",
-                  outputFormat: "DD.MM.YYYY",
-              }
+            { title: "", field: "ok", formatter: "tickCross" },
+            {
+                title: "дата", field: "date", width: 100, headerFilter: true, topCalc: "count",
+                //sorter: "date",
+                formatter: "datetime", formatterParams: {
+                    inputFormat: "YYYY-MM-DD",
+                    outputFormat: "DD.MM.YYYY",
+                }
             },
-            { title: "№ служебки", field: "numb", widthGrow: 2, headerFilter: true},
+            { title: "№ служебки", field: "numb", widthGrow: 2, headerFilter: true },
         ],
 
         dataLoaded: function (data) {
-            let id_sz = getFirstID( tableSZ );
+            let id_sz = getFirstID(tableSZ);
             console.log(id_sz);
-            tableSZ.selectRow( id_sz )
-            createTabulatorDD( appH, id_sz );
+            tableSZ.selectRow(id_sz)
+            createTabulatorDD(appH, id_sz);
         },
 
         rowClick: function (e, row) {
-            let id_sz_old = getCurrentID( tableSZ );
+            let id_sz_old = getCurrentID(tableSZ);
             let id_sz_new = row.getData().id;
-            if (id_sz_new==id_sz_old) return;
+            if (id_sz_new == id_sz_old) return;
             tableSZ.deselectRow(id_sz_old);
-            tableSZ.selectRow(  id_sz_new )
-            createTabulatorDD(appH, id_sz_new );
+            tableSZ.selectRow(id_sz_new)
+            createTabulatorDD(appH, id_sz_new);
         },
 
         cellDblClick: function (e, cell) { editSZ('edit'); },
@@ -164,15 +165,15 @@ function createTabulatorSZ(id_div, appH) {
     // кнопка вывода в PDF-файл  служебки -----------------------------------------------
     document.getElementById("vewSZ").onclick = function () {
         let id_sz = tableSZ.getSelectedData()[0].id;
-        sz_ok_oib( id_sz, 'view' );
-        sz_ok_oib_append( id_sz, 'view' )
+        sz_ok_oib(id_sz, 'view');
+        sz_ok_oib_append(id_sz, 'view')
     };
 
     // кнопка вывода в PDF-файл  служебки -----------------------------------------------
     document.getElementById("prtSZ").onclick = function () {
         let id_sz = tableSZ.getSelectedData()[0].id;
-        sz_ok_oib( id_sz, 'print' );
-        sz_ok_oib_append( id_sz, 'print' )
+        sz_ok_oib(id_sz, 'print');
+        sz_ok_oib_append(id_sz, 'print')
     };
 
     // кнопка добавления новой служебки -------------------------------------------------
@@ -222,7 +223,7 @@ function acc2tab(acc) {
 function createTabulatorD(id_div, appH, id_change, id_type) {
     let ok = tableSZ.getSelectedData()[0].ok;
     let allow = getAllows();
-    let ed = (allow.E == 1 && ok =='0') ? "input" : "";
+    let ed = (allow.E == 1 && ok == '0') ? "input" : "";
     let ed_date = (allow.E == 1 && ok == '0') ? date_Editor : "";
     let bCFG = (allow.E == 1 && id_type == 4) ? `<button id='cfgUsr' title='Настроить поля служебной записки'           class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-cog'></i></button>` : ``;
     let bVEW = (allow.C == 1) ? `<button id='vewUsr${id_type}'       title='Предварительеый просмотр служебной записки' class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-eye'></i></button>` : ``;
@@ -231,7 +232,7 @@ function createTabulatorD(id_div, appH, id_change, id_type) {
     let bADD = (allow.C == 1) ? `<button id='addUsr${id_type}'       title='Создание записи'                            class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-plus'></i></button>` : ``;
     let ms = bCFG + bVEW + bPRT + bDEL + bADD;
     let cols = [
-        { title: '№',  formatter:"rownum", hozAlign:"center", width:20},
+        { title: '№', formatter: "rownum", hozAlign: "center", width: 20 },
         //{ title: 'id', field: "id", width: 45 }
     ];
 
@@ -324,7 +325,7 @@ function createTabulatorD(id_div, appH, id_change, id_type) {
     });
     cols.push({ title: '№ приказа', field: "pnumb", width: 100 });
 
-    tableD[id_type] = new Tabulator('#'+id_div, {
+    tableD[id_type] = new Tabulator('#' + id_div, {
         ajaxURL: "myphp/loadDataDetail.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -345,21 +346,21 @@ function createTabulatorD(id_div, appH, id_change, id_type) {
         scrollToRowIfVisible: false,
 
         dataLoaded: function (data) {
-            let id_dd = getFirstID( tableD[id_type] );
-            tableD[id_type].selectRow( id_dd )
+            let id_dd = getFirstID(tableD[id_type]);
+            tableD[id_type].selectRow(id_dd)
         },
 
         cellClick: function (e, cell) {
             let fieldName = cell.getField();
-            let row       = cell.getRow();
+            let row = cell.getRow();
 
-            let id        = row.getData().id;
-            let id_dd_old = getCurrentID( tableD[id_type] );
+            let id = row.getData().id;
+            let id_dd_old = getCurrentID(tableD[id_type]);
             let id_dd_new = row.getData().id;
 
-            if (id_dd_new!=id_dd_old) {
+            if (id_dd_new != id_dd_old) {
                 tableD[id_type].deselectRow(id_dd_old);
-                tableD[id_type].selectRow(  id_dd_new )
+                tableD[id_type].selectRow(id_dd_new)
             }
 
             if (ok == '1') return;
@@ -428,8 +429,8 @@ function createTabulatorD(id_div, appH, id_change, id_type) {
 
     // кнопка добавление пользователя в кадровые изменеия -------------------------------
     $("#addUsr" + id_type.toString()).click(function () {
-        let id_sz = getCurrentID( tableSZ );
-        if (id_type == 1) {            
+        let id_sz = getCurrentID(tableSZ);
+        if (id_type == 1) {
             runSQL_p(`INSERT INTO kadri_change_detail (id_change, id_type, tabn) VALUES (${id_sz}, ${id_type}, '')`)    //*
                 .then((id) => {
                     tableD[id_type].addData([{
@@ -557,11 +558,11 @@ function sz_ok_oib(id_sz, mode) {
 
                 styles: {
                     header1: { font: 'times', fontSize: 12, alignment: 'right', },
-                    header0: { font: 'times', fontSize: 13, alignment: 'right',  },
-                    header:  { font: 'times', fontSize: 13, alignment: 'center', },
+                    header0: { font: 'times', fontSize: 13, alignment: 'right', },
+                    header: { font: 'times', fontSize: 13, alignment: 'center', },
                     header6: { font: 'times', fontSize: 12, alignment: 'left', },
-                    body0:   { font: 'times', fontSize: 13, alignment: 'left', margin: [40, 0, 0, 0], },
-                    body:    { font: 'times', fontSize: 13, alignment: 'left', },
+                    body0: { font: 'times', fontSize: 13, alignment: 'left', margin: [40, 0, 0, 0], },
+                    body: { font: 'times', fontSize: 13, alignment: 'left', },
                     subject: { font: 'times', fontSize: 13, decoration: 'underline', alignment: 'left', },
                     footer6: { font: 'times', fontSize: 8, alignment: 'left', italics: true, margin: [20, 0, 0, 0] },
                 },
@@ -582,15 +583,15 @@ function sz_ok_oib(id_sz, mode) {
                 { text: `Отдел кадров сообщает о кадровых изменениях аппарата Управления`, style: ['body0'] },
                 { text: `за период с ${sz_start} по ${sz_stop} г.` + '\n\n', style: ['body'] },
                 { text: `Приложение на  1  л.` + '\n\n', style: ['body0'] },
-                { text: '\n\n' + users[3].title_1.replace(/\\n/g, '\n').replace(/\\t/g, '\t'), style: ['header6']},
+                { text: '\n\n' + users[3].title_1.replace(/\\n/g, '\n').replace(/\\t/g, '\t'), style: ['header6'] },
             ];
 
             let doc = Object.assign(doc_head, { content: content });
 
             if (mode == 'view') {
-                pdfMake.createPdf( doc ).open();
+                pdfMake.createPdf(doc).open();
             } else {
-                pdfMake.createPdf( doc ).download(pdf_name1);
+                pdfMake.createPdf(doc).download(pdf_name1);
             }
         });
 }
@@ -598,12 +599,12 @@ function sz_ok_oib(id_sz, mode) {
 //=======================================================================================
 // создание PDF-файла приложения к служебной записки из ОК в ОИБ
 //=======================================================================================
-function sz_ok_oib_append( id_sz, mode ) {
-    let row_data  = tableSZ.getSelectedData()[0];
-    let sz_date   = moment(row_data.date).format('DD-MM-YYYY');
-    let sz_numb   = row_data.numb;
-    let sz_start  = moment(row_data.dt_start).format('DD-MM-YYYY');
-    let sz_stop   = moment(row_data.dt_stop).format('DD-MM-YYYY');
+function sz_ok_oib_append(id_sz, mode) {
+    let row_data = tableSZ.getSelectedData()[0];
+    let sz_date = moment(row_data.date).format('DD-MM-YYYY');
+    let sz_numb = row_data.numb;
+    let sz_start = moment(row_data.dt_start).format('DD-MM-YYYY');
+    let sz_stop = moment(row_data.dt_stop).format('DD-MM-YYYY');
     let pdf_name2 = `кадровые изменения с ${sz_start} по ${sz_stop} (Приложение).pdf`;
 
     // параметры шрифта pdf-документа ---------------------------------------------------
@@ -655,7 +656,7 @@ function sz_ok_oib_append( id_sz, mode ) {
         { text: 'Приложение к служебной записке отдела кадров', style: ['header0'] },
         { text: 'УФНС России по Ростовской области', style: ['header0'] },
         { text: `от ${sz_date} № ${sz_numb}`, style: ['header0'] },
-        { text: `Кадровые изменения за период с ${sz_start} по ${sz_stop}`, style: ['header']},
+        { text: `Кадровые изменения за период с ${sz_start} по ${sz_stop}`, style: ['header'] },
     ];
     let content1 = create2pdf();
     let content2 = delete2pdf(0);
@@ -697,9 +698,9 @@ function sz_ok_oib_append( id_sz, mode ) {
     };
 
     if (mode == 'view') {
-        pdfMake.createPdf( doc ).open();
+        pdfMake.createPdf(doc).open();
     } else {
-        pdfMake.createPdf( doc ).download(pdf_name2);
+        pdfMake.createPdf(doc).download(pdf_name2);
     }
 }
 
@@ -1006,13 +1007,13 @@ function sz_oib_it(id_type, mode) {
                 defaultStyle: { font: 'times', fontSize: 9, },
                 styles: {
                     header1: { font: 'times', fontSize: 12, alignment: 'right', },
-                    header2: { font: 'times', fontSize: 12, alignment: 'center',  bold: true, },
+                    header2: { font: 'times', fontSize: 12, alignment: 'center', bold: true, },
                     header3: { font: 'times', fontSize: 12, alignment: 'justify', margin: [20, 0, 0, 0] },
                     header4: { font: 'times', fontSize: 12, alignment: 'justify', margin: [0, 0, 0, 0] },
-                    header5: { font: 'times', fontSize: 12, alignment: 'center',  margin: [10, 0, 10, 0] },
+                    header5: { font: 'times', fontSize: 12, alignment: 'center', margin: [10, 0, 10, 0] },
                     header6: { font: 'times', fontSize: 12, alignment: 'left', },
-                    header7: { font: 'times', fontSize: 12, alignment: 'left',    margin: [300, 0, 10, 0] },
-                    footer6: { font: 'times', fontSize:  8, alignment: 'left',    italics: true, margin: [20, 0, 0, 0] },
+                    header7: { font: 'times', fontSize: 12, alignment: 'left', margin: [300, 0, 10, 0] },
+                    footer6: { font: 'times', fontSize: 8, alignment: 'left', italics: true, margin: [20, 0, 0, 0] },
                     table: { margin: [0, 0, 0, 0] },
                     tableHeader: { bold: true, fontSize: 8, alignment: 'center', }
                 },
@@ -1047,7 +1048,7 @@ function sz_oib_it(id_type, mode) {
                     table = [{
                         style: 'table',
                         table: {
-                            widths: [w_fio / 2, w_tabn, w_name * 0.50, w_fio * 0.45, w_date * 0.8, w_date *0.8, w_date *0.7, w_numb], headerRows: 1,
+                            widths: [w_fio / 2, w_tabn, w_name * 0.50, w_fio * 0.45, w_date * 0.8, w_date * 0.8, w_date * 0.7, w_numb], headerRows: 1,
                             body: [[{ text: 'ФИО', style: 'tableHeader' },
                             { text: 'таб.№', style: 'tableHeader' },
                             { text: 'должность (отдел)', style: 'tableHeader' },
@@ -1144,10 +1145,10 @@ function sz_oib_it(id_type, mode) {
 
             let doc = Object.assign(doc_head, { content: content });
 
-            if ( mode == 'view') {
+            if (mode == 'view') {
                 pdfMake.createPdf(doc).open();
             } else {
-                pdfMake.createPdf(doc).download( pdf_file_name );
+                pdfMake.createPdf(doc).download(pdf_file_name);
             }
         });
 }
@@ -1205,10 +1206,10 @@ function configKadri(id_doc_type) {
         scrollToRowPosition: "center",
         scrollToRowIfVisible: false,
         columns: [
-            { title: "поле 1",     field: "title_1",  editor: "textarea", widthGrow: 3, formatter:"textarea", },
-            { title: "поле 2",     field: "title_2",  editor: "input", widthGrow: 1, },
-            { title: "вкл",        field: "on_off",   editor: "input", width: 50,    },
-            { title: "примечание", field: "comment",  editor: "input", widthGrow: 1, },
+            { title: "поле 1", field: "title_1", editor: "textarea", widthGrow: 3, formatter: "textarea", },
+            { title: "поле 2", field: "title_2", editor: "input", widthGrow: 1, },
+            { title: "вкл", field: "on_off", editor: "input", width: 50, },
+            { title: "примечание", field: "comment", editor: "input", widthGrow: 1, },
         ],
         footerElement: msgFooter,
         cellEdited: function (cell) {

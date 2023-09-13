@@ -356,7 +356,9 @@ function tabulator_zayavki(id_div, appH) {
         const title_depart_isp = await id_user_2_title_depart(d.id_user_isp)
 
         const appH = window.innerHeight - 600
-        const headerZayavka = `<h4>Обращение № ${d.id} (${type})</h4>`
+        const status = (await id_2_data(d.id_status, 'types')).name
+
+        const headerZayavka = `<h4>Обращение № ${d.id}: ${type} (${status})</h4>`
 
         const bDELMTS = `<button id='delMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>удалить</i></button>`
         const bADDMTS = `<button id='addMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>добавить</i></button>`
@@ -379,7 +381,7 @@ function tabulator_zayavki(id_div, appH) {
                             <label for="z_date">  Дата обращения</label>
                             <br>
 
-                            <center><h4>Прошу осуществить выдачу/возврат/замену МТС следующим сотрудникам:</h4></center>
+                            <center><h4>Прошу осуществить выдачу/возврат/регистрацию МТС следующим сотрудникам:</h4></center>
                             <br>
 
                             ${menuMTS}
@@ -428,14 +430,28 @@ function tabulator_zayavki(id_div, appH) {
         )
 
         tabulator_zay2mts(
+            status,
             "tabMTS",
             appH,
             (id_zayavka = d.id),
-            (win_return = win_current)
+            (win_return = win_current),            
         )
-
+        
         id2e("z_date").focus()
         id2e("z_date").select()
+
+        if (status == 'на выполнении') {
+            id2e("z_comm").disabled = true
+            id2e("z_date").disabled = true
+            id2e("b_ACTION").disabled = true
+            id2e("selIT").disabled = true
+            id2e("selOtd").disabled = true
+            id2e("selAuthor").disabled = true
+            id2e("selIsp").disabled = true
+            id2e("delMTS").disabled = true
+            id2e("addMTS").disabled = true
+            id2e("modMTS").disabled = true
+        }
 
         // кнопка выбора начальника ОИТ -------------------------------------------------------
         id2e("selIT").onclick = async function () {
@@ -605,16 +621,21 @@ function tabulator_zayavki(id_div, appH) {
     // печать заявки
     //=======================================================================================
     function print_zayavka(id_zayavka, mode) {
+        const pdf_file_name = "Служебная записка МТС.pdf"
         const zay_data = table_zayavki.getSelectedData()[0]
         const mts_data = table_mts.getData()
+        const table_content = []
 
         const title_it =
             (zay_data.io_it == "0" ? "Начальнику\n" : "И.о. начальника\n") +
             "отдела информационных технологий\n" +
             "УФНС России по Ростовской области\n"
 
-        let table = []
-        let table_content = []
+        const title_otd =
+            (zay_data.io_otd == "0" ? "Начальник\n" : "И.о. начальник\n") +
+            txt2dat(zay_data.depart.toLowerCase())
+
+        
         let i = 0
 
         // предварительная подготовка страницы ------------------------------------------
@@ -627,51 +648,20 @@ function tabulator_zayavki(id_div, appH) {
             },
         }
 
-        let doc_head = {
+        const doc_head = {
             pageSize: "A4",
             pageOrientation: "portrait",
             pageMargins: [30, 30, 30, 30],
             defaultStyle: { font: "times", fontSize: 9 },
             styles: {
                 header1: { font: "times", fontSize: 12, alignment: "right" },
-                header2: {
-                    font: "times",
-                    fontSize: 12,
-                    alignment: "center",
-                    bold: true,
-                },
-                header3: {
-                    font: "times",
-                    fontSize: 12,
-                    alignment: "justify",
-                    margin: [20, 0, 0, 0],
-                },
-                header4: {
-                    font: "times",
-                    fontSize: 12,
-                    alignment: "justify",
-                    margin: [0, 0, 0, 0],
-                },
-                header5: {
-                    font: "times",
-                    fontSize: 12,
-                    alignment: "center",
-                    margin: [10, 0, 10, 0],
-                },
+                header2: { font: "times", fontSize: 12, alignment: "center", bold: true, },
+                header3: { font: "times", fontSize: 12, alignment: "justify", margin: [20, 0, 0, 0], },
+                header4: { font: "times", fontSize: 12, alignment: "justify", margin: [0, 0, 0, 0], },
+                header5: { font: "times", fontSize: 12, alignment: "center", margin: [10, 0, 10, 0], },
                 header6: { font: "times", fontSize: 12, alignment: "left" },
-                header7: {
-                    font: "times",
-                    fontSize: 12,
-                    alignment: "left",
-                    margin: [300, 0, 10, 0],
-                },
-                footer6: {
-                    font: "times",
-                    fontSize: 8,
-                    alignment: "left",
-                    italics: true,
-                    margin: [20, 0, 0, 0],
-                },
+                header7: { font: "times", fontSize: 12, alignment: "left", margin: [300, 0, 10, 0], },
+                footer6: { font: "times", fontSize: 8, alignment: "left", italics: true, margin: [20, 0, 0, 0], },
                 table: { margin: [0, 0, 0, 0] },
                 tableHeader: { bold: true, fontSize: 8, alignment: "center" },
             },
@@ -685,7 +675,8 @@ function tabulator_zayavki(id_div, appH) {
             },
         }
 
-        let content0 = [
+        // шапка и заголовок СЗ ---------------------------------------------------------
+        const content0 = [
             {
                 text: title_it + fio2dat(zay_data.user_it) + "\n\n\n",
                 style: ["header1"],
@@ -693,13 +684,26 @@ function tabulator_zayavki(id_div, appH) {
             { text: "СЛУЖЕБНАЯ ЗАПИСКА\n\n", style: ["header2"] },
         ]
 
-        pdf_file_name = "Служебная записка МТС.pdf"
+        // ФИО и подпись начальника отдела  ---------------------------------------------
+        const content1 = [
+            {
+                text: "\n\n\n" + title_otd,
+                style: ["header6"],
+            },
+            {
+                text: fio2fio2(zay_data.user_otd),
+                style: ["header1"],
+            },
+        ]
+
+        
+
         content0.push({
             text: "Прошу осуществить выдачу/возврат МТС следующим сотрудникам:\n\n",
             style: ["header5"],
         })
 
-        table = [
+        const table = [
             {
                 style: "table",
                 table: {
@@ -736,9 +740,9 @@ function tabulator_zayavki(id_div, appH) {
 
         table[0].table.body = table[0].table.body.concat(table_content)
 
-        const content = content0.concat(table)
+        const content = content0.concat(table).concat(content1)
 
-        let doc = Object.assign(doc_head, { content: content })
+        const doc = Object.assign(doc_head, { content: content })
 
         if (mode == "view") {
             pdfMake.createPdf(doc).open()
@@ -895,11 +899,12 @@ function tabulator_zayavki(id_div, appH) {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 function tabulator_zay2mts(
+    status,
     id_div,
     appH,
     id_zayavka = 0,
     win_current = null,
-    syncWithARM = false
+    syncWithARM = false    
 ) {
     let allow = getAllows()
     let ed = allow.E == 1 ? "input" : ""
@@ -994,14 +999,15 @@ function tabulator_zay2mts(
         },
 
         rowSelectionChanged: function (data, rows) {
+            if (status == 'на выполнении') return
             id2e("delMTS").disabled = data.length == 0
             id2e("modMTS").disabled = data.length != 1
-            if (syncWithARM) id2e("addARM").disabled = data.length != 1
+            // if (syncWithARM) id2e("addARM").disabled = data.length != 1
         },
 
         rowClick: function (e, row) {
             m_id_MTS = row.getData().id_mts
-            if (syncWithARM) table_arm.setFilter("id_mts", "=", m_id_MTS)
+            // if (syncWithARM) table_arm.setFilter("id_mts", "=", m_id_MTS)
         },
 
         cellDblClick: function (e, cell) {
@@ -1127,7 +1133,22 @@ function tabulator_zay2mts(
                 
                 <br>
                 
+                <span>
+                ДСП
+                <n-switch  :rail-style="style_dsp"
+                    size="small"
+                    checked-value="1"
+                    unchecked-value="0"
+                    v-model:value="dv.dsp"
+                />  
+                </span>
+                <br>
+                <br>                   
+
+                <!--
                 <input type="checkbox" id="MTS_dsp" :disabled="disDsp"> ДСП&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                -->
+
                 <input v-show="showSize" class="o3-border" type="number" id="MTS_size" value="${d.size_gb}" :disabled="disSize">
                 <label v-show="showSize" for="MTS_size"> Гб запрошено</label>
                 <br>
@@ -1187,12 +1208,20 @@ function tabulator_zay2mts(
         const vapp = Vue.createApp({
             data() {
                 return {
+                    dv: d,
                     operTypes: m_operTypes,
                     text: "ABC",
                     id_oper: d.id_oper,
                     tex: isRole("tex"),
                     su: isRole("su"),
                     mo: isRole("mo"),
+
+                    style_dsp: ({ focused, checked }) => {
+                        const style = {}
+                        style.background = (checked) ? "#8888ff" : "grey"
+                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                        return style
+                    },
                 }
             },
             computed: {
@@ -1200,9 +1229,22 @@ function tabulator_zay2mts(
                     return id_oper_2_name(this.id_oper)
                 },
                 txtBtnMTS1() {
-                    return this.oper == "выдача"
-                        ? "Взять со склада"
-                        : "Выбрать из выданных"
+                    let text = ''
+                    // console.log('this.oper = ', this.oper)
+                    switch (this.oper) {
+                        case 'выдача':
+                            text = 'Взять со склада'
+                            break
+                        case 'возврат':
+                            text = 'Выбрать из выданных'
+                            break
+                        case 'регистрация личного МТС':
+                            text = 'Зарегистрировать'
+                            break
+                        default:
+                            text = '???'
+                    }
+                    return text
                 },
                 txtBtnMTS2() { return "Взять со склада" },
                 showSize() { return this.oper == "выдача" },
@@ -1218,7 +1260,7 @@ function tabulator_zay2mts(
             },
         })
 
-        const v1 = vapp.mount("#vEditMTS")
+        const v1 = vapp.use(naive).mount("#vEditMTS")
 
         const e_selectUser = id2e("selectUser")
         const e_selectMTS1 = id2e("selectMTS1")
@@ -1234,11 +1276,13 @@ function tabulator_zay2mts(
 
         id2e("editMTS").focus()
         // e_MTS_dsp.focus()
-        e_MTS_dsp.select()
-        e_MTS_dsp.checked = d.dsp == "1"
+        // e_MTS_dsp.select()
+        // e_MTS_dsp.checked = d.dsp == "1"
 
         // кнопка selectUser ---------------------------------------------------------------------
         e_selectUser.onclick = async () => {
+            if (d.oper == 'возврат') return
+
             const selectedUsers = await selectUser(
                 "6100",
                 "",
@@ -1265,34 +1309,48 @@ function tabulator_zay2mts(
             let id_otdel = 0
             let sklad = 0
 
+            // для технолога показывать выданные отделу (id_otdel) МТС (sklad=2)
             if (isRole("tex")) {
                 id_otdel = g_user.id_otdel
                 sklad = 2
             }
 
+            // для м/о показывать МТС на складе (sklad=1)
             if (isRole("mo")) {
                 sklad = 1
             }
 
             d.id_mts_old = d.id_mts
 
+            // выбор МТС ------------------------------
             const mts = await select_mts(
                 "6100",
                 id_otdel,
                 sklad,
                 (selectable = 1),
                 (mode = "select"),
-                (win_return = win_current)
+                (win_return = win_current),
+                d.id_mts
             )
+
+            if (d.oper == 'возврат') {
+                d.id_user = mts.id_user
+                d.user = (await id_user_2_data(d.id_user)).name
+                e_selectUser.innerHTML = d.user
+                d.size_gb = mts.size_gb
+            }
 
             d.id_mts = mts.id
             d.mts_size1 = mts.size_gb
             d.mts_SN1 = mts.SN
             e_MTS_size1.value = mts.size_gb
             e_MTS_SN1.value = mts.SN
+            e_MTS_size.value = d.size_gb
+
+            console.log('d.size_gb = ', d.size_gb)
         }
 
-        // кнопка выбора МТС выданного в качестве замены ------------------------------------
+        // кнопка выбора МТС выданного в качестве замены --------------------------------
         if (!!e_selectMTS2) {
             e_selectMTS2.onclick = async () => {
                 const id_otdel =
@@ -1315,9 +1373,9 @@ function tabulator_zay2mts(
             }
         }
 
-        // кнопка ENTER ---------------------------------------------------------------------
+        // кнопка ENTER -----------------------------------------------------------------
         id2e("enterMTS").onclick = () => {
-            d.dsp = e_MTS_dsp.checked ? "1" : "0"
+            // d.dsp = e_MTS_dsp.checked ? "1" : "0"
             d.size_gb = e_MTS_size.value
             d.mts_SN1 = e_MTS_SN1.value
             d.mts_SN2 = e_MTS_SN2.value
@@ -1326,17 +1384,19 @@ function tabulator_zay2mts(
             d.id_oper = v1.$data.id_oper
             d.oper = id_oper_2_name(d.id_oper)
 
-            if (d.id_mts_old != d.id_mts) {
+            // если выдача или регистрация, привязать MTS к пользователю ----------------
+            if (d.oper != 'возврат' && d.id_mts_old != d.id_mts) {
                 mts_4_user(d.id_mts_old, d.id_user, false)
                 mts_4_user(d.id_mts, d.id_user, true)
             }
+
             save_zay2mts(d)
             vapp.unmount()
             removeModalWindow(win_current, win_return)
             table_mts.updateRow(d.id, d)
         }
 
-        // кнопка CANCEL --------------------------------------------------------------------
+        // кнопка CANCEL ----------------------------------------------------------------
         id2e("cancelMTS").onclick = () => {
             if (mode == "new") {
                 remove_selected_mts()
@@ -1344,7 +1404,7 @@ function tabulator_zay2mts(
             vapp.unmount()
             removeModalWindow(win_current, win_return)
         }
-    } ///////// editMTS
+    } /// edit_mts
 
     function remove_selected_mts() {
         let id = table_mts.getSelectedData()[0].id
@@ -1558,7 +1618,7 @@ function tabulator_mts_arm(id_div, appH, id_zayavka = 0) {
 ///                          ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ                                  ///
 /////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////// привязать МТС (id_mts) к пользователю (id_user) ///////////////////
+///////////////////// привязать/отвязать (on_off=true/false) МТС (id_mts) к пользователю (id_user)
 function mts_4_user(id_mts, id_user, on_off) {
     if (on_off) {
         return runSQL_p(

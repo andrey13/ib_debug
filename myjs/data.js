@@ -2,7 +2,7 @@
 // id -> все данные
 //=======================================================================================
 async function id_2_data(id, table) {
-    let response = await fetch(`myphp/id_2_data.php?t=${table},i=${id}`)
+    let response = await fetch(`myphp/id_2_data.php?t=${table}&i=${id}`)
     let data = await response.json()
     return data[0]
 }

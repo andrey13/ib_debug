@@ -11,9 +11,9 @@ function newModalWindow(
     esc_callback = () => { console.log('esc_callback') }
 ) {
 
-    console.log('newModalWindow ==================== ')
-    console.log('win_return = ', win_return)
-// console.log('win_return1 = ', win_return)
+    // console.log('newModalWindow ==================== ')
+    // console.log('win_return = ', win_return)
+    // console.log('win_return1 = ', win_return)
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------      
     // const modalMain = modal + "Main"
@@ -57,7 +57,7 @@ function newModalWindow(
     }
 
     div_modal.oncancel = () => {
-        console.log('oncancel = ', div_modal)
+        // console.log('oncancel = ', div_modal)
     }
 }
 
@@ -81,8 +81,8 @@ function removeModalWindow(modal, win_return = null) {
 
 // удаление модального окна ==========================================================
 function id_2_set_focus(id) {
-    console.log('id_2_set_focus ====================')
-    console.log('id = ', id)
+    // console.log('id_2_set_focus ====================')
+    // console.log('id = ', id)
     const e = id2e(id)
     if (!!id && id != '' && !!e) e.focus()
 }

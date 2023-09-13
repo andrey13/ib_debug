@@ -7,14 +7,15 @@ function select_mts(
     sklad = 0,
     selectable = 1,
     mode = "select",
-    win_return = null
+    win_return = null,
+    id_mts = 0
 ) {
     return new Promise(function (resolve, reject) {
         const win_current = "selectMTS" /////////////////////////////
 
-        console.log("selectMTS ==================== ")
-        console.log("win_current = ", win_current)
-        console.log("win_return = ", win_return)
+        // console.log("selectMTS ==================== ")
+        // console.log("win_current = ", win_current)
+        // console.log("win_return = ", win_return)
 
         if (mode == "select") {
             const formSelectMTS = `<div class="w3-container"></div>`
@@ -54,7 +55,8 @@ function select_mts(
             selectable,
             mode,
             win_current,
-            win_return
+            win_return,
+            id_mts
         )
 
         if (mode == "select") id_2_set_focus("selectMTS")
@@ -76,11 +78,14 @@ function tabulator_select_mts(
     selectable = 1,
     mode = "select",
     win_current = null,
-    win_return = null
+    win_return = null,
+    id_mts = 0
 ) {
+    console.log('id_mts = ', id_mts)
+
     let cols = []
 
-    let cols1 = [
+    const cols1 = [
         {
             title: "СОНО",
             field: "sono",
@@ -90,51 +95,35 @@ function tabulator_select_mts(
         },
     ]
 
-    let cols2 = [
+    const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
-        { title: "SN", field: "SN", widthGrow: 6, headerFilter: true },
+        { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
         {
-            title: "Гб",
-            field: "size_gb",
-            widthGrow: 1,
-            headerFilter: true,
-            editor: "input",
+            title: "ДСП", field: "dsp", widthGrow: 2, headerFilter: true, formatter: "lookup",
+            formatterParams: { 0: "", 1: "дсп" },
         },
         {
-            title: "ЕСК",
-            field: "user_esk_status",
-            formatter: "lookup",
-            formatterParams: { 0: "?", 1: "отключен", 2: "Активен" },
-            widthGrow: 2,
-            headerFilter: true,
+            title: "", field: "bad", headerFilter: true, width: 20, formatter: "lookup",
+            formatterParams: { 0: "", 1: "<i class='fa fa-times'></i>" },
         },
-        {
-            title: "пользователь",
-            field: "uname",
-            widthGrow: 6,
-            headerFilter: true,
-        },
-        {
-            title: "Производитель",
-            field: "manufacturer",
-            widthGrow: 4,
-            headerFilter: true,
-        },
+        { title: "Гб", field: "size_gb", widthGrow: 1, headerFilter: true, editor: "input", },
+        { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true, },
         { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
+        { title: "комментарий", field: "comment", widthGrow: 6, headerFilter: true, },
         {
-            title: "комментарий",
-            field: "comment",
-            widthGrow: 6,
-            headerFilter: true,
-        },
-        {
-            title: "склад",
-            field: "sklad",
-            formatter: "lookup",
+            title: "склад", field: "sklad", formatter: "lookup",
             formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
             widthGrow: 2,
             headerFilter: true
         },
+        {
+            title: "ЕСК", field: "user_esk_status", formatter: "lookup",
+            formatterParams: { 0: "?", 1: "отключен", 2: "Активен" },
+            widthGrow: 2,
+            headerFilter: true,
+        },
+        { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true, },
+
         { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
         { title: "отдел", field: "dname", widthGrow: 4, headerFilter: true },
     ]
@@ -158,23 +147,36 @@ function tabulator_select_mts(
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols2,
+
+        dataLoaded: function () {
+            if (id_mts == 0) return
+            table_select_mts.selectRow(id_mts)
+            table_select_mts.scrollToRow(id_mts, "center", false)
+        },
+
         rowFormatter: function (row) {
             if (row.getData().user_esk_status == 1) {
                 row.getCell("user_esk_status").getElement().style.backgroundColor = '#ff7575'
-                row.getCell("uname").getElement().style.backgroundColor = '#ff7575'                
+                row.getCell("uname").getElement().style.backgroundColor = '#ff7575'
+            }
+            if (row.getData().bad == 1) {
+                row.getCell("bad").getElement().style.backgroundColor = '#ff0000'
+            }
+            if (row.getData().dsp == 1) {
+                row.getCell("dsp").getElement().style.backgroundColor = '#8888ff'
             }
         },
 
         rowSelectionChanged: function (data, rows) {
             if (data.length == 0) {
                 id2e("btnDelMTSVocab").disabled = true
-                id2e("btnAddMTSVocab").disabled = false
+                id2e("btnAddMTSVocab").disabled = isRole("tex")
                 id2e("btnModMTSVocab").disabled = true
                 id2e("btnSelMTSVocab").disabled = true
             } else {
-                id2e("btnDelMTSVocab").disabled = false
-                id2e("btnAddMTSVocab").disabled = false
-                id2e("btnModMTSVocab").disabled = false
+                id2e("btnDelMTSVocab").disabled = isRole("tex")
+                id2e("btnAddMTSVocab").disabled = isRole("tex")
+                id2e("btnModMTSVocab").disabled = isRole("tex")
                 if (mode == "select") id2e("btnSelMTSVocab").disabled = false
             }
         },
@@ -230,7 +232,7 @@ function tabulator_select_mts(
 
         if (ans == 'YES') {
             const data = table_select_mts.getSelectedData()
-            data.forEach((d) => {               
+            data.forEach((d) => {
                 del_mts_vocab(d.id)
                 table_select_mts.deleteRow(d.id)
             })
@@ -285,7 +287,7 @@ function tabulator_select_mts(
                     <tr>
                       <td>
                         ДСП
-                        <n-switch
+                        <n-switch  :rail-style="style_dsp"
                           size="small"
                           checked-value="1"
                           unchecked-value="0"
@@ -294,7 +296,7 @@ function tabulator_select_mts(
                       </td>
                       <td>
                         {{ (dv.bad == "0") ? "исправно" : "неисправно" }}
-                        <n-switch :rail-style="railStyle"
+                        <n-switch :rail-style="style_bad"
                           size="small"                          
                           checked-value="1"
                           unchecked-value="0"
@@ -346,11 +348,6 @@ function tabulator_select_mts(
                     <tr>
                       <td>объем:<input class="o3-border" type="number" v-model="dv.size_gb" style="width: 100px;"></td>
                       <td>{{dv.size}}</td>
-                    </tr>
-
-                    <tr>
-                      <td></td>
-                      <td></td>
                     </tr>
 
                     <tr>
@@ -408,24 +405,18 @@ function tabulator_select_mts(
                         dv: d,
                         chg: false,
                         dsp: d.dsp,
-                        railStyle: ({
-                            focused,
-                            checked
-                          }) => {
+                        style_dsp: ({ focused, checked }) => {
                             const style = {}
-                            if (checked) {
-                              style.background = "red"
-                              if (focused) {
-                                style.boxShadow = "0 0 0 2px #d0305040"
-                              }
-                            } else {
-                              style.background = "green"
-                              if (focused) {
-                                style.boxShadow = "0 0 0 2px #2080f040"
-                              }
-                            }
+                            style.background = (checked) ? "#8888ff" : "grey"
+                            style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
                             return style
-                          }
+                        },
+                        style_bad: ({ focused, checked }) => {
+                            const style = {}
+                            style.background = (checked) ? "red" : "green"
+                            style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                            return style
+                        }
                     }
                 },
                 computed: {
@@ -457,7 +448,7 @@ function tabulator_select_mts(
                         deep: true,
                     },
                 },
-                
+
             })
 
             // const vuetify = Vuetify.createVuetify()
@@ -492,8 +483,9 @@ function tabulator_select_mts(
                     if (u.esk_status == 2) {
                         console.log('u.esk_status == 2')
                         vm.$data.dv.id_depart = u.id_depart
-                        vm.$data.dv.id_otdel = u.id_otdel
-                        vm.$data.dv.dname = (await id_depart_2_data(u.id_depart)).name
+                        const depart_data = await id_depart_2_data(u.id_depart)
+                        vm.$data.dv.id_otdel = depart_data.id_otdel
+                        vm.$data.dv.dname = depart_data.name
                     } else {
                         console.log('u.esk_status != 2')
                         vm.$data.dv.id_depart = 0
