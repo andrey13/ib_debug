@@ -492,7 +492,7 @@ function dialogYESNO(text, win_return = '') {
             resolve("YES")
         }
 
-    });
+    })
 }
 
 function getAllows() {

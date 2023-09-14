@@ -160,6 +160,18 @@ function tabulator_zayavki(id_div, appH) {
             },
         ],
 
+        rowFormatter: function (row) {
+            if (row.getData().status == 'отклонено') {
+                row.getCell("status").getElement().style.backgroundColor = '#ff8888'
+            }
+            if (row.getData().status == 'выполнено') {
+                row.getCell("status").getElement().style.backgroundColor = '#88ff88'
+            }
+            if (row.getData().status == 'на выполнении') {
+                row.getCell("status").getElement().style.backgroundColor = '#8888ff'
+            }
+        },
+
         renderStarted: function () { },
 
         dataLoaded: function (data) {
@@ -331,6 +343,8 @@ function tabulator_zayavki(id_div, appH) {
         const d = table_zayavki.getSelectedData()[0]
         m_id_zayavka = d.id
 
+        d.user_isp = (!!!d.user_isp) ? '<выбрать>' : d.user_isp
+
         // подготовка полей формы ---------------------------------------------------------
         const title_ruk = d.io_ruk == "0" ? "Руководитель" : "И.о. руководителя"
 
@@ -356,72 +370,75 @@ function tabulator_zayavki(id_div, appH) {
         const title_depart_isp = await id_user_2_title_depart(d.id_user_isp)
 
         const appH = window.innerHeight - 600
+
         const status = (await id_2_data(d.id_status, 'types')).name
-
         const headerZayavka = `<h4>Обращение № ${d.id}: ${type} (${status})</h4>`
-
-        const bDELMTS = `<button id='delMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>удалить</i></button>`
-        const bADDMTS = `<button id='addMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>добавить</i></button>`
-        const bMODMTS = `<button id='modMTS' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>изменить</i></button>`
-
-        const menuMTS = `<div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0px; width: 100%;">${bDELMTS + bMODMTS + bADDMTS}</div>`
-
-        const tabMTS = `<div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: white"></div>`
 
         const bodyZayavka = `<div id="" style="margin: 0; padding: 1%;" class="w3-container">
                             <div id="userIT" style="position: absolute; right: 0;width: 400px;">
                                 <span id="title-it">${title_it}</span>
                                 <br>
-                                <button id="selIT" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${fio2dat(d.user_it)}</button>
+                                <button id="selIT" :disabled="disIt" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${fio2dat(d.user_it)}</button>
                             </div>
                             <br>
                             <br>
 
-                            <input class="o3-border" type="date" id="z_date" value="${d.date}">
+                            <input :disabled="disDate" class="o3-border" type="date" id="z_date" v-model="dv.date">
                             <label for="z_date">  Дата обращения</label>
                             <br>
 
                             <center><h4>Прошу осуществить выдачу/возврат/регистрацию МТС следующим сотрудникам:</h4></center>
                             <br>
 
-                            ${menuMTS}
-                            ${tabMTS}
+                            <div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0px; width: 100%;">
+                                <button id='delMTS' :disabled="disDel" class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>удалить</i></button>
+                                <button id='addMTS' :disabled="disAdd" class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>добавить</i></button>
+                                <button id='modMTS' :disabled="disMod" class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal'>изменить</i></button>
+                            </div>
+
+                            <div id="tabMTS" style="display: inline-block; margin: 0; padding: 0; height: 100%; width: 100%; border: 1px solid black; background: white"></div>
+
                             <label for="z_comm">Комментарии</label><br>
-                            <textarea id="z_comm" rows="3" style="width:100%" class="o3-border" value="${d.comment}"></textarea>                            
+                            <textarea id="z_comm" :disabled="disComm" rows="3" style="width:100%" class="o3-border" v-model="dv.comment"></textarea>                            
                             <br>
 
                             <span id="title-otd">${title_otd}:</span>
                             <br> 
-                            <button id="selOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_otd}</button>
+                            <button id="selOtd" :disabled="disOtd" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">{{dv.user_otd}}</button>
                             <br>
 
                             Заявитель:  <span id="title-usr">${title_usr}</span>
                             <br>
-                            <button id="selAuthor" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user}</button>
+                            <button id="selAuthor" :disabled="disAut" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">{{dv.user}}</button>
                             <br>
 
                             Исполнитель: <span id="title-isp">${title_depart_isp}</span>
                             <br>
-                            <button id="selIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">${d.user_isp}</button>
+                            <button id="selIsp" :disabled="disIsp" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal disabled">{{dv.user_isp}}</button>
                             <br>
                             
-                            <button id="b_ENTER" class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить как черновик</button>
-                            <button id="b_ACTION" class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить и отправить на выполнение</button>
-                            <button id="b_CANCEL" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
-                            <button id="b_PRINT1" class="w3-btn w3-padding-small o3-border w3-hover-teal">печать служебной записки</button>
+                            <button id="b_ENTER"  :disabled="disEnter"  v-show="shEnter"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
+                            <button id="b_CANCEL" :disabled="disCancel" v-show="shCancel" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
+                            <button id="b_START"  :disabled="disStart"  v-show="shStart"  class="w3-btn w3-padding-small o3-border w3-hover-teal">отправить на выполнение</button>
+                            <button id="b_STOP"   :disabled="disStop"   v-show="shStop"   class="w3-btn w3-padding-small o3-border w3-hover-red">снять с выполнения</button>
+                            <button id="b_PRINT1" :disabled="disPrint1" v-show="shPrint1" class="w3-btn w3-padding-small o3-border w3-hover-teal">печать служебной записки</button>
+                            <button id="b_ACCEPT" :disabled="disAccept" v-show="shAccept" class="w3-btn w3-padding-small o3-border w3-hover-teal">закрыть заявку</button>
+                            <button id="b_REJECT" :disabled="disReject" v-show="shReject" class="w3-btn w3-padding-small o3-border w3-hover-red">отклонить заявку</button>
+
                             </div>`
 
         footZayavka = ``
 
-        const esc_zayavka = mode == "new"
-            ? () => { remove_selected_zayavka() }
-            : () => { console.log("esc_fun") }
+        const esc_zayavka = mode == 'new'
+            ? () => { 
+                remove_selected_zayavka() 
+                vapp.unmount()
+            }
+            : () => { 
+                vapp.unmount() 
+            }
 
-        newModalWindow(
-            win_current,
-            headerZayavka,
-            bodyZayavka,
-            footZayavka,
+        newModalWindow(win_current, headerZayavka, bodyZayavka, footZayavka,
             (width = "98%"),
             (marginLeft = "1%"),
             (marginTop = "1%"),
@@ -429,29 +446,56 @@ function tabulator_zayavki(id_div, appH) {
             esc_zayavka
         )
 
-        tabulator_zay2mts(
-            status,
-            "tabMTS",
-            appH,
+        // ViewModel ------------------------------------------------------------------------
+        const vapp = Vue.createApp({
+            data() {
+                return {
+                    dv: d,
+                    su: isRole('su'),
+                    mo: isRole('mo'),
+                    tex: isRole('tex'),
+                    is: d.id_status,
+                }
+            },
+            computed: {
+                disAdd()    { return !(this.su || this.is == 31) },
+                disDel()    { return !(this.su || this.is == 31) },
+                disMod()    { return !(this.su || this.is == 31 || (this.mo && this.is == 32)) },
+
+                disIt()     { return !(this.su || this.is == 31) },
+                disOtd()    { return !(this.su || this.is == 31) },
+                disAut()    { return !(this.su || this.is == 31) },
+                disIsp()    { return !(this.su || this.is == 32 || (this.mo && this.is == 32)) },
+                disDate()   { return !(this.su || this.is == 31) },
+                disComm()   { return !(this.su || this.is == 31 || (this.mo && this.is == 32)) },
+
+                disEnter()  { return !(this.su || this.is == 31) },
+                disCancel() { return !(this.su || this.is == 31) },
+                disStart()  { return !(this.su || this.is == 31) },
+                disStop()   { return !(this.su || this.is == 32) },
+                disPrint1() { return !(this.su || false) },
+                disAccept() { return !(this.su || this.is == 32) },
+                disReject() { return !(this.su || this.is == 32) },
+
+                shEnter()   { return this.su || true},
+                shCancel()  { return this.su || true},
+                shStart()   { return this.su || this.tex || this.mo},
+                shStop()    { return this.su || this.tex || this.mo},
+                shPrint1()  { return this.su || this.tex || this.mo},
+                shAccept()  { return this.su || this.mo },
+                shReject()  { return this.su || this.mo },
+            },
+        })
+        
+        const vm = vapp.use(naive).mount('#' + win_current)
+        // ViewModel ------------------------------------------------------------------------
+
+        tabulator_zay2mts(status, 'tabMTS', appH,
             (id_zayavka = d.id),
             (win_return = win_current),            
         )
-        
-        id2e("z_date").focus()
-        id2e("z_date").select()
 
-        if (status == 'на выполнении') {
-            id2e("z_comm").disabled = true
-            id2e("z_date").disabled = true
-            id2e("b_ACTION").disabled = true
-            id2e("selIT").disabled = true
-            id2e("selOtd").disabled = true
-            id2e("selAuthor").disabled = true
-            id2e("selIsp").disabled = true
-            id2e("delMTS").disabled = true
-            id2e("addMTS").disabled = true
-            id2e("modMTS").disabled = true
-        }
+        id_2_set_focus(win_current)
 
         // кнопка выбора начальника ОИТ -------------------------------------------------------
         id2e("selIT").onclick = async function () {
@@ -571,44 +615,83 @@ function tabulator_zayavki(id_div, appH) {
             })
         }
 
-        // кнопка ENTER ---------------------------------------------------------------------
+        // кнопка ENTER (сохранение изменений)-------------------------------------------
         id2e("b_ENTER").onclick = () => {
-            d.date = id2e("z_date").value
-            d.comment = id2e("z_comm").value
+            const d = vm.$data.dv
             d.status = id_status_2_name(d.id_status)
+            vapp.unmount()
             save_zayavka(d)
             verInc("zayavki", g_user.id_depart, "id_depart")
             removeModalWindow(win_current, win_return)
             table_zayavki.updateRow(d.id, d)
         }
 
-        // кнопка ACTION ---------------------------------------------------------------------
-        id2e("b_ACTION").onclick = () => {
-            d.date = id2e("z_date").value
-            d.comment = id2e("z_comm").value
-            d.id_status++
-            d.status = id_status_2_name(d.id_status)
-            save_zayavka(d)
-            verInc("zayavki", g_user.id_depart, "id_depart")
-            removeModalWindow(win_current, win_return)
-            table_zayavki.updateRow(d.id, d)
-        }
-
-        // кнопка CANCEL --------------------------------------------------------------------
+        // кнопка CANCEL (отмена изменений) ---------------------------------------------
         id2e("b_CANCEL").onclick = () => {
             if (mode == "new") remove_selected_zayavka()
+            vapp.unmount()
             removeModalWindow(win_current, win_return)
         }
 
-        // кнопка PRINT1 --------------------------------------------------------------------
+        // кнопка START (отправить на выполнение) ---------------------------------------
+        id2e("b_START").onclick = () => {
+            const d = vm.$data.dv
+            d.id_status = 32 // на выполнении
+            d.status = id_status_2_name(d.id_status)
+            vapp.unmount()
+            save_zayavka(d)
+            verInc("zayavki", g_user.id_depart, "id_depart")
+            removeModalWindow(win_current, win_return)
+            table_zayavki.updateRow(d.id, d)
+        }
+
+        // кнопка STOP (снять с выполнения) ---------------------------------------------
+        id2e("b_STOP").onclick = () => {
+            const d = vm.$data.dv
+            d.id_status = 31 // черновик
+            d.status = id_status_2_name(d.id_status)
+            vapp.unmount()
+            save_zayavka(d)
+            verInc("zayavki", g_user.id_depart, "id_depart")
+            removeModalWindow(win_current, win_return)
+            table_zayavki.updateRow(d.id, d)
+        }
+
+        // кнопка PRINT1 (печать служебной записки) -------------------------------------
         id2e("b_PRINT1").onclick = () => {
             const id_zayavka = table_zayavki.getSelectedData()[0].id
             // const zay_data = table_zayavki.getSelectedData()[0]
             // const mts_data = table_mts.getData()
             print_zayavka(id_zayavka, "view")
         }
+
+        // кнопка b_ACCEPT (закрытие заявки) -------------------------------------------
+        id2e("b_ACCEPT").onclick = () => {
+            const d = vm.$data.dv
+            d.id_status = 33 // выполнено
+            d.status = id_status_2_name(d.id_status)
+            vapp.unmount()
+            save_zayavka(d)
+            verInc("zayavki", g_user.id_depart, "id_depart")
+            removeModalWindow(win_current, win_return)
+            table_zayavki.updateRow(d.id, d)
+        }
+        
+        // кнопка b_REJECT (отклонение заявки) -------------------------------------------
+        id2e("b_REJECT").onclick = () => {
+            const d = vm.$data.dv
+            d.id_status = 34 // отклонено
+            d.status = id_status_2_name(d.id_status)
+            vapp.unmount()
+            save_zayavka(d)
+            verInc("zayavki", g_user.id_depart, "id_depart")
+            removeModalWindow(win_current, win_return)
+            table_zayavki.updateRow(d.id, d)
+        }
+        
     } // edit_zayavka_1
 
+    //=======================================================================================
     function remove_selected_zayavka() {
         let id_zayavka = table_zayavki.getSelectedData()[0].id
         del_zayavka(id_zayavka)
@@ -808,10 +891,12 @@ function tabulator_zayavki(id_div, appH) {
                             ${menuMTS}${menuARM}
                             ${tabMTS}${tabARM}
                             <br><br>
-                            <button id="b_ENTER" class="w3-btn o3-border w3-hover-teal"  tabindex="6">сохранить</button>
-                            <button id="b_CANCEL" class="w3-btn o3-border w3-hover-red" tabindex="7">отменить</button>                            
+                            <button id="b_ENTER"  class="w3-btn o3-border w3-hover-teal" tabindex="6">сохранить</button>
+                            <button id="b_CANCEL" class="w3-btn o3-border w3-hover-red"  tabindex="7">отменить</button>                            
                             <button id="b_PRINT1" class="w3-btn o3-border w3-hover-teal" tabindex="8">печать СЗ на получение</button>
                             <button id="b_PRINT2" class="w3-btn o3-border w3-hover-teal" tabindex="9">печать заявки на подключение</button>
+                            <button id="b_ACCEPT" class="w3-btn o3-border w3-hover-teal" tabindex="10">закрыть заявку</button>
+                            <button id="b_REJECT" class="w3-btn o3-border w3-hover-teal" tabindex="11">отклонить заявку</button>
                             </div>`
 
         footZayavka = ``
@@ -830,8 +915,9 @@ function tabulator_zayavki(id_div, appH) {
         tabulator_zay2mts("tabMTS", appH, (id_zayavka = d.id))
         tabulator_mts_arm("tabARM", appH, (id_zayavka = d.id))
 
-        id2e("z_date").focus()
-        id2e("z_date").select()
+        // id2e("z_date").focus()
+        // id2e("z_date").select()
+        id_2_set_focus(win_current)
 
         // кнопка ENTER ---------------------------------------------------------------------
         id2e("b_ENTER").onclick = () => {
@@ -1000,6 +1086,8 @@ function tabulator_zay2mts(
 
         rowSelectionChanged: function (data, rows) {
             if (status == 'на выполнении') return
+            if (status == 'выполнено') return
+            if (status == 'отклонено') return
             id2e("delMTS").disabled = data.length == 0
             id2e("modMTS").disabled = data.length != 1
             // if (syncWithARM) id2e("addARM").disabled = data.length != 1
@@ -1189,8 +1277,14 @@ function tabulator_zay2mts(
         footZayavkaMTS = ``
 
         const esc_zay2mts = mode == "new"
-            ? () => { remove_selected_mts() }
-            : () => { console.log("esc_fun") }
+            ? () => { 
+                remove_selected_mts() 
+                vapp.unmount()
+            }
+            : () => { 
+                console.log("esc_fun") 
+                vapp.unmount()
+            }
 
         newModalWindow(
             win_current,
@@ -1274,7 +1368,9 @@ function tabulator_zay2mts(
         const e_MTS_reson = id2e("MTS_reson")
         const e_MTS_comm = id2e("MTS_comm")
 
-        id2e("editMTS").focus()
+        // id2e("editMTS").focus()
+        id_2_set_focus(win_current)
+
         // e_MTS_dsp.focus()
         // e_MTS_dsp.select()
         // e_MTS_dsp.checked = d.dsp == "1"
@@ -1329,8 +1425,8 @@ function tabulator_zay2mts(
                 sklad,
                 (selectable = 1),
                 (mode = "select"),
-                (win_return = win_current),
-                d.id_mts
+                (win_return = win_current)
+                // d.id_mts
             )
 
             if (d.oper == 'возврат') {
@@ -1340,14 +1436,35 @@ function tabulator_zay2mts(
                 d.size_gb = mts.size_gb
             }
 
-            d.id_mts = mts.id
-            d.mts_size1 = mts.size_gb
-            d.mts_SN1 = mts.SN
-            e_MTS_size1.value = mts.size_gb
-            e_MTS_SN1.value = mts.SN
-            e_MTS_size.value = d.size_gb
+            console.log('d.id_oper = ', d.id_oper)
+            switch(d.id_oper) {
+                case '28':
+                    console.log('выдача')
+                    d.id_mts = mts.id
+                    d.mts_size1 = mts.size_gb
+                    d.mts_SN1 = mts.SN
+                    e_MTS_size1.value = mts.size_gb
+                    e_MTS_SN1.value = mts.SN
+                    e_MTS_size.value = d.size_gb
+                            break
+                case '29':
+                    console.log('возврат')
+                    break
+                case '35':
+                    console.log('регистрация личного МТС')
+                    break
+            }
 
-            console.log('d.size_gb = ', d.size_gb)
+
+            if (d.oper == 'возврат') {
+                d.id_user = mts.id_user
+                d.user = (await id_user_2_data(d.id_user)).name
+                e_selectUser.innerHTML = d.user
+                d.size_gb = mts.size_gb
+            }
+
+
+            console.log('d = ', d)
         }
 
         // кнопка выбора МТС выданного в качестве замены --------------------------------
@@ -1386,8 +1503,11 @@ function tabulator_zay2mts(
 
             // если выдача или регистрация, привязать MTS к пользователю ----------------
             if (d.oper != 'возврат' && d.id_mts_old != d.id_mts) {
+                console.log('привязка МТС: ', d.id_mts, ' ', d.id_user)
                 mts_4_user(d.id_mts_old, d.id_user, false)
                 mts_4_user(d.id_mts, d.id_user, true)
+                mts_2_sklad(d.id_mts_old, true)
+                mts_2_sklad(d.id_mts, false)
             }
 
             save_zay2mts(d)
@@ -1436,9 +1556,12 @@ function tabulator_zay2mts(
             m_id_MTS = table_mts.getSelectedData().id_mts
             // table_arm.setFilter("id_mts", "=", m_id_MTS)
             const d = table_mts.getSelectedData()
+            if (syncWithARM) id2e("addARM").disabled = d.length == 0
+            if (status == 'на выполнении') return
+            if (status == 'выполнено') return
+            if (status == 'отклонено') return
             id2e("delMTS").disabled = d.length == 0
             id2e("modMTS").disabled = d.length == 0
-            if (syncWithARM) id2e("addARM").disabled = d.length == 0
         }
     }
 
@@ -1619,21 +1742,48 @@ function tabulator_mts_arm(id_div, appH, id_zayavka = 0) {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////// привязать/отвязать (on_off=true/false) МТС (id_mts) к пользователю (id_user)
-function mts_4_user(id_mts, id_user, on_off) {
+async function mts_4_user(id_mts, id_user, on_off) {
+    const user_data = await id_2_data(id_user, 'user')
+    const id_depart = user_data.id_depart
+    const depart_data = await id_2_data(id_depart, 'depart')
+    const id_otdel = depart_data.id_otdel
+    
     if (on_off) {
         return runSQL_p(
             `UPDATE mts SET
-                id_user=${id_user}
+                id_user=${id_user},
+                id_depart=${id_depart},
+                id_otdel=${id_otdel}
             WHERE id=${id_mts}`
         )
     } else {
         return runSQL_p(
             `UPDATE mts SET
-                id_user=0
+                id_user=0,
+                id_depart=0,
+                id_otdel=0
             WHERE id=${id_mts}`
         )
     }
 }
+
+///////////////////// склад/выдано (on_off=true/false) МТС (id_mts)
+function mts_2_sklad(id_mts, on_off) {
+    if (on_off) {
+        return runSQL_p(
+            `UPDATE mts SET
+                sklad=1
+            WHERE id=${id_mts}`
+        )
+    } else {
+        return runSQL_p(
+            `UPDATE mts SET
+                sklad=2
+            WHERE id=${id_mts}`
+        )
+    }
+}
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 function save_zayavka(d) {

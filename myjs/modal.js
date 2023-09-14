@@ -32,8 +32,8 @@ function newModalWindow(
            </div>`;
 
     // вставить модальное окно в конец BODY ---------------------------------------------
-    const body_el = document.getElementsByTagName('body')[0];
-    body_el.insertAdjacentHTML("beforeend", modal_html);
+    const body_el = document.getElementsByTagName('body')[0]
+    body_el.insertAdjacentHTML("beforeend", modal_html)
 
     // задать ширину и положение модального окна ----------------------------------------
     id2e(modalContent).style.width = width;

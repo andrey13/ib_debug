@@ -39,6 +39,7 @@ function select_mts(
             `<button id='btnModMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
             `<button id='btnAddMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
             `<button id='btnDelMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
+            `<button id='btnHisMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
             `</div>`
 
         appHeight = appBodyHeight() * 0.9
@@ -173,11 +174,13 @@ function tabulator_select_mts(
                 id2e("btnAddMTSVocab").disabled = isRole("tex")
                 id2e("btnModMTSVocab").disabled = true
                 id2e("btnSelMTSVocab").disabled = true
+                id2e("btnHisMTSVocab").disabled = true
             } else {
                 id2e("btnDelMTSVocab").disabled = isRole("tex")
                 id2e("btnAddMTSVocab").disabled = isRole("tex")
                 id2e("btnModMTSVocab").disabled = isRole("tex")
                 if (mode == "select") id2e("btnSelMTSVocab").disabled = false
+                id2e("btnHisMTSVocab").disabled = false
             }
         },
 
@@ -244,9 +247,45 @@ function tabulator_select_mts(
         }
     }
 
+    id2e("btnHisMTSVocab").onclick = () => {
+        show_mts_history(
+            table_select_mts.getSelectedData()[0],
+            (win_return = win_current)
+        )
+    }
+
+    //-----------------------------------------------------------------------------------
+    function show_mts_history(d, win_return = null) {
+
+        const win_current = "historyMTS" ///////////////////////////////////////////
+        const header = ''
+        const body = ''
+        const foot = ``
+
+        const esc_mts_history = () => { 
+            console.log("esc_callback") 
+            // vapp.unmount()
+        }
+
+        newModalWindow(
+            win_current,
+            header,
+            body,
+            foot,
+            (width = "90%"),
+            (marginLeft = "5%"),
+            (marginTop = "5%"),
+            win_return,
+            esc_mts_history
+        )
+
+        id_2_set_focus(win_current)
+    }
+
     //-----------------------------------------------------------------------------------
     function edit_mts_vocab(d, win_return = null, mode = "") {
         return new Promise(function (resolve, reject) {
+
             const win_current = "editMTSVocab" ///////////////////////////////////////////
 
             const headerMTSVocab = `<h4>параметры МТС</h4>`
@@ -384,8 +423,14 @@ function tabulator_select_mts(
             const footMTSVocab = ``
 
             const esc_mts_vocab = mode == "new"
-                ? () => { remove_selected_mts_vocab() }
-                : () => { console.log("esc_callback") }
+                ? () => { 
+                    remove_selected_mts_vocab() 
+                    vapp.unmount()
+                }
+                : () => { 
+                    console.log("esc_callback") 
+                    vapp.unmount()
+                }
 
             newModalWindow(
                 win_current,
