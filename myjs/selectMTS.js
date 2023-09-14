@@ -82,7 +82,7 @@ function tabulator_select_mts(
     win_return = null,
     id_mts = 0
 ) {
-    console.log('id_mts = ', id_mts)
+    // console.log('id_mts = ', id_mts)
 
     let cols = []
 
@@ -258,8 +258,8 @@ function tabulator_select_mts(
     function show_mts_history(d, win_return = null) {
 
         const win_current = "historyMTS" ///////////////////////////////////////////
-        const header = ''
-        const body = ''
+        const header = `<h4>история МТС id: ${d.id}, SN: ${d.SN}, ${d.uname}</h4>`
+        const body = `<div class="w3-container"></div>`
         const foot = ``
 
         const esc_mts_history = () => { 
@@ -267,17 +267,47 @@ function tabulator_select_mts(
             // vapp.unmount()
         }
 
-        newModalWindow(
-            win_current,
-            header,
-            body,
-            foot,
-            (width = "90%"),
-            (marginLeft = "5%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_mts_history
+        newModalWindow( 
+            win_current, header, body, foot,
+            width = "90%", marginLeft = "5%", marginTop = "1%",
+            win_return, esc_mts_history
         )
+
+        const table_histoty = new Tabulator('#' + win_current + 'Body', {
+            ajaxURL: "myphp/get_mts_history.php",
+            ajaxConfig: "GET",
+            ajaxContentType: "json",
+            ajaxParams: { i: d.id },
+            height: appBodyHeight(),
+            layout: "fitColumns",
+            tooltipsHeader: true,
+            printAsHtml: true,
+            printHeader: "<h1>история МТС<h1>",
+            printFooter: "",
+            rowContextMenu: rowMenu(),
+            headerFilterPlaceholder: "",
+            selectable: selectable,
+            selectableRangeMode: "click",
+            reactiveData: true,
+            columns: [
+                { title: 'обращение', field: 'z_id', widthGrow: 1, headerFilter: true, topCalc: 'count' },
+                { title: 'дата', field: 'z_date', width: 75, headerFilter: true },
+                // { title: 'тип', field: 'z_id_type', widthGrow: 1, headerFilter: true },
+                { title: 'тип', field: 'type', widthGrow: 4, headerFilter: true },
+                // { title: 'статус', field: 'z_id_status', widthGrow: 1, headerFilter: true },
+                { title: 'статус', field: 'status', widthGrow: 2, headerFilter: true },
+                // { title: 'операция', field: 'zm_id_oper', widthGrow: 1, headerFilter: true },
+                { title: 'операция', field: 'oper', widthGrow: 2, headerFilter: true },
+                { title: 'дсп', field: 'zm_dsp', widthGrow: 1, headerFilter: true },
+                // { title: 'ответственный', field: 'zm_id_user', widthGrow: 1, headerFilter: true },
+                { title: 'ответственный', field: 'user_mts_name', widthGrow: 4, headerFilter: true },
+                // { title: 'заявитель', field: 'z_id_user', widthGrow: 1, headerFilter: true },
+                { title: 'заявитель', field: 'user_name', widthGrow: 4, headerFilter: true },
+                // { title: 'исполнитель', field: 'z_id_user_isp', widthGrow: 1, headerFilter: true },
+                { title: 'исполнитель', field: 'user_isp_name', widthGrow: 4, headerFilter: true },
+            ],
+            footerElement: '',
+        })
 
         id_2_set_focus(win_current)
     }
