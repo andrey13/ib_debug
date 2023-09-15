@@ -1000,7 +1000,7 @@ function tabulator_zay2mts(
     dt_now = dt_now.getTime()
 
     table_mts = new Tabulator("#" + id_div, {
-        ajaxURL: "myphp/loadDataZayavkaMTS.php",
+        ajaxURL: "myphp/get_all_zay2mts.php",
         ajaxParams: { z: id_zayavka },
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -1058,13 +1058,6 @@ function tabulator_zay2mts(
                     { title: "SN", field: "mts_SN1", widthGrow: 2 },
                 ],
             },
-            // {//create column group
-            //     title: "Выдано в качестве замены",
-            //     columns: [
-            //         { title: "Гб", field: "mts_size2", width: 30 },
-            //         { title: "SN", field: "mts_SN2", widthGrow: 1 },
-            //     ],
-            // },
             { title: "выполнено", field: "date_vidano", width: 100 },
             { title: "подключено", field: "date_podkl", width: 100 },
             {
@@ -1099,7 +1092,7 @@ function tabulator_zay2mts(
         },
 
         cellDblClick: function (e, cell) {
-            edit_mts(
+            edit_oper(
                 table_mts.getSelectedData()[0].id,
                 (mode = "edit"),
                 (win_return = win_current)
@@ -1111,7 +1104,7 @@ function tabulator_zay2mts(
         dialog_del_mts((win_return = win_current))
     }
     id2e("modMTS").onclick = () => {
-        edit_mts(
+        edit_oper(
             table_mts.getSelectedData()[0].id,
             (mode = "edit"),
             (win_return = win_current),
@@ -1183,14 +1176,14 @@ function tabulator_zay2mts(
         d.id = id
         d.id_zayavka = id_zayavka
         addTabRow(table_mts, d, false)
-        edit_mts(id, "new", win_return)
+        edit_oper(id, "new", win_return)
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///                                   модальное окно редактора МТС                                        ///
+    ///                                   модальное окно редактора операции с МТС                             ///
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    async function edit_mts(
+    async function edit_oper(
         id_mts,
         mode,
         win_return = null,
@@ -1207,6 +1200,7 @@ function tabulator_zay2mts(
         d.mts_SN2 = !!!d.mts_SN2 ? "" : d.mts_SN2
 
         if (d.user === null) d.user = "<выбрать>"
+        if (d.user1 === null) d.user1 = "<выбрать>"
 
         const headerZayavkaMTS = `<h4>параметры МТС</h4>`
 
@@ -1246,7 +1240,8 @@ function tabulator_zay2mts(
                 <br>
                 <br>
 
-                <button id="selectMTS1" class="w3-btn w3-padding-small o3-border w3-hover-teal" style="text-align: left;" :disabled="disMTS1">{{ txtBtnMTS1 }}</button><br>
+                <button id="selectMTS1" class="w3-btn w3-padding-small o3-border w3-hover-teal" style="text-align: left;" :disabled="disMTS1">{{ txtBtnMTS1 }}</button>
+                <span v-show="showUser1">&nbsp;&nbsp;&nbsp;Кому передается МТС:<button id="selectUser1" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" v-show="showUser1">${d.user1}</button></span><br>
                 <input class="o3-border" type="text" id="MTS_size1" value="${d.mts_size1}" style="width: 100px;" disabled>
                 <label for="MTS_size1">  Объем (Гб)</label>
                 <br>
@@ -1325,15 +1320,18 @@ function tabulator_zay2mts(
                 txtBtnMTS1() {
                     let text = ''
                     // console.log('this.oper = ', this.oper)
-                    switch (this.oper) {
-                        case 'выдача':
+                    switch (this.id_oper) {
+                        case '28':
                             text = 'Взять со склада'
                             break
-                        case 'возврат':
+                        case '29':
                             text = 'Выбрать из выданных'
                             break
-                        case 'регистрация личного МТС':
+                        case '35':
                             text = 'Зарегистрировать'
+                            break
+                        case '36':
+                            text = 'Выбрать из выданных'
                             break
                         default:
                             text = '???'
@@ -1341,8 +1339,11 @@ function tabulator_zay2mts(
                     return text
                 },
                 txtBtnMTS2() { return "Взять со склада" },
-                showSize() { return this.oper == "выдача" },
-                showBtnMTS2() { return this.oper == "замена" },
+                
+                showSize() { return this.id_oper == '28' }, // выдача
+                // showBtnMTS2() { return this.dv.id_oper == '29' }, // замена
+                showUser1() { return this.id_oper == '36'}, // передача другму лицу
+
                 disUser() { return this.mo },
                 disOper() { return this.mo },
                 disDsp() { return this.mo },
@@ -1669,7 +1670,7 @@ function tabulator_mts_arm(id_div, appH, id_zayavka = 0) {
         // table_arm.selectRow(id)
 
         addTabRow(table_arm, d, (top = true))
-        edit_mts(id, "new")
+        edit_oper(id, "new")
     }
 
     //=======================================================================================

@@ -278,7 +278,7 @@ function tabulator_select_mts(
             ajaxConfig: "GET",
             ajaxContentType: "json",
             ajaxParams: { i: d.id },
-            height: appBodyHeight(),
+            height: appBodyHeight()-100,
             layout: "fitColumns",
             tooltipsHeader: true,
             printAsHtml: true,
