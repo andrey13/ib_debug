@@ -661,7 +661,7 @@ function tabulator_zayavki(id_div, appH) {
         id2e("b_PRINT1").onclick = () => {
             const id_zayavka = table_zayavki.getSelectedData()[0].id
             // const zay_data = table_zayavki.getSelectedData()[0]
-            // const mts_data = table_mts.getData()
+            // const mts_data = table_oper.getData()
             print_zayavka(id_zayavka, "view")
         }
 
@@ -706,7 +706,7 @@ function tabulator_zayavki(id_div, appH) {
     function print_zayavka(id_zayavka, mode) {
         const pdf_file_name = "Служебная записка МТС.pdf"
         const zay_data = table_zayavki.getSelectedData()[0]
-        const mts_data = table_mts.getData()
+        const mts_data = table_oper.getData()
         const table_content = []
 
         const title_it =
@@ -981,7 +981,7 @@ function tabulator_zayavki(id_div, appH) {
 } ///////// tabulator_zayavki
 
 /////////////////////////////////////////////////////////////////////////////////////////
-//                                  ТАБУЛЯТОР МТС                                      //
+//                           ТАБУЛЯТОР ОПЕРАЦИЙ С МТС                                  //
 /////////////////////////////////////////////////////////////////////////////////////////
 
 function tabulator_zay2mts(
@@ -999,7 +999,7 @@ function tabulator_zay2mts(
     let dt_now = new Date(moment().format("YYYY-MM-DD"))
     dt_now = dt_now.getTime()
 
-    table_mts = new Tabulator("#" + id_div, {
+    table_oper = new Tabulator("#" + id_div, {
         ajaxURL: "myphp/get_all_zay2mts.php",
         ajaxParams: { z: id_zayavka },
         ajaxConfig: "GET",
@@ -1071,9 +1071,9 @@ function tabulator_zay2mts(
         renderStarted: function () { },
 
         dataLoaded: function (data) {
-            const id = getFirstID(table_mts)
-            table_mts.selectRow(id)
-            m_id_MTS = table_mts.getRow(id).getData().id_mts
+            const id = getFirstID(table_oper)
+            table_oper.selectRow(id)
+            m_id_MTS = table_oper.getRow(id).getData().id_mts
             if (syncWithARM) table_arm.setFilter("id_mts", "=", m_id_MTS)
         },
 
@@ -1093,7 +1093,7 @@ function tabulator_zay2mts(
 
         cellDblClick: function (e, cell) {
             edit_oper(
-                table_mts.getSelectedData()[0].id,
+                table_oper.getSelectedData()[0].id,
                 (mode = "edit"),
                 (win_return = win_current)
             )
@@ -1105,7 +1105,7 @@ function tabulator_zay2mts(
     }
     id2e("modMTS").onclick = () => {
         edit_oper(
-            table_mts.getSelectedData()[0].id,
+            table_oper.getSelectedData()[0].id,
             (mode = "edit"),
             (win_return = win_current),
             syncWithARM
@@ -1175,7 +1175,7 @@ function tabulator_zay2mts(
 
         d.id = id
         d.id_zayavka = id_zayavka
-        addTabRow(table_mts, d, false)
+        addTabRow(table_oper, d, false)
         edit_oper(id, "new", win_return)
     }
 
@@ -1192,7 +1192,7 @@ function tabulator_zay2mts(
         const win_current = "editMTS" /////////////////////////////////////
 
         const allow = getAllows()
-        const d = table_mts.getSelectedData()[0]
+        const d = table_oper.getSelectedData()[0]
 
         d.mts_size1 = !!!d.mts_size1 ? "" : d.mts_size1
         d.mts_size2 = !!!d.mts_size2 ? "" : d.mts_size2
@@ -1202,14 +1202,14 @@ function tabulator_zay2mts(
         if (d.user === null) d.user = "<выбрать>"
         if (d.user1 === null) d.user1 = "<выбрать>"
 
-        const headerZayavkaMTS = `<h4>параметры МТС</h4>`
+        const headerZayavkaMTS = `<h4>операция с МТС</h4>`
 
         const bodyZayavkaMTS = `<div id="vEditMTS" style="margin: 0; padding: 1%;" class="w3-container">
-                <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" :disabled="disUser">${d.user}</button></center>
+                <center>Ответственное лицо:<button id="selectUser" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" :disabled="disUser">{{ dv.user }}</button></center>
                 <br>                                    
 
                 <span style="display: flex; align-items: center;" v-for="o in operTypes">
-                    <input type="radio" :id="'oper'+o.id" name="operTypes" v-bind:value="o.id" v-model="id_oper" :disabled="disOper">
+                    <input type="radio" :id="'oper'+o.id" name="operTypes" v-bind:value="o.id" v-model="dv.id_oper" :disabled="disOper">
                     <label v-bind:for="'oper'+o.id">&nbsp;{{ o.name }}</label>
                 </span>                
                 
@@ -1231,40 +1231,28 @@ function tabulator_zay2mts(
                 <input type="checkbox" id="MTS_dsp" :disabled="disDsp"> ДСП&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 -->
 
-                <input v-show="showSize" class="o3-border" type="number" id="MTS_size" value="${d.size_gb}" :disabled="disSize">
+                <input v-show="showSize" class="o3-border" type="number" id="MTS_size" v-model="dv.size_gb" :disabled="disSize">
                 <label v-show="showSize" for="MTS_size"> Гб запрошено</label>
                 <br>
 
                 <label for="MTS_reson"><b>Обоснование:</b></label><br>
-                <textarea id="MTS_reson" rows="3" style="width:100%" :disabled="disReson">${d.reson}</textarea>
+                <textarea id="MTS_reson" rows="3" style="width:100%" :disabled="disReson" v-model="dv.reson"></textarea>
                 <br>
                 <br>
 
                 <button id="selectMTS1" class="w3-btn w3-padding-small o3-border w3-hover-teal" style="text-align: left;" :disabled="disMTS1">{{ txtBtnMTS1 }}</button>
                 <span v-show="showUser1">&nbsp;&nbsp;&nbsp;Кому передается МТС:<button id="selectUser1" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" v-show="showUser1">${d.user1}</button></span><br>
-                <input class="o3-border" type="text" id="MTS_size1" value="${d.mts_size1}" style="width: 100px;" disabled>
+                <input class="o3-border" type="text" id="MTS_size1" v-model="dv.mts_size1" style="width: 100px;" disabled>
                 <label for="MTS_size1">  Объем (Гб)</label>
                 <br>
                 
-                <input class="o3-border" type="text" id="MTS_SN1" value="${d.mts_SN1}" style="width: 400px;" disabled>
+                <input class="o3-border" type="text" id="MTS_SN1" v-model="dv.mts_SN1" style="width: 400px;" disabled>
                 <label for="MTS_SN1">  Серийный номер</label>
                 <br><br>
                 
-                <div v-show="showBtnMTS2">
-                    <button id="selectMTS2" class="w3-btn w3-padding-small o3-border w3-hover-teal" style="text-align: left;" :disabled="disMTS2">{{ txtBtnMTS2 }}</button><br>
-                    <input class="o3-border" type="text" id="MTS_size2" value="${d.mts_size2}" style="width: 100px;" disabled>
-                    <label for="MTS_size2">  Объем (Гб)</label>
-                    <br>
-                
-                    <input class="o3-border" type="text" id="MTS_SN2" value="${d.mts_SN2}" style="width: 400px;" disabled>
-                    <label for="MTS_SN2">  Серийный номер</label>
-                    <br><br>
-                </div>
-                
                 <label for="MTS_comm"><b>Комментарии:</b></label><br>
-                <textarea id="MTS_comm" rows="3" style="width:100%" :disabled="disComm">${d.comment}</textarea>
-                <br>
-                <br>
+                <textarea id="MTS_comm"  rows="3" style="width:100%" :disabled="disComm"  v-model="dv.comment"></textarea>
+                <br><br>
                 <button id="enterMTS" class="w3-btn w3-padding-small o3-border w3-hover-teal"  >сохранить</button>
                 <button id="cancelMTS" class="w3-btn w3-padding-small o3-border w3-hover-red" >отменить</button>                            
             </div>`
@@ -1299,8 +1287,6 @@ function tabulator_zay2mts(
                 return {
                     dv: d,
                     operTypes: m_operTypes,
-                    text: "ABC",
-                    id_oper: d.id_oper,
                     tex: isRole("tex"),
                     su: isRole("su"),
                     mo: isRole("mo"),
@@ -1315,12 +1301,12 @@ function tabulator_zay2mts(
             },
             computed: {
                 oper() {
-                    return id_oper_2_name(this.id_oper)
+                    return id_oper_2_name(this.dv.id_oper)
                 },
                 txtBtnMTS1() {
                     let text = ''
                     // console.log('this.oper = ', this.oper)
-                    switch (this.id_oper) {
+                    switch (this.dv.id_oper) {
                         case '28':
                             text = 'Взять со склада'
                             break
@@ -1340,41 +1326,26 @@ function tabulator_zay2mts(
                 },
                 txtBtnMTS2() { return "Взять со склада" },
                 
-                showSize() { return this.id_oper == '28' }, // выдача
-                // showBtnMTS2() { return this.dv.id_oper == '29' }, // замена
-                showUser1() { return this.id_oper == '36'}, // передача другму лицу
+                showSize() { return this.dv.id_oper == '28' }, // выдача
+                showUser1() { return this.dv.id_oper == '36'}, // передача другму лицу
 
                 disUser() { return this.mo },
                 disOper() { return this.mo },
                 disDsp() { return this.mo },
                 disReson() { return this.mo },
                 disSize() { return this.mo },
-                disMTS1() { return this.oper == "выдача" && this.tex },
-                disMTS2() { return this.tex },
+                disMTS1() { return ['28', '35'].includes(this.dv.id_oper) && this.tex }, // выдача
                 disComm() { return this.tex },
             },
         })
 
-        const v1 = vapp.use(naive).mount("#vEditMTS")
+        const vm = vapp.use(naive).mount("#vEditMTS")
 
         const e_selectUser = id2e("selectUser")
+        const e_selectUser1 = id2e("selectUser1")
         const e_selectMTS1 = id2e("selectMTS1")
-        const e_selectMTS2 = id2e("selectMTS2")
-        const e_MTS_dsp = id2e("MTS_dsp")
-        const e_MTS_size = id2e("MTS_size")
-        const e_MTS_size1 = id2e("MTS_size1")
-        const e_MTS_size2 = id2e("MTS_size2")
-        const e_MTS_SN1 = id2e("MTS_SN1")
-        const e_MTS_SN2 = id2e("MTS_SN2")
-        const e_MTS_reson = id2e("MTS_reson")
-        const e_MTS_comm = id2e("MTS_comm")
 
-        // id2e("editMTS").focus()
         id_2_set_focus(win_current)
-
-        // e_MTS_dsp.focus()
-        // e_MTS_dsp.select()
-        // e_MTS_dsp.checked = d.dsp == "1"
 
         // кнопка selectUser ---------------------------------------------------------------------
         e_selectUser.onclick = async () => {
@@ -1394,15 +1365,36 @@ function tabulator_zay2mts(
             )
 
             selectedUsers.forEach((u) => {
-                d.id_user = u.id
-                d.user = u.name
-                e_selectUser.innerHTML = d.user
+                vm.$data.dv.id_user = u.id
+                vm.$data.dv.user = u.name
             })
         }
 
-        // кнопка выбора фактически выданного МТС -------------------------------------------
+        // кнопка selectUser1 ---------------------------------------------------------------------
+        e_selectUser1.onclick = async () => {
+            if (d.oper == 'возврат') return
+
+            const selectedUsers = await selectUser(
+                "6100",
+                "",
+                g_user.id_depart,
+                1,
+                (header = "Кому передается МТС"),
+                (width = "40%"),
+                (marginLeft = "30%"),
+                (marginTop = "5%"),
+                (win_return = win_current),
+                d.id_user1
+            )
+
+            selectedUsers.forEach((u) => {
+                vm.$data.dv.id_user = u.id
+                vm.$data.dv.user = u.name
+            })
+        }
+
+        // кнопка выбора  МТС ---------------------------------------------------------------------
         e_selectMTS1.onclick = async () => {
-            const oper = id_oper_2_name(d.id_oper)
             let id_otdel = 0
             let sklad = 0
 
@@ -1420,7 +1412,7 @@ function tabulator_zay2mts(
             d.id_mts_old = d.id_mts
 
             // выбор МТС ------------------------------
-            const mts = await select_mts(
+            const mts_selected = await select_mts(
                 "6100",
                 id_otdel,
                 sklad,
@@ -1430,77 +1422,34 @@ function tabulator_zay2mts(
                 // d.id_mts
             )
 
-            if (d.oper == 'возврат') {
-                d.id_user = mts.id_user
-                d.user = (await id_user_2_data(d.id_user)).name
-                e_selectUser.innerHTML = d.user
-                d.size_gb = mts.size_gb
-            }
-
-            console.log('d.id_oper = ', d.id_oper)
             switch(d.id_oper) {
-                case '28':
-                    console.log('выдача')
-                    d.id_mts = mts.id
-                    d.mts_size1 = mts.size_gb
-                    d.mts_SN1 = mts.SN
-                    e_MTS_size1.value = mts.size_gb
-                    e_MTS_SN1.value = mts.SN
-                    e_MTS_size.value = d.size_gb
-                            break
-                case '29':
-                    console.log('возврат')
+                case '28': // выдача
+                    vm.$data.dv.id_mts = mts_selected.id
+                    vm.$data.dv.mts_size1 = mts_selected.size_gb
+                    vm.$data.dv.mts_SN1 = mts_selected.SN
                     break
-                case '35':
-                    console.log('регистрация личного МТС')
+                case '29': // возврат
+                    vm.$data.dv.id_user = mts_selected.id_user
+                    vm.$data.dv.user = (await id_user_2_data(mts_selected.id_user)).name
+                    vm.$data.dv.id_mts = mts_selected.id
+                    vm.$data.dv.mts_size1 = mts_selected.size_gb
+                    vm.$data.dv.mts_SN1 = mts_selected.SN
+                    vm.$data.dv.size_gb = mts_selected.size_gb
                     break
-            }
-
-
-            if (d.oper == 'возврат') {
-                d.id_user = mts.id_user
-                d.user = (await id_user_2_data(d.id_user)).name
-                e_selectUser.innerHTML = d.user
-                d.size_gb = mts.size_gb
-            }
-
-
-            console.log('d = ', d)
-        }
-
-        // кнопка выбора МТС выданного в качестве замены --------------------------------
-        if (!!e_selectMTS2) {
-            e_selectMTS2.onclick = async () => {
-                const id_otdel =
-                    isRole("su") || isRole("tex") ? 0 : g_user.id_otdel
-
-                const mts = await select_mts(
-                    "6100",
-                    id_otdel,
-                    (sklad = 0),
-                    (selectable = 1),
-                    (mode = "select"),
-                    (win_return = win_current)
-                )
-
-                d.id_mts2 = mts.id
-                d.mts_size2 = mts.size_gb
-                d.mts_SN2 = mts.SN
-                e_MTS_size2.value = mts.size_gb
-                e_MTS_SN2.value = mts.SN
+                case '35': // регистрация
+                    vm.$data.dv.id_mts = mts_selected.id
+                    vm.$data.dv.mts_size1 = mts_selected.size_gb
+                    vm.$data.dv.mts_SN1 = mts_selected.SN
+                    break
+                case '36': // передача
+                    break
             }
         }
 
         // кнопка ENTER -----------------------------------------------------------------
         id2e("enterMTS").onclick = () => {
-            // d.dsp = e_MTS_dsp.checked ? "1" : "0"
-            d.size_gb = e_MTS_size.value
-            d.mts_SN1 = e_MTS_SN1.value
-            d.mts_SN2 = e_MTS_SN2.value
-            d.comment = e_MTS_comm.value
-            d.reson = e_MTS_reson.value
-            d.id_oper = v1.$data.id_oper
-            d.oper = id_oper_2_name(d.id_oper)
+            const d = vm.$data.dv
+            d.oper = id_oper_2_name(vm.$data.dv.id_oper)
 
             // если выдача или регистрация, привязать MTS к пользователю ----------------
             if (d.oper != 'возврат' && d.id_mts_old != d.id_mts) {
@@ -1514,7 +1463,7 @@ function tabulator_zay2mts(
             save_zay2mts(d)
             vapp.unmount()
             removeModalWindow(win_current, win_return)
-            table_mts.updateRow(d.id, d)
+            table_oper.updateRow(d.id, d)
         }
 
         // кнопка CANCEL ----------------------------------------------------------------
@@ -1528,12 +1477,12 @@ function tabulator_zay2mts(
     } /// edit_mts
 
     function remove_selected_mts() {
-        let id = table_mts.getSelectedData()[0].id
+        let id = table_oper.getSelectedData()[0].id
         del_zay2mts(d)
-        table_mts.deleteRow(id)
-        id = getFirstID(table_mts)
-        table_mts.selectRow(id)
-        m_id_MTS = table_mts.getSelectedData().id_mts
+        table_oper.deleteRow(id)
+        id = getFirstID(table_oper)
+        table_oper.selectRow(id)
+        m_id_MTS = table_oper.getSelectedData().id_mts
         if (syncWithARM) table_arm.setFilter("id_mts", "=", m_id_MTS)
     }
 
@@ -1541,7 +1490,7 @@ function tabulator_zay2mts(
     // модальное окно удаления MTS
     //=======================================================================================
     async function dialog_del_mts(win_return = null, syncWithARM = false) {
-        const data = table_mts.getSelectedData()
+        const data = table_oper.getSelectedData()
 
         const ans = await dialogYESNO(
             (text = "Устройства: <br><br>будут удалены, вы уверены?<br>"),
@@ -1550,13 +1499,13 @@ function tabulator_zay2mts(
         if (ans == "YES") {
             data.forEach((d) => {
                 del_zay2mts(d)
-                table_mts.deleteRow(d.id)
+                table_oper.deleteRow(d.id)
             })
-            let id_mts = getFirstID(table_mts)
-            table_mts.selectRow(id_mts)
-            m_id_MTS = table_mts.getSelectedData().id_mts
+            let id_mts = getFirstID(table_oper)
+            table_oper.selectRow(id_mts)
+            m_id_MTS = table_oper.getSelectedData().id_mts
             // table_arm.setFilter("id_mts", "=", m_id_MTS)
-            const d = table_mts.getSelectedData()
+            const d = table_oper.getSelectedData()
             if (syncWithARM) id2e("addARM").disabled = d.length == 0
             if (status == 'на выполнении') return
             if (status == 'выполнено') return
@@ -1626,7 +1575,7 @@ function tabulator_mts_arm(id_div, appH, id_zayavka = 0) {
 
         rowSelectionChanged: function (data, rows) {
             id2e("delARM").disabled = data.length == 0
-            const d = table_mts.getSelectedData()
+            const d = table_oper.getSelectedData()
             id2e("addARM").disabled = d.length == 0
         },
 
@@ -1662,7 +1611,7 @@ function tabulator_mts_arm(id_div, appH, id_zayavka = 0) {
         const id = await runSQL_p(`INSERT INTO mts2comp () VALUES ()`)
         d.id = id
         d.id_zayavka = id_zayavka
-        d.id_mts = table_mts.getSelectedData()[0].id
+        d.id_mts = table_oper.getSelectedData()[0].id
 
         // table_arm.addRow(d, true)
         // table_arm.scrollToRow(id, "top", false)
@@ -1678,7 +1627,7 @@ function tabulator_mts_arm(id_div, appH, id_zayavka = 0) {
     //=======================================================================================
     async function edit_arm(id_zayavka, mode) {
         // let d = table_arm.getSelectedData()[0]
-        let d_MTS = table_mts.getSelectedData()[0]
+        let d_MTS = table_oper.getSelectedData()[0]
         let id_arm = 0
 
         const listComp = await selectComp("6100", 2, g_user.id_depart, true)
