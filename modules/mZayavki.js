@@ -108,6 +108,7 @@ function tabulator_zayavki(id_div, appH) {
 
         columns: [
             { title: "id", field: "id", width: 50, print: false },
+            { title: "id_dep", field: "id_depart", width: 50, print: false },
             {
                 title: "дата",
                 field: "date",
@@ -255,13 +256,7 @@ function tabulator_zayavki(id_div, appH) {
 
         // начальник ОИБ ----------------------------------------------------------------
         const depart_ib = await getDepart("Отдел информационной безопасности")
-
         const user_ib = await getBoss(depart_ib.id)
-
-        // начальник отдела  ------------------------------------------------------------
-        const user_otd = await getBoss(g_user.id_depart)
-
-        // руководитель -----------------------------------------------------------------
 
         // данные для пустой заявки -----------------------------------------------------
         const d = {
@@ -270,13 +265,13 @@ function tabulator_zayavki(id_div, appH) {
             date: moment().format("YYYY-MM-DD"),
             id_type: id_type,
             id_status: m_statusTypes[0].id,
-            id_depart: g_user.id_depart,
+            id_depart: 0,
             id_user_ruk: 0,
             id_user_it: user_it.id,
             id_user_ib: user_ib.id,
-            id_user_otd: user_otd.id,
-            id_user: g_user.id,
-            id_user_isp: 0,
+            id_user_otd: 0,
+            id_user: 0,
+            id_user_isp: 723,
             io_ruk: "0",
             io_it: "0",
             io_ib: "0",
@@ -290,10 +285,22 @@ function tabulator_zayavki(id_div, appH) {
             user_ruk: "Мосиенко А.В.",
             user_it: user_it.name,
             user_ib: user_ib.name,
-            user_otd: user_otd.name,
-            user: g_user.name,
-            user_isp: "<выбрать>",
-            depart: g_user.depart,
+            user_otd: '<выбрать>',
+            user: '<выбрать>',
+            user_isp: 'Котов Вадим Витальевич',
+            depart: '',
+        }
+
+        if (isRole('tex')) {
+            // начальник отдела  ------------------------------------------------------------
+            const user_otd = await getBoss(g_user.id_depart)
+            d.id_depart = g_user.id_depart
+            d.id_user_ib = user_ib.id
+            d.id_user_otd = user_otd.id
+            d.id_user = g_user.id
+            d.user_otd = user_otd.name
+            d.user = g_user.name
+            d.depart = g_user.depart
         }
 
         const id_zayavka = await new_zayavka(d)
@@ -341,9 +348,21 @@ function tabulator_zayavki(id_div, appH) {
         const win_current = "editZayavka" /////////////////////////////////////
         const allow = getAllows()
         const d = table_zayavki.getSelectedData()[0]
+        console.log('d = ', d)
+
         m_id_zayavka = d.id
 
         d.user_isp = (!!!d.user_isp) ? '<выбрать>' : d.user_isp
+
+        const id_depart_user = (await id_user_2_data(d.id_user)).id_depart
+        const id_depart_user_otd = (await id_user_2_data(d.id_user_otd)).id_depart
+
+        console.log('d.id_user = ', d.id_user)
+        console.log('d.id_user_otd = ', d.id_user_otd)
+        console.log('id_depart_user = ', id_depart_user)
+        console.log('id_depart_user_otd = ', id_depart_user_otd)
+        
+        d.depart = (id_depart_user_otd != 0) ? (await id_depart_2_data(id_depart_user_otd)).name : (await id_depart_2_data(id_depart_user)).name
 
         // подготовка полей формы ---------------------------------------------------------
         const title_ruk = d.io_ruk == "0" ? "Руководитель" : "И.о. руководителя"
@@ -531,14 +550,13 @@ function tabulator_zayavki(id_div, appH) {
         id2e("selOtd").onclick = async function () {
             const depart_name = (await id_depart_2_data(d.id_depart)).name
             const depart_name_dat = txt2dat(depart_name)
-            const header_otd =
-                "Выбор начальника (и.о. начальника) " + txt2dat(depart_name)
-            const id_boss = (await getBoss(d.id_depart)).id
+            const header_otd = "Выбор начальника (и.о. начальника) " + txt2dat(depart_name)   
+            const id_boss = (await getBoss(d.id_depart)).id         
 
             const selectedUsers = await selectUser(
                 "6100",
                 "",
-                d.id_depart,
+                isRole('su') ? 0 : d.id_depart,
                 1,
                 (header = header_otd),
                 (width = "40%"),
@@ -548,10 +566,13 @@ function tabulator_zayavki(id_div, appH) {
                 id_boss
             )
 
-            selectedUsers.forEach((u) => {
-                d.id_user_ib = u.id
-                d.user_ib = u.name
-                id2e("selOtd").innerHTML = d.user_ib
+            selectedUsers.forEach(async (u) => {
+                d.id_user_otd = u.id
+                d.user_otd = u.name
+                if (d.id_depart == '0') d.id_depart = u.id_depart
+                const id_boss = (await getBoss(u.id_depart)).id
+
+                id2e("selOtd").innerHTML = d.user_otd
                 id2e("title-otd").innerHTML =
                     (id_boss != u.id ? "И.о. начальника " : "Начальник ") +
                     depart_name_dat
@@ -580,6 +601,7 @@ function tabulator_zayavki(id_div, appH) {
             selectedUsers.forEach((u) => {
                 d.id_user = u.id
                 d.user = u.name
+                d.id_depart = u.id_depart
                 id2e("selAuthor").innerHTML = u.name
                 id2e("title-usr").innerHTML = u.title + " " + depart_name_dat
             })
@@ -1350,11 +1372,12 @@ function tabulator_zay2mts(
         // кнопка selectUser ---------------------------------------------------------------------
         e_selectUser.onclick = async () => {
             if (d.oper == 'возврат') return
+            const id_depart = isRole('su') ? 0 : g_user.id_depart
 
             const selectedUsers = await selectUser(
                 "6100",
                 "",
-                g_user.id_depart,
+                id_depart,
                 1,
                 (header = "Выбор ответственного лица"),
                 (width = "40%"),
@@ -1371,13 +1394,14 @@ function tabulator_zay2mts(
         }
 
         // кнопка selectUser1 ---------------------------------------------------------------------
-        e_selectUser1.onclick = async () => {
+        e_selectUser1.onclick = async () => {            
             if (d.oper == 'возврат') return
+            const id_depart = isRole('su') ? 0 : g_user.id_depart
 
             const selectedUsers = await selectUser(
                 "6100",
                 "",
-                g_user.id_depart,
+                id_depart,
                 1,
                 (header = "Кому передается МТС"),
                 (width = "40%"),
@@ -1454,9 +1478,9 @@ function tabulator_zay2mts(
             // если выдача или регистрация, привязать MTS к пользователю ----------------
             if (d.oper != 'возврат' && d.id_mts_old != d.id_mts) {
                 console.log('привязка МТС: ', d.id_mts, ' ', d.id_user)
-                mts_4_user(d.id_mts_old, d.id_user, false)
-                mts_4_user(d.id_mts, d.id_user, true)
-                mts_2_sklad(d.id_mts_old, true)
+                // mts_4_user(d.id_mts_old, d.id_user, false)
+                // mts_4_user(d.id_mts, d.id_user, true)
+                // mts_2_sklad(d.id_mts_old, true)
                 mts_2_sklad(d.id_mts, false)
             }
 

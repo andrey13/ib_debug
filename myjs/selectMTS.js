@@ -98,6 +98,9 @@ function tabulator_select_mts(
 
     const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
+        { title: "zid", field: "z_id", width: 50, print: false },
+        { title: "дата", field: "date", width: 80, print: false },
+
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
         {
             title: "ДСП", field: "dsp", widthGrow: 2, headerFilter: true, formatter: "lookup",
@@ -165,6 +168,9 @@ function tabulator_select_mts(
             }
             if (row.getData().dsp == 1) {
                 row.getCell("dsp").getElement().style.backgroundColor = '#8888ff'
+            }
+            if (!!row.getData().z_id) {
+                row.getCell("SN").getElement().style.backgroundColor = '#88ff88'
             }
         },
 

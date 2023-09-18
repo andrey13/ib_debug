@@ -11,6 +11,7 @@ async function id_2_data(id, table) {
 // id_depart (id отдела) -> все данные отдела
 //=======================================================================================
 async function id_depart_2_data(id_depart) {
+    if (id_depart == 0) return {name: ''}
     let response = await fetch(`myphp/id_depart_2_data.php?i=${id_depart}`)
     let data = await response.json()
     return data[0]
@@ -29,8 +30,10 @@ async function getDepart(depart) {
 // id_depart (id отдела) -> все данные начальника отдела
 //=======================================================================================
 async function getBoss(id_depart) {
+    if (id_depart == 0 ) return {id: 0, name: ''}
     let response = await fetch(`myphp/getBoss.php?d=${id_depart}`)
     let data = await response.json()
+    if (data.length == 0 ) return {id: 0, name: ''}
     return data[0]
 }
 
@@ -57,7 +60,7 @@ async function id_user_2_title_depart(id_user) {
 // id_user (id пользователя) -> должность
 //=======================================================================================
 async function id_user_2_data(id_user) {
-    if (!!!id_user || id_user == 0) return {id: 0, name: '', title: ''}
+    if (!!!id_user || id_user == 0) return {id: 0, name: '', title: '', id_depart: 0}
     let response = await fetch(`myphp/id_user_2_data.php?u=${id_user}`)
     let data = await response.json()
     return data[0]
