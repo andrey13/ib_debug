@@ -85,14 +85,17 @@ $sql = "SELECT
         u.name AS uname,
         u.esk_status AS user_esk_status,
         d.name AS dname,
-        zm.id_zayavka AS z_id
+        (SELECT COUNT(id) FROM zayavka2mts AS zm WHERE zm.id_mts = m.id) as z_count
     FROM mts AS m 
-    LEFT JOIN zayavka2mts AS zm ON zm.id_mts = m.id
     LEFT JOIN user AS u ON u.id = m.id_user
     LEFT JOIN depart AS d ON d.id = m.id_depart ";
-    
-// $sql = $sql . $sfx . " ORDER BY id DESC";
-$sql = $sql . $sfx . " ORDER BY date";
+
+//zm.id_zayavka AS z_id,
+//LEFT JOIN zayavka2mts AS zm ON zm.id_mts = m.id
+
+
+// $sql = $sql . $sfx . " ORDER BY id,date2 DESC";
+$sql = $sql . $sfx . " ORDER BY SN, date";
 
 // echo $sql;        
 

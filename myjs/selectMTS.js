@@ -40,6 +40,7 @@ function select_mts(
             `<button id='btnAddMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
             `<button id='btnDelMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
             `<button id='btnHisMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
+            `<button id='btnCreMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
             `</div>`
 
         appHeight = appBodyHeight() * 0.9
@@ -98,14 +99,26 @@ function tabulator_select_mts(
 
     const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
-        { title: "zid", field: "z_id", width: 50, print: false },
+        { title: "заявок", field: "z_count", width: 50, print: false },
         { title: "дата", field: "date", width: 80, print: false },
 
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
         {
+            title: "склад", field: "sklad", formatter: "lookup",
+            formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
+            widthGrow: 2,
+            headerFilter: true
+        },
+        { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true, },
+        {
             title: "ДСП", field: "dsp", widthGrow: 2, headerFilter: true, formatter: "lookup",
             formatterParams: { 0: "", 1: "дсп" },
         },
+        { title: "статус", field: "status1", widthGrow: 2, headerFilter: true, },
+        { title: "пользователь", field: "user", widthGrow: 6, headerFilter: true, },
+        { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
+        { title: "отдел", field: "dname", widthGrow: 4, headerFilter: true },
+        { title: "отдел", field: "otdel", widthGrow: 4, headerFilter: true },
         {
             title: "", field: "bad", headerFilter: true, width: 20, formatter: "lookup",
             formatterParams: { 0: "", 1: "<i class='fa fa-times'></i>" },
@@ -114,22 +127,12 @@ function tabulator_select_mts(
         { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true, },
         { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
         { title: "комментарий", field: "comment", widthGrow: 6, headerFilter: true, },
-        {
-            title: "склад", field: "sklad", formatter: "lookup",
-            formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
-            widthGrow: 2,
-            headerFilter: true
-        },
-        {
-            title: "ЕСК", field: "user_esk_status", formatter: "lookup",
-            formatterParams: { 0: "?", 1: "отключен", 2: "Активен" },
-            widthGrow: 2,
-            headerFilter: true,
-        },
-        { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true, },
-
-        { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
-        { title: "отдел", field: "dname", widthGrow: 4, headerFilter: true },
+        // {
+        //     title: "ЕСК", field: "user_esk_status", formatter: "lookup",
+        //     formatterParams: { 0: "?", 1: "отключен", 2: "Активен" },
+        //     widthGrow: 2,
+        //     headerFilter: true,
+        // },
     ]
 
     cols = cols1.concat(cols2)
@@ -150,7 +153,8 @@ function tabulator_select_mts(
         selectable: selectable,
         selectableRangeMode: "click",
         reactiveData: true,
-        columns: cols2,
+        columns: cols2, 
+        // groupBy:"SN",
 
         dataLoaded: function () {
             if (id_mts == 0) return
@@ -160,8 +164,8 @@ function tabulator_select_mts(
 
         rowFormatter: function (row) {
             if (row.getData().user_esk_status == 1) {
-                row.getCell("user_esk_status").getElement().style.backgroundColor = '#ff7575'
-                row.getCell("uname").getElement().style.backgroundColor = '#ff7575'
+                // row.getCell("user_esk_status").getElement().style.backgroundColor = '#ff9999'
+                row.getCell("uname").getElement().style.backgroundColor = '#ffcccc'
             }
             if (row.getData().bad == 1) {
                 row.getCell("bad").getElement().style.backgroundColor = '#ff0000'
@@ -169,24 +173,28 @@ function tabulator_select_mts(
             if (row.getData().dsp == 1) {
                 row.getCell("dsp").getElement().style.backgroundColor = '#8888ff'
             }
-            if (!!row.getData().z_id) {
+            if (row.getData().z_count > 0) {
                 row.getCell("SN").getElement().style.backgroundColor = '#88ff88'
             }
         },
 
-        rowSelectionChanged: function (data, rows) {
+        rowSelectionChanged: function (data, rows) {            
             if (data.length == 0) {
                 id2e("btnDelMTSVocab").disabled = true
                 id2e("btnAddMTSVocab").disabled = isRole("tex")
                 id2e("btnModMTSVocab").disabled = true
                 id2e("btnSelMTSVocab").disabled = true
                 id2e("btnHisMTSVocab").disabled = true
+                id2e("btnCreMTSVocab").disabled = true
+                id2e("btnCreMTSVocab").disabled = !isRole('su')
+
             } else {
                 id2e("btnDelMTSVocab").disabled = isRole("tex")
                 id2e("btnAddMTSVocab").disabled = isRole("tex")
                 id2e("btnModMTSVocab").disabled = isRole("tex")
                 if (mode == "select") id2e("btnSelMTSVocab").disabled = false
                 id2e("btnHisMTSVocab").disabled = false
+                id2e("btnCreMTSVocab").disabled = !isRole('su')
             }
         },
 
@@ -260,7 +268,50 @@ function tabulator_select_mts(
         )
     }
 
+    id2e("btnCreMTSVocab").onclick = () => {
+        create_absent_zayavki(
+            (win_return = win_current)
+        )
+    }
     //-----------------------------------------------------------------------------------
+    function create_absent_zayavki(win_return = null) {
+        const win_current = "createAbsentZayavki" ///////////////////////////////////////////
+        const header = `<h4>Создание недостающих заявок</h4>`
+        const body = `
+        <div class="w3-container" v-html="body">
+        </div>`
+        const foot = ``
+
+        const esc_create_absent_zayavki = () => { 
+            console.log("esc_callback") 
+            // vapp.unmount()
+        }
+
+        newModalWindow( 
+            win_current, header, body, foot,
+            width = "90%", marginLeft = "5%", marginTop = "1%",
+            win_return, esc_create_absent_zayavki
+        )
+
+        const vapp = Vue.createApp({
+            data() {
+                return {
+                    dv: table_select_mts.getData(),
+                    body: '',
+                }
+            },
+        })
+
+        const vm = vapp.use(naive).mount("#createAbsentZayavki")
+
+        vm.$data.dv.forEach((d) => {
+            vm.$data.body = vm.$data.body + '<br>' + d.id
+        })
+
+        id_2_set_focus(win_current)
+    }
+
+     //-----------------------------------------------------------------------------------
     function show_mts_history(d, win_return = null) {
 
         const win_current = "historyMTS" ///////////////////////////////////////////
@@ -446,8 +497,7 @@ function tabulator_select_mts(
                 <textarea rows="3" style="width:100%" v-model="dv.comment"></textarea>
                 <br>
 
-                date2: ${d.date2}<br>
-                date: ${d.date}<br>
+                дата операции {{dv.date}}<br>
                 <br>
                 <button id="btnEnterMTSVocab"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
                 <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>

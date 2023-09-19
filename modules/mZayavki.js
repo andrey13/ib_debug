@@ -406,7 +406,7 @@ function tabulator_zayavki(id_div, appH) {
                             <label for="z_date">  Дата обращения</label>
                             <br>
 
-                            <center><h4>Прошу осуществить выдачу/возврат/регистрацию МТС следующим сотрудникам:</h4></center>
+                            <center><h4>Прошу осуществить выдачу/возврат МТС следующим сотрудникам:</h4></center>
                             <br>
 
                             <div id="tabMTSmenu" style="display: inline-block; margin: 0px; padding: 0px; width: 100%;">
@@ -509,9 +509,9 @@ function tabulator_zayavki(id_div, appH) {
         const vm = vapp.use(naive).mount('#' + win_current)
         // ViewModel ------------------------------------------------------------------------
 
-        tabulator_zay2mts(status, 'tabMTS', appH,
+        tabulator_oper(status, 'tabMTS', appH,
             (id_zayavka = d.id),
-            (win_return = win_current),            
+            (win_return = win_current),
         )
 
         id_2_set_focus(win_current)
@@ -607,7 +607,7 @@ function tabulator_zayavki(id_div, appH) {
             })
         }
 
-        // кнопка выбора исполнителя обращения (м/о лицо ОИТ) -----------------------------------
+        // кнопка выбора исполнителя обращения (м/о лицо ОИТ) ---------------------------
         id2e("selIsp").onclick = async function () {
             const selectedUsers = await selectUser(
                 (sono = "6100"),
@@ -687,7 +687,7 @@ function tabulator_zayavki(id_div, appH) {
             print_zayavka(id_zayavka, "view")
         }
 
-        // кнопка b_ACCEPT (закрытие заявки) -------------------------------------------
+        // кнопка b_ACCEPT (закрытие заявки) --------------------------------------------
         id2e("b_ACCEPT").onclick = () => {
             const d = vm.$data.dv
             d.id_status = 33 // выполнено
@@ -699,7 +699,7 @@ function tabulator_zayavki(id_div, appH) {
             table_zayavki.updateRow(d.id, d)
         }
         
-        // кнопка b_REJECT (отклонение заявки) -------------------------------------------
+        // кнопка b_REJECT (отклонение заявки) ------------------------------------------
         id2e("b_REJECT").onclick = () => {
             const d = vm.$data.dv
             d.id_status = 34 // отклонено
@@ -934,7 +934,7 @@ function tabulator_zayavki(id_div, appH) {
             (win_return = win_current)
         )
 
-        tabulator_zay2mts("tabMTS", appH, (id_zayavka = d.id))
+        tabulator_oper("tabMTS", appH, (id_zayavka = d.id))
         tabulator_mts_arm("tabARM", appH, (id_zayavka = d.id))
 
         // id2e("z_date").focus()
@@ -1006,7 +1006,7 @@ function tabulator_zayavki(id_div, appH) {
 //                           ТАБУЛЯТОР ОПЕРАЦИЙ С МТС                                  //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-function tabulator_zay2mts(
+function tabulator_oper(
     status,
     id_div,
     appH,
@@ -1134,8 +1134,12 @@ function tabulator_zay2mts(
         )
     }
     id2e("addMTS").onclick = () => {
-        // create_mts(id_zayavka)
-        create_mts(id_zayavka, (win_return = win_current))
+        // create_oper(id_zayavka)
+        create_oper(
+            id_zayavka, 
+            0,
+            (win_return = win_current)
+        )
     }
 
     id2e(id_div).style.display = "inline-block"
@@ -1143,13 +1147,17 @@ function tabulator_zay2mts(
     //=======================================================================================
     // создание пустого МТС
     //=======================================================================================
-    async function create_mts(id_zayavka, win_return = null) {
+    async function create_oper(
+        id_zayavka, 
+        id_user = 0,
+        win_return = null
+    ) {
         const d = {
             // поля таблицы Zayavka2mts------------------
             id: "0",
             id_zayavka: id_zayavka,
             id_status: "0",
-            id_user: "0",
+            id_user: id_user,
             id_mts: "0",
             id_mts2: "0",
             id_oper: m_operTypes[0].id,
@@ -1371,7 +1379,7 @@ function tabulator_zay2mts(
 
         // кнопка selectUser ---------------------------------------------------------------------
         e_selectUser.onclick = async () => {
-            if (d.oper == 'возврат') return
+            // if (d.oper == 'возврат') return
             const id_depart = isRole('su') ? 0 : g_user.id_depart
 
             const selectedUsers = await selectUser(
