@@ -275,11 +275,15 @@ function tabulator_select_mts(
     }
     //-----------------------------------------------------------------------------------
     function create_absent_zayavki(win_return = null) {
+        
         const win_current = "createAbsentZayavki" ///////////////////////////////////////////
+        
         const header = `<h4>Создание недостающих заявок</h4>`
+        
         const body = `
         <div class="w3-container" v-html="body">
         </div>`
+
         const foot = ``
 
         const esc_create_absent_zayavki = () => { 
@@ -289,10 +293,11 @@ function tabulator_select_mts(
 
         newModalWindow( 
             win_current, header, body, foot,
-            width = "90%", marginLeft = "5%", marginTop = "1%",
+            width = "75%", marginLeft = "20%", marginTop = "1%",
             win_return, esc_create_absent_zayavki
         )
 
+        // viewModel -------------------------------------------------------------------->
         const vapp = Vue.createApp({
             data() {
                 return {
@@ -303,9 +308,21 @@ function tabulator_select_mts(
         })
 
         const vm = vapp.use(naive).mount("#createAbsentZayavki")
+        // viewModel --------------------------------------------------------------------<
 
-        vm.$data.dv.forEach((d) => {
-            vm.$data.body = vm.$data.body + '<br>' + d.id
+
+        let SN_prev = ''
+        let SN_next = ''
+        vm.$data.dv.forEach((d) => {            
+            SN_next = d.SN
+            
+            if (SN_next != SN_prev) { // новая группа операций с SN_next
+                vm.$data.body = vm.$data.body + '<br>' + d.id + ' ' + SN_next
+            } else { // продолжение старой группы операций с SN_next
+                vm.$data.body = vm.$data.body + '<br>' + d.id
+            }
+
+            SN_prev = SN_next            
         })
 
         id_2_set_focus(win_current)

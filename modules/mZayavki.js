@@ -5,8 +5,10 @@ let m_id_ARM = 0
 let m_id_empty_MTS = 0
 let m_id_empty_ARM = 0
 let m_ver_zayavki = 0
+let m_id_user = 0
 let m_user_it = 0
 let m_user_ib = 0
+let m_user = ''
 
 // виды операций с МТС---------------------------------------------------------
 let m_operTypes = []
@@ -250,6 +252,8 @@ function tabulator_zayavki(id_div, appH) {
     // создание пустой заявки с последующим редактированием
     //=======================================================================================
     async function create_zayavka_1(type, id_type, win_return = null) {
+        m_id_user = 0
+        m_user = ''
         // начальник ОИТ ----------------------------------------------------------------
         const depart_it = await getDepart("Отдел информационных технологий")
         const user_it = await getBoss(depart_it.id)
@@ -353,6 +357,8 @@ function tabulator_zayavki(id_div, appH) {
         m_id_zayavka = d.id
 
         d.user_isp = (!!!d.user_isp) ? '<выбрать>' : d.user_isp
+        m_id_user = (!!!d.id_user) ? 0 : d.id_user
+        m_user = (!!!d.user) ? 0 : d.user
 
         const id_depart_user = (await id_user_2_data(d.id_user)).id_depart
         const id_depart_user_otd = (await id_user_2_data(d.id_user_otd)).id_depart
@@ -599,8 +605,10 @@ function tabulator_zayavki(id_div, appH) {
             )
 
             selectedUsers.forEach((u) => {
+                m_id_user = u.id
                 d.id_user = u.id
                 d.user = u.name
+                m_user = u.name
                 d.id_depart = u.id_depart
                 id2e("selAuthor").innerHTML = u.name
                 id2e("title-usr").innerHTML = u.title + " " + depart_name_dat
@@ -1137,7 +1145,7 @@ function tabulator_oper(
         // create_oper(id_zayavka)
         create_oper(
             id_zayavka, 
-            0,
+            m_id_user,
             (win_return = win_current)
         )
     }
@@ -1145,13 +1153,15 @@ function tabulator_oper(
     id2e(id_div).style.display = "inline-block"
 
     //=======================================================================================
-    // создание пустого МТС
+    // создание пустой операции
     //=======================================================================================
     async function create_oper(
         id_zayavka, 
         id_user = 0,
         win_return = null
     ) {
+        console.log('m_id_user = ', m_id_user)
+        console.log('id_user = ', id_user)
         const d = {
             // поля таблицы Zayavka2mts------------------
             id: "0",
@@ -1168,6 +1178,7 @@ function tabulator_oper(
             date_zakaz: "",
             date_vdano: "",
             date_podkl: "",
+            user: m_user,
 
             // поля SN и size_gb из таблицы mts ----------------------
             mts_SN1: "",
@@ -1176,7 +1187,7 @@ function tabulator_oper(
             mts_size2: "0",
 
             // поле name из таблицы user (расшифровка id_user)---
-            user: "<выбрать>",
+            // user: "<выбрать>",
 
             // поле name из таблицы types (расшифровка id_oper) -
             oper: "",
@@ -1192,14 +1203,16 @@ function tabulator_oper(
                 id_oper,                
                 size_gb,
                 reson,
-                comment
+                comment,
+                id_user
             ) VALUES (
                 ${d.id_zayavka}, 
                 0,
                 ${d.id_oper}, 
                 ${d.size_gb},
                "${d.reson}",
-               "${d.comment}"
+               "${d.comment}",
+                ${d.id_user}
             )`
         )
 
@@ -1272,6 +1285,7 @@ function tabulator_oper(
 
                 <button id="selectMTS1" class="w3-btn w3-padding-small o3-border w3-hover-teal" style="text-align: left;" :disabled="disMTS1">{{ txtBtnMTS1 }}</button>
                 <span v-show="showUser1">&nbsp;&nbsp;&nbsp;Кому передается МТС:<button id="selectUser1" class="w3-btn w3-padding-small o3-button-0 w3-hover-teal" v-show="showUser1">${d.user1}</button></span><br>
+                id: {{ dv.id_mts }}<br>
                 <input class="o3-border" type="text" id="MTS_size1" v-model="dv.mts_size1" style="width: 100px;" disabled>
                 <label for="MTS_size1">  Объем (Гб)</label>
                 <br>
