@@ -100,7 +100,19 @@ function tabulator_select_mts(
     const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
         { title: "заявок", field: "z_count", width: 50, print: false },
-        { title: "дата", field: "date", width: 80, print: false },
+        // { title: "дата", field: "date", width: 80, print: false },
+        {
+            title: "дата",
+            field: "date",
+            width: 80,
+            headerFilter: true,
+            formatter: "datetime",
+            formatterParams: {
+                inputFormat: "YYYY-MM-DD",
+                outputFormat: "DD.MM.YYYY",
+            },
+        },
+
 
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
         {
@@ -154,7 +166,7 @@ function tabulator_select_mts(
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols2, 
-        // groupBy:"SN",
+        groupBy:"SN",
 
         dataLoaded: function () {
             if (id_mts == 0) return
@@ -365,11 +377,21 @@ function tabulator_select_mts(
             reactiveData: true,
             columns: [
                 { title: 'обращение', field: 'z_id', widthGrow: 1, headerFilter: true, topCalc: 'count' },
-                { title: 'дата', field: 'z_date', width: 75, headerFilter: true },
+                // { title: 'дата', field: 'z_date', width: 75, headerFilter: true },
+                {
+                    title: "дата",
+                    field: "z_date",
+                    width: 75,
+                    headerFilter: true,
+                    formatter: "datetime",
+                    formatterParams: {
+                        inputFormat: "YYYY-MM-DD",
+                        outputFormat: "DD.MM.YYYY",
+                    },
+                }, 
                 // { title: 'тип', field: 'z_id_type', widthGrow: 1, headerFilter: true },
                 { title: 'тип', field: 'type', widthGrow: 4, headerFilter: true },
                 // { title: 'статус', field: 'z_id_status', widthGrow: 1, headerFilter: true },
-                { title: 'статус', field: 'status', widthGrow: 2, headerFilter: true },
                 // { title: 'операция', field: 'zm_id_oper', widthGrow: 1, headerFilter: true },
                 { title: 'операция', field: 'oper', widthGrow: 2, headerFilter: true },
                 { title: 'дсп', field: 'zm_dsp', widthGrow: 1, headerFilter: true },
@@ -379,6 +401,7 @@ function tabulator_select_mts(
                 { title: 'заявитель', field: 'user_name', widthGrow: 4, headerFilter: true },
                 // { title: 'исполнитель', field: 'z_id_user_isp', widthGrow: 1, headerFilter: true },
                 { title: 'исполнитель', field: 'user_isp_name', widthGrow: 4, headerFilter: true },
+                { title: 'статус', field: 'status', widthGrow: 2, headerFilter: true },
             ],
             footerElement: '',
         })
