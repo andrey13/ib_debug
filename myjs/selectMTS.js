@@ -99,7 +99,8 @@ function tabulator_select_mts(
 
     const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
-        { title: "заявок", field: "z_count", width: 50, print: false },
+        { title: "№", field: "numb", widthGrow: 1, headerFilter: true },
+        { title: "заявок", field: "z_count", width: 50, print: false, headerFilter: true },
         // { title: "дата", field: "date", width: 80, print: false },
         {
             title: "дата",
@@ -472,6 +473,7 @@ function tabulator_select_mts(
                     </tr>
 
                     <tr>
+                      <td>№: <input class="o3-border" type="text" id="MTS_Numb" v-model="dv.numb" style="width: 300px;"></td>
                       <td>SN: <input class="o3-border" type="text" id="MTS_SN1" v-model="dv.SN" style="width: 300px;"></td>
                       <td></td>
                     </tr>
@@ -804,6 +806,7 @@ async function save_mts(d) {
     const sql =
         d.id == 0
             ? `INSERT INTO mts ( 
+            numb,
             SN, 
             id_user,
             id_comp,
@@ -827,6 +830,7 @@ async function save_mts(d) {
             eko,
             bad
         ) VALUES (
+           "${d.numb}", 
            "${d.SN}", 
             ${nn(d.id_user)},
             ${nn(d.id_comp)},
@@ -851,6 +855,7 @@ async function save_mts(d) {
             ${d.bad}
         )`
             : `UPDATE mts SET 
+            numb="${d.numb}",
             SN="${d.SN}", 
             id_user=${nn(d.id_user)},
             id_comp=${nn(d.id_comp)},
@@ -896,6 +901,7 @@ function del_mts_vocab(id) {
 function factory_MTS() {
     return {
         id: 0,
+        numb: '',
         SN: '',
         id_user: 0,
         id_comp: 0,

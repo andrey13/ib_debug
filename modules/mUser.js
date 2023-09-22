@@ -31,7 +31,7 @@ function createTabulatorUser(id_div, appH, msgF) {
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder:"",
         columns:[ 
-            //{titlw:'id',       field:'id'},
+            {title:'id',       field:'id'},
             {title:"СОНО",     field:"sono",       widthGrow:1, headerFilter:true, topCalc:"count"},
             {title:"логин",    field:"Account",    widthGrow:2, headerFilter:true},
             {title:"ФИО",      field:"name",       widthGrow:4, headerFilter:true},

@@ -11,6 +11,7 @@ if ($id_otdel != '0' and $sklad != '0') $sfx = "WHERE m.id_otdel=$id_otdel AND s
 
 $sql = "SELECT 
             m.id,
+            m.numb,
             m.SN,
             m.id_user,
             m.id_comp,
