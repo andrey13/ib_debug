@@ -116,15 +116,9 @@ function tabulator_select_mts(
 
 
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
-        {
-            title: "склад", field: "sklad", formatter: "lookup",
-            formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
-            widthGrow: 2,
-            headerFilter: true
-        },
         { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true, },
         {
-            title: "ДСП", field: "dsp", widthGrow: 2, headerFilter: true, formatter: "lookup",
+            title: "ДСП", field: "dsp", widthGrow: 1, headerFilter: true, formatter: "lookup",
             formatterParams: { 0: "", 1: "дсп" },
         },
         { title: "статус", field: "status1", widthGrow: 2, headerFilter: true, },
@@ -139,6 +133,12 @@ function tabulator_select_mts(
         { title: "Гб", field: "size_gb", widthGrow: 1, headerFilter: true, editor: "input", },
         { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true, },
         { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
+        {
+            title: "склад", field: "sklad", formatter: "lookup",
+            formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
+            widthGrow: 2,
+            headerFilter: true
+        },
         { title: "комментарий", field: "comment", widthGrow: 6, headerFilter: true, },
         // {
         //     title: "ЕСК", field: "user_esk_status", formatter: "lookup",
@@ -149,6 +149,8 @@ function tabulator_select_mts(
     ]
 
     cols = cols1.concat(cols2)
+
+    let group = (mode == 'select') ? '' : 'SN'
 
     table_select_mts = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_mts.php",
@@ -167,7 +169,7 @@ function tabulator_select_mts(
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols2, 
-        groupBy:"SN",
+        groupBy: group,
 
         dataLoaded: function () {
             if (id_mts == 0) return
@@ -276,7 +278,7 @@ function tabulator_select_mts(
 
     id2e("btnHisMTSVocab").onclick = () => {
         show_mts_history(
-            table_select_mts.getSelectedData()[0],
+            table_select_mts.getSelectedData()[0].id,
             (win_return = win_current)
         )
     }
@@ -342,10 +344,11 @@ function tabulator_select_mts(
     }
 
      //-----------------------------------------------------------------------------------
-    function show_mts_history(d, win_return = null) {
+    async function show_mts_history(id_mts, win_return = null) {
 
+        const data_mts = await id_2_data(id_mts, 'mts')
         const win_current = "historyMTS" ///////////////////////////////////////////
-        const header = `<h4>история МТС id: ${d.id}, SN: ${d.SN}, ${d.uname}</h4>`
+        const header = `<h4>история МТС id: ${data_mts.id}, SN: ${data_mts.SN}, ${data_mts.uname}</h4>`
         const body = `<div class="w3-container"></div>`
         const foot = ``
 
@@ -356,7 +359,7 @@ function tabulator_select_mts(
 
         newModalWindow( 
             win_current, header, body, foot,
-            width = "90%", marginLeft = "5%", marginTop = "1%",
+            width = "59%", marginLeft = "40%", marginTop = "1%",
             win_return, esc_mts_history
         )
 
@@ -364,7 +367,7 @@ function tabulator_select_mts(
             ajaxURL: "myphp/get_mts_history.php",
             ajaxConfig: "GET",
             ajaxContentType: "json",
-            ajaxParams: { i: d.id },
+            ajaxParams: { i: data_mts.id },
             height: appBodyHeight()-100,
             layout: "fitColumns",
             tooltipsHeader: true,

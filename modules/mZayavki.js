@@ -483,32 +483,29 @@ function tabulator_zayavki(id_div, appH) {
                 }
             },
             computed: {
-                disAdd()    { return !(this.su || this.is == 31) },
-                disDel()    { return !(this.su || this.is == 31) },
-                disMod()    { return !(this.su || this.is == 31 || (this.mo && this.is == 32)) },
-
-                disIt()     { return !(this.su || this.is == 31) },
-                disOtd()    { return !(this.su || this.is == 31) },
-                disAut()    { return !(this.su || this.is == 31) },
-                disIsp()    { return !(this.su || this.is == 32 || (this.mo && this.is == 32)) },
-                disDate()   { return !(this.su || this.is == 31) },
-                disComm()   { return !(this.su || this.is == 31 || (this.mo && this.is == 32)) },
-
-                disEnter()  { return !(this.su || this.is == 31) },
-                disCancel() { return !(this.su || this.is == 31) },
-                disStart()  { return !(this.su || this.is == 31) },
-                disStop()   { return !(this.su || this.is == 32) },
-                disPrint1() { return !(this.su || false) },
-                disAccept() { return !(this.su || this.is == 32) },
-                disReject() { return !(this.su || this.is == 32) },
-
-                shEnter()   { return this.su || true},
-                shCancel()  { return this.su || true},
-                shStart()   { return this.su || this.tex || this.mo},
-                shStop()    { return this.su || this.tex || this.mo},
-                shPrint1()  { return this.su || this.tex || this.mo},
-                shAccept()  { return this.su || this.mo },
-                shReject()  { return this.su || this.mo },
+                disAdd()    { return !(this.su || this.mo || this.is == 31) },
+                disDel()    { return !(this.su || this.mo || this.is == 31) },
+                disMod()    { return !(this.su || this.mo || this.is == 31 || (this.mo && this.is == 32)) },
+                disIt()     { return !(this.su || this.mo || this.is == 31) },
+                disOtd()    { return !(this.su || this.mo || this.is == 31) },
+                disAut()    { return !(this.su || this.mo || this.is == 31) },
+                disIsp()    { return !(this.su || this.mo || this.is == 32 || (this.mo && this.is == 32)) },
+                disDate()   { return !(this.su || this.mo || this.is == 31) },
+                disComm()   { return !(this.su || this.mo || this.is == 31 || (this.mo && this.is == 32)) },
+                disEnter()  { return !(this.su || this.mo || this.is == 31) },
+                disCancel() { return !(this.su || this.mo || this.is == 31) },
+                disStart()  { return !(this.su || this.mo || this.is == 31) },
+                disStop()   { return !(this.su || this.mo || this.is == 32) },
+                disPrint1() { return !(this.su || this.mo || false) },
+                disAccept() { return !(this.su || this.mo || this.is == 32) },
+                disReject() { return !(this.su || this.mo || this.is == 32) },
+                shEnter()   { return   this.su || this.mo || true},
+                shCancel()  { return   this.su || this.mo || true},
+                shStart()   { return   this.su || this.mo || this.tex || this.mo},
+                shStop()    { return   this.su || this.mo || this.tex || this.mo},
+                shPrint1()  { return   this.su || this.mo || this.tex || this.mo},
+                shAccept()  { return   this.su || this.mo || this.mo },
+                shReject()  { return   this.su || this.mo || this.mo },
             },
         })
         
@@ -1373,13 +1370,13 @@ function tabulator_oper(
                 showSize() { return this.dv.id_oper == '28' }, // выдача
                 showUser1() { return this.dv.id_oper == '36'}, // передача другму лицу
 
-                disUser() { return this.mo },
-                disOper() { return this.mo },
-                disDsp() { return this.mo },
-                disReson() { return this.mo },
-                disSize() { return this.mo },
-                disMTS1() { return ['28', '35'].includes(this.dv.id_oper) && this.tex }, // выдача
-                disComm() { return this.tex },
+                disUser()  { return false && this.mo },
+                disOper()  { return false && this.mo },
+                disDsp()   { return false && this.mo },
+                disReson() { return false && this.mo },
+                disSize()  { return false && this.mo },
+                disMTS1()  { return false && ['28', '35'].includes(this.dv.id_oper) && this.tex }, // выдача
+                disComm()  { return false && this.tex },
             },
         })
 

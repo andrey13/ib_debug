@@ -30,7 +30,7 @@ LEFT JOIN types AS t1 ON t1.id = z.id_type
 LEFT JOIN types AS t2 ON t2.id = z.id_status
 LEFT JOIN types AS t3 ON t3.id = zm.id_oper
 WHERE zm.id_mts=$id_mts
-ORDER BY z_date";
+ORDER BY z_date, z_id";
 
 
 
