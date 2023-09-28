@@ -12,7 +12,8 @@ function select_mts(
     id_mts = 0
 ) {
     return new Promise(function (resolve, reject) {
-        const win_current = 'selectMTS'
+        const salt = randomStr(10)
+        const win_current = 'selectMTS' + salt
 
         if (mode == 'select') {
             newModalWindow(
@@ -27,24 +28,12 @@ function select_mts(
             )
         }
 
-        let msgFooter =
-            `<span id="select-stats"></span>` +
-            `<div style="width: 100%; text-align: left;">` +
-            `<button id='btnSelMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
-            `<button id='btnModMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
-            `<button id='btnAddMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
-            `<button id='btnDelMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
-            `<button id='btnHisMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-            `<button id='btnCreMTSVocab' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
-            `</div>`
-
-        appHeight = appBodyHeight()
+        const appHeight = appBodyHeight()
 
         table_select_mts = tabulator_select_mts(
             div = (mode == 'select') ? win_current + 'Body' : 'appBody',
             sono,
-            appHeight,
-            msgFooter,
+            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
             resolve,
             reject,
             id_otdel,
@@ -53,7 +42,7 @@ function select_mts(
             mode,
             win_current,
             win_return,
-            id_mts
+            id_mts,
         )
 
         if (mode == "select") id_2_set_focus(win_current)
@@ -64,8 +53,7 @@ function select_mts(
 function tabulator_select_mts(
     div,
     sono,
-    appH,
-    msgF,
+    tabHeight,
     resolve,
     reject,
     id_otdel = 0,
@@ -74,7 +62,7 @@ function tabulator_select_mts(
     mode = "select",
     win_current = null,
     win_return = null,
-    id_mts = 0
+    id_mts = 0,
 ) {
     let cols = []
 
@@ -141,14 +129,34 @@ function tabulator_select_mts(
 
     cols = cols1.concat(cols2)
 
-    let group = (mode == 'select') ? '' : 'SN'
+    const group = (mode == 'select') ? '' : 'SN'
+
+    const salt = randomStr(10)
+
+    const id_button_sel = 'sel' + salt
+    const id_button_mod = 'mod' + salt
+    const id_button_add = 'add' + salt
+    const id_button_del = 'del' + salt
+    const id_button_his = 'his' + salt
+    const id_button_cre = 'cre' + salt
+
+    const msgFooter =
+    `<span id="select-stats"></span>` +
+    `<div style="width: 100%; text-align: left;">` +
+    `<button id='${id_button_sel}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
+    `<button id='${id_button_mod}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
+    `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
+    `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
+    `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
+    `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
+    `</div>`
 
     tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_mts.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
         ajaxParams: { s: sono, o: id_otdel, k: sklad },
-        height: appH,
+        height: tabHeight,
         layout: "fitColumns",
         tooltipsHeader: true,
         printAsHtml: true,
@@ -161,6 +169,7 @@ function tabulator_select_mts(
         reactiveData: true,
         columns: cols2, 
         groupBy: group,
+        footerElement: msgFooter,
 
         dataLoaded: function () {
             if (id_mts == 0) return
@@ -186,21 +195,20 @@ function tabulator_select_mts(
 
         rowSelectionChanged: function (data, rows) {            
             if (data.length == 0) {
-                id2e("btnDelMTSVocab").disabled = true
-                id2e("btnAddMTSVocab").disabled = isRole("tex")
-                id2e("btnModMTSVocab").disabled = true
-                id2e("btnSelMTSVocab").disabled = true
-                id2e("btnHisMTSVocab").disabled = true
-                id2e("btnCreMTSVocab").disabled = true
-                id2e("btnCreMTSVocab").disabled = !isRole('su')
+                id2e(id_button_del).disabled = true
+                id2e(id_button_add).disabled = isRole("tex")
+                id2e(id_button_mod).disabled = true
+                id2e(id_button_sel).disabled = true
+                id2e(id_button_his).disabled = true
+                id2e(id_button_cre).disabled = !isRole('su')
 
             } else {
-                id2e("btnDelMTSVocab").disabled = isRole("tex")
-                id2e("btnAddMTSVocab").disabled = isRole("tex")
-                id2e("btnModMTSVocab").disabled = isRole("tex")
-                if (mode == "select") id2e("btnSelMTSVocab").disabled = false
-                id2e("btnHisMTSVocab").disabled = false
-                id2e("btnCreMTSVocab").disabled = !isRole('su')
+                id2e(id_button_del).disabled = isRole("tex")
+                id2e(id_button_add).disabled = isRole("tex")
+                id2e(id_button_mod).disabled = isRole("tex")
+                if (mode == "select") id2e(id_button_sel).disabled = false
+                id2e(id_button_his).disabled = false
+                id2e(id_button_cre).disabled = !isRole('su')
             }
         },
 
@@ -216,15 +224,15 @@ function tabulator_select_mts(
             }
         },
 
-        footerElement: msgF,
+        
     })
 
-    id2e("btnSelMTSVocab").onclick = () => {
+    id2e(id_button_sel).onclick = () => {
         removeModalWindow(win_current, win_return)
         resolve(table_select_mts.getSelectedData()[0])
     }
 
-    id2e("btnAddMTSVocab").onclick = async () => {
+    id2e(id_button_add).onclick = async () => {
         const d = factory_MTS()
         d.id = await save_mts(d)
 
@@ -239,7 +247,7 @@ function tabulator_select_mts(
         console.log("res = ", res)
     }
 
-    id2e("btnModMTSVocab").onclick = async () => {
+    id2e(id_button_mod).onclick = async () => {
         const res = await edit_mts_vocab(
             table_select_mts.getSelectedData()[0],
             (win_return = win_current),
@@ -247,7 +255,7 @@ function tabulator_select_mts(
         )
     }
 
-    id2e("btnDelMTSVocab").onclick = async () => {
+    id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
             (text = "Удалить МТС"),
             (win_return = win_current)
@@ -267,14 +275,14 @@ function tabulator_select_mts(
         }
     }
 
-    id2e("btnHisMTSVocab").onclick = () => {
+    id2e(id_button_his).onclick = () => {
         show_mts_history(
             table_select_mts.getSelectedData()[0].id,
             (win_return = win_current)
         )
     }
 
-    id2e("btnCreMTSVocab").onclick = () => {
+    id2e(id_button_cre).onclick = () => {
         create_absent_zayavki(
             (win_return = win_current)
         )
@@ -332,7 +340,7 @@ function create_absent_zayavki(win_return = null) {
 /////////////////////////////////////////////////////////////////////////////////////////
 async function show_mts_history(id_mts, win_return = null) {
     const data_mts = await id_2_data(id_mts, 'mts')
-    const win_current = "historyMTS" ///////////////////////////////////////////
+    const win_current = 'historyMTS' + randomStr(10)
     const header = `<h4>история МТС id: ${data_mts.id}, SN: ${data_mts.SN}, ${data_mts.uname}</h4>`
     const body = `<div class="w3-container"></div>`
     const foot = ``
@@ -397,9 +405,12 @@ async function show_mts_history(id_mts, win_return = null) {
 /////////////////////////////////////////////////////////////////////////////////////////
 function edit_mts_vocab(d, win_return = null, mode = "") {
     return new Promise(function (resolve, reject) {
-        const win_current = "editMTSVocab"
+        const salt = randomStr(10)
+        const win_current = 'editMTSVocab' + salt
+
         const headerMTSVocab = `<h4>параметры МТС</h4>`
-        const bodyMTSVocab = `<div id="modMTSVocab" style="margin: 0; padding: 1%;">
+
+        const bodyMTSVocab = `<div style="margin: 0; padding: 1%;">
             <table class="w3-table-all">
                 <tr>
                   <td>id:{{dv.id}} id_zayavka:{{dv.id_zayavka}} id_oper:{{dv.id_oper}} id_status:{{dv.id_status}} status:{{dv.status}}</td>
@@ -585,7 +596,8 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                 },
             },
         })
-        const vm = vapp.use(naive).mount("#modMTSVocab")
+        const vm = vapp.use(naive).mount('#' + win_current)
+
         id_2_set_focus(win_current)
         // кнопка выбора пользователя -----------------------------------------------
         id2e("selectMtsUser").onclick = async () => {
