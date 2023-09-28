@@ -46,7 +46,7 @@ function select_mts(
         appHeight = appBodyHeight() * 0.9
 
         tabulator_select_mts(
-            (div = "selectMTSBody"),
+            (div = (mode == 'select') ? 'selectMTSBody' : 'appBody'),
             sono,
             appHeight,
             msgFooter,

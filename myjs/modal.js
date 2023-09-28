@@ -114,3 +114,56 @@ function removeElement(element, win_return = null) {
     element.onkeyup = function (e) { }
     id_2_set_focus(win_return)
 }
+
+
+//=======================================================================================
+function dialogYESNO(text, win_return = '') {
+    return new Promise(function (resolve, reject) {
+        // создание модального окна ----------------------------------------------------------
+        let div_modal = ""
+
+        div_modal = document.createElement('div')
+
+        div_modal.className = "w3-modal"
+
+        div_modal.innerHTML = `<div id="modalWindow" class="modal-content" style="width:250px">
+                                    <div id="modalHeader" class="modal-header w3-red" style="padding:1px 16px">
+                                    </div>
+                                    <div id="modalBody"   class="modal-body" style="text-align:center">
+                                         ${text}<br><br>
+                                         <div class="w3-container">
+                                              <button id="YES" class="w3-button w3-border w3-hover-red"  style="width:70px">ДА</button>   
+                                              <button id="NO"  class="w3-button w3-border w3-hover-red"  style="width:70px">НЕТ</button><br><br>
+                                         </div>
+                                    </div>     
+                                    <div id="modalFooter" class="modal-footer w3-red"></div>
+                               </div>`
+
+        document.body.append(div_modal)
+        div_modal.style.display = "block"
+        document.getElementById("YES").focus()
+
+        div_modal.onkeyup = function (e) {
+            // console.log('key=', e.key)
+            if (e.key == 'Escape') {
+                removeElement(div_modal, win_return)
+                resolve("ESC")
+            }
+            if (e.key == 'Enter') {
+                removeElement(div_modal, win_return)
+                resolve("YES")
+            }
+        };
+        // нажатие кнопки ОТМЕНА ------------------------------------------------------------
+        document.getElementById("NO").onclick = function () {
+            removeElement(div_modal, win_return)
+            resolve("NO")
+        }
+        // нажатие кнопки ДА ---------------------------------------------------------------
+        document.getElementById("YES").onclick = function () {
+            removeElement(div_modal, win_return)
+            resolve("YES")
+        }
+
+    })
+}
