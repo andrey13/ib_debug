@@ -1,4 +1,9 @@
 //=======================================================================================
+function nn(n) {
+    return !!!n ? 0 : n
+}
+
+//=======================================================================================
 function Export2Word(element, filename = '') {
     var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
     var postHtml = "</body></html>";
@@ -50,12 +55,11 @@ function randomColor(brightness) {
 
 // высота экрана без заголовка, меню и футера -------------------------------------------
 function appBodyHeight() {
-    // console.log(`${window.innerHeight} - ${$("#appHeader").height()} - ${$("#appMenu").height()} - ${$("#appFooter").height()} = ${window.innerHeight - $("#appHeader").height() - $("#appMenu").height() - $("#appFooter").height()}`);
     return (
         window.innerHeight -
-        $("#appHeader").height() -
-        $("#appMenu").height() -
-        $("#appFooter").height()
+        id2e('appHeader').offsetHeight -
+        id2e('appMenu').offsetHeight -
+        id2e('appFooter').offsetHeight
     );
 }
 

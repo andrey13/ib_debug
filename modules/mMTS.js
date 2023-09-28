@@ -1,6 +1,8 @@
 async function mMTS() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
+
+    // определение ролей текущего пользователя -----------------------------------------
     const tex = isRole('tex')
     const mo  = isRole('mo')
     const su  = isRole('su')
@@ -8,13 +10,8 @@ async function mMTS() {
     const id_otdel = tex ? g_user.id_otdel : 0
     const sklad = 0
 
-    //const tMTS = '<div id="selectMTSBody" style="display: inline-block; padding: 0; height: 100%; width: 100%; border: 1px solid black;"></div>'
-    const appHeight = appBodyHeight()
-
-    //id2e('appBody').innerHTML = tMTS;
-    id2e('appBody').style.height = appHeight;
-
-    const mts = await select_mts(
+    // список МТС -----------------------------------------------------------------------
+    select_mts(
         sono = '6100', 
         id_otdel, 
         sklad, 

@@ -11,9 +11,6 @@ function newModalWindow(
     esc_callback = () => { console.log('esc_callback') }
 ) {
 
-    // console.log('newModalWindow ==================== ')
-    // console.log('win_return = ', win_return)
-    // console.log('win_return1 = ', win_return)
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------      
     // const modalMain = modal + "Main"
@@ -27,9 +24,9 @@ function newModalWindow(
                <div     id="${modalContent}" class="modal-content">
                    <div id="${modalHeader}"  class="modal-header w3-teal" style="display: flex; align-items: center;">${html_header}</div>
                    <div id="${modalBody}"    class="modal-body tabulator">${html_body}</div>
-                   <div id="${modalFooter}"  class="modal-footer w3-teal">${html_footer}</div>
                </div>
            </div>`;
+//           <div id="${modalFooter}"  class="modal-footer w3-teal">${html_footer}</div>
 
     // вставить модальное окно в конец BODY ---------------------------------------------
     const body_el = document.getElementsByTagName('body')[0]
