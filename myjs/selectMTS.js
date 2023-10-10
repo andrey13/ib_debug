@@ -45,6 +45,8 @@ function select_mts(
             id_mts,
         )
 
+        table_select_mts.setFilter("old", "=", 0)
+
         if (mode == "select") id_2_set_focus(win_current)
     })
 }
@@ -78,6 +80,7 @@ function tabulator_select_mts(
 
     const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
+        { title: "w", field: "old", widthGrow: 1, headerFilter: true },
         { title: "№", field: "numb", widthGrow: 1, headerFilter: true },
         { title: "заявок", field: "z_count", width: 50, print: false, headerFilter: true },
         // { title: "дата", field: "date", width: 80, print: false },
@@ -151,7 +154,7 @@ function tabulator_select_mts(
     `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
     `</div>`
 
-    tabulator = new Tabulator("#" + div, {
+    const tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_mts.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
@@ -173,8 +176,8 @@ function tabulator_select_mts(
 
         dataLoaded: function () {
             if (id_mts == 0) return
-            table_select_mts.selectRow(id_mts)
-            table_select_mts.scrollToRow(id_mts, "center", false)
+            tabulator.selectRow(id_mts)
+            tabulator.scrollToRow(id_mts, "center", false)
         },
 
         rowFormatter: function (row) {
@@ -218,7 +221,7 @@ function tabulator_select_mts(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_mts_vocab(
-                    table_select_mts.getSelectedData()[0],
+                    tabulator.getSelectedData()[0],
                     (win_return = win_current)
                 )
             }
@@ -229,14 +232,14 @@ function tabulator_select_mts(
 
     id2e(id_button_sel).onclick = () => {
         removeModalWindow(win_current, win_return)
-        resolve(table_select_mts.getSelectedData()[0])
+        resolve(tabulator.getSelectedData()[0])
     }
 
     id2e(id_button_add).onclick = async () => {
         const d = factory_MTS()
         d.id = await save_mts(d)
 
-        addTabRow(table_select_mts, d, (top = true))
+        addTabRow(tabulator, d, (top = true))
 
         const res = await edit_mts_vocab(
             d,
@@ -249,7 +252,7 @@ function tabulator_select_mts(
 
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_mts_vocab(
-            table_select_mts.getSelectedData()[0],
+            tabulator.getSelectedData()[0],
             (win_return = win_current),
             (mode = "mod")
         )
@@ -262,22 +265,19 @@ function tabulator_select_mts(
         )
 
         if (ans == 'YES') {
-            const data = table_select_mts.getSelectedData()
+            const data = tabulator.getSelectedData()
             data.forEach((d) => {
                 del_mts_vocab(d.id)
-                table_select_mts.deleteRow(d.id)
+                tabulator.deleteRow(d.id)
             })
-            const id_mts = getFirstID(table_select_mts)
-            table_select_mts.selectRow(id_mts)
-            // const d = table_select_mts.getSelectedData()
-            // id2e("delZayavki").disabled = d.length == 0
-            // id2e("modZayavki").disabled = d.length == 0
+            const id_mts = getFirstID(tabulator)
+            tabulator.selectRow(id_mts)
         }
     }
 
     id2e(id_button_his).onclick = () => {
         show_mts_history(
-            table_select_mts.getSelectedData()[0].id,
+            tabulator.getSelectedData()[0].id,
             (win_return = win_current)
         )
     }
@@ -286,7 +286,7 @@ function tabulator_select_mts(
         create_absent_zayavki(
             (win_return = win_current)
         )
-    }
+    }    
 
     return tabulator
 }
@@ -341,18 +341,20 @@ function create_absent_zayavki(win_return = null) {
 async function show_mts_history(id_mts, win_return = null) {
     const data_mts = await id_2_data(id_mts, 'mts')
     const win_current = 'historyMTS' + randomStr(10)
-    const header = `<h4>история МТС id: ${data_mts.id}, SN: ${data_mts.SN}, ${data_mts.uname}</h4>`
+    const header = `<h4>история МТС id: ${data_mts.id}, SN: ${data_mts.SN}</h4>`
     const body = `<div class="w3-container"></div>`
     const foot = ``
+    
     const esc_mts_history = () => { 
         console.log("esc_callback") 
-        // vapp.unmount()
     }
+
     newModalWindow( 
         win_current, header, body, foot,
         width = "59%", marginLeft = "40%", marginTop = "1%",
         win_return, esc_mts_history
     )
+    
     const table_histoty = new Tabulator('#' + win_current + 'Body', {
         ajaxURL: "myphp/get_mts_history.php",
         ajaxConfig: "GET",
@@ -414,7 +416,8 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
             <table class="w3-table-all">
                 <tr>
                   <td>id:{{dv.id}} id_zayavka:{{dv.id_zayavka}} id_oper:{{dv.id_oper}} id_status:{{dv.id_status}} status:{{dv.status}}</td>
-                  <td></td>
+                  <td>
+                  </td>
                 </tr>
                 <!--
                 <tr>
@@ -524,8 +527,18 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
             <button id="btnApplayMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-teal">применить</button>
             <button id="btnPrevMTSVocab"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущее МТС</button>
             <button id="btnNextMTSVocab"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующее МТС</button>
+            Дубль
+            <n-switch  :rail-style="style_old"
+              size="small"
+              checked-value="1"
+              unchecked-value="0"
+              v-model:value="dv.old"
+            />
+
         </div>`
+
         const footMTSVocab = ``
+
         const esc_mts_vocab = mode == "new"
             ? () => { 
                 remove_selected_mts_vocab() 
@@ -535,13 +548,14 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                 console.log("esc_callback") 
                 vapp.unmount()
             }
+
         newModalWindow(
             win_current,
             headerMTSVocab,
             bodyMTSVocab,
             footMTSVocab,
             (width = "60%"),
-            (marginLeft = "5%"),
+            (marginLeft = "15%"),
             (marginTop = "5%"),
             win_return,
             esc_mts_vocab
@@ -559,6 +573,12 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                         return style
                     },
                     style_bad: ({ focused, checked }) => {
+                        const style = {}
+                        style.background = (checked) ? "red" : "green"
+                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                        return style
+                    },
+                    style_old: ({ focused, checked }) => {
                         const style = {}
                         style.background = (checked) ? "red" : "green"
                         style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
@@ -780,7 +800,8 @@ async function save_mts(d) {
             revision,
             usb_device_id,
             eko,
-            bad
+            bad,
+            old
         ) VALUES (
            "${d.numb}", 
            "${d.SN}", 
@@ -804,7 +825,8 @@ async function save_mts(d) {
            '${d.revision}',
            '${d.usb_device_id}',
            '${d.eko}',
-            ${d.bad}
+            ${d.bad},
+            ${d.old}
         )`
             : `UPDATE mts SET 
             numb="${d.numb}",
@@ -829,7 +851,8 @@ async function save_mts(d) {
             revision='${d.revision}',
             usb_device_id='${d.usb_device_id}',
             eko='${d.eko}',
-            bad=${d.bad}
+            bad=${d.bad},
+            old=${d.old}
         WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -874,7 +897,8 @@ function factory_MTS() {
         dsp: '',
         size_gb: 0,
         status: '',
-        bad: 0
+        bad: 0,
+        old: 0
     }
 }
 

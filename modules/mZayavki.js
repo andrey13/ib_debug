@@ -109,8 +109,8 @@ function tabulator_zayavki(id_div, appH) {
         reactiveData: true,
 
         columns: [
-            { title: "id", field: "id", width: 50, print: false },
-            { title: "id_dep", field: "id_depart", width: 50, print: false },
+            { title: "id", field: "id", width: 50, headerFilter: true, print: false },
+            { title: "id_dep", field: "id_depart", width: 50, headerFilter: true, print: false },
             {
                 title: "дата",
                 field: "date",
@@ -164,12 +164,16 @@ function tabulator_zayavki(id_div, appH) {
         ],
 
         rowFormatter: function (row) {
+            if (row.getData().status == 'черновик') {
+                row.getCell("status").getElement().style.backgroundColor = '#999999'
+            }
             if (row.getData().status == 'отклонено') {
                 row.getCell("status").getElement().style.backgroundColor = '#ff8888'
             }
-            if (row.getData().status == 'выполнено') {
-                row.getCell("status").getElement().style.backgroundColor = '#88ff88'
-            }
+            // if (row.getData().status == 'выполнено') {
+            //     row.getCell("status").getElement().style.backgroundColor = '#88ff88'
+            //     row.getCell("status").getElement().style.backgroundColor = '#ffffff'
+            // }
             if (row.getData().status == 'на выполнении') {
                 row.getCell("status").getElement().style.backgroundColor = '#8888ff'
             }

@@ -41,7 +41,7 @@ LEFT JOIN user AS u4 ON u4.id = z.id_user_ib
 LEFT JOIN user AS u5 ON u5.id = z.id_user_ruk
 LEFT JOIN user AS u6 ON u6.id = z.id_user_isp
 LEFT JOIN depart AS d ON d.id = z.id_depart        
-ORDER BY z.id DESC";
+ORDER BY z.date DESC";
 } else {
     $sql = "SELECT z.id, 
     z.id_type,
@@ -81,7 +81,7 @@ LEFT JOIN user AS u5 ON u5.id = z.id_user_ruk
 LEFT JOIN user AS u6 ON u6.id = z.id_user_isp
 LEFT JOIN depart AS d ON d.id = z.id_depart        
 WHERE z.id_depart = $id_depart
-ORDER BY z.id DESC";
+ORDER BY z.date DESC";
 }
 
 
