@@ -1,3 +1,10 @@
+async function id_mts_2_last_oper(id_mts) {
+    let response = await fetch(`myphp/id_mts_2_last_oper.php?m=${id_mts}`)
+    let data = await response.json()
+    return data[0]
+}
+
+
 //=======================================================================================
 // id -> все данные
 //=======================================================================================
