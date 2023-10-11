@@ -481,6 +481,7 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                 <tr>
                   <td>id:{{dv.id}} id_zayavka:{{dv.id_zayavka}} id_oper:{{dv.id_oper}} id_status:{{dv.id_status}} status:{{dv.status}}</td>
                   <td>
+                    <button id="btnShowExl" style="border: 0; background-color: white;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
                   </td>
                 </tr>
                 <!--
@@ -540,28 +541,21 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                     <input type="radio" id="sklad-2" name="skaldSatus" value="2" v-model="dv.sklad">-выдано&nbsp;&nbsp;
                   </span>
                   </td>
-                  <td>{{dv.status1}}</td>
+                  <td><span v-show="shExl">{{dv.status1}}</span></td>
                 </tr>
                 <tr>
                   <td>
                     <button id="selectMtsUser" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{uname}}</button>
-                    id_user: {{dv.id_user}}
+                    <span v-show="shExl">id_user: {{dv.id_user}}</span>
                   </td>
-                  <td>{{dv.user}}</td>
-                </tr>
-                <tr>
-                  <td>
-                    <button id="selectMtsComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
-                    id_comp: {{dv.id_comp}}
-                  </td>
-                  <td></td>
+                  <td><span v-show="shExl">{{dv.user}}</span></td>
                 </tr>
                 <tr>
                   <td>
                     <button id="selectMtsDepart" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{dname}}</button>
-                    id_depart: {{dv.id_depart}}
+                    <span v-show="shExl">id_depart: {{dv.id_depart}}</span>
                   </td>
-                  <td>{{dv.otdel}}</td>
+                  <td><span v-show="shExl">{{dv.otdel}}</span></td>
                 </tr>
                 <tr>
                   <td>объем:<input class="o3-border" type="number" v-model="dv.size_gb" style="width: 100px;"></td>
@@ -598,8 +592,16 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
               unchecked-value="0"
               v-model:value="dv.old"
             />
-
         </div>`
+
+        // <tr>
+        //   <td>
+        //     <button id="selectMtsComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
+        //     <span v-show="shExl">id_comp: {{dv.id_comp}}</span>
+        //   </td>
+        //   <td></td>
+        // </tr>
+
 
         const footMTSVocab = ``
 
@@ -630,6 +632,7 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                     dv: d,
                     chg: false,
                     dsp: d.dsp,
+                    shExl: false,
                     style_dsp: ({ focused, checked }) => {
                         const style = {}
                         style.background = (checked) ? "#8888ff" : "grey"
@@ -683,6 +686,10 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
         const vm = vapp.use(naive).mount('#' + win_current)
 
         id_2_set_focus(win_current)
+        // кнопка выбора пользователя -----------------------------------------------
+        id2e('btnShowExl').onclick = () => {
+            vm.$data.shExl = !vm.$data.shExl
+        }
         // кнопка выбора пользователя -----------------------------------------------
         id2e("selectMtsUser").onclick = async () => {
             const id_depart = isRole("tex") ? g_user.id_depart : 0

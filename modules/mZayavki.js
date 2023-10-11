@@ -448,9 +448,9 @@ function tabulator_zayavki(id_div, appH) {
                             
                             <button id="b_ENTER"  :disabled="disEnter"  v-show="shEnter"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
                             <button id="b_CANCEL" :disabled="disCancel" v-show="shCancel" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>                            
+                            <button id="b_PRINT1" :disabled="disPrint1" v-show="shPrint1" class="w3-btn w3-padding-small o3-border w3-hover-teal">печать служебной записки</button>
                             <button id="b_START"  :disabled="disStart"  v-show="shStart"  class="w3-btn w3-padding-small o3-border w3-hover-teal">отправить на выполнение</button>
                             <button id="b_STOP"   :disabled="disStop"   v-show="shStop"   class="w3-btn w3-padding-small o3-border w3-hover-red">снять с выполнения</button>
-                            <button id="b_PRINT1" :disabled="disPrint1" v-show="shPrint1" class="w3-btn w3-padding-small o3-border w3-hover-teal">печать служебной записки</button>
                             <button id="b_ACCEPT" :disabled="disAccept" v-show="shAccept" class="w3-btn w3-padding-small o3-border w3-hover-teal">закрыть заявку</button>
                             <button id="b_REJECT" :disabled="disReject" v-show="shReject" class="w3-btn w3-padding-small o3-border w3-hover-red">отклонить заявку</button>
 
@@ -850,7 +850,7 @@ function tabulator_zayavki(id_div, appH) {
                 d.reson,
                 d.mts_SN1,
                 d.comment,
-                " ",
+                "\n\n\n",
                 " "
             ]
             i += 1
