@@ -183,6 +183,10 @@ function tabulator_select_mts(
         footerElement: msgFooter,
         // movableRows: true,
 
+        renderComplete: function() {
+            if (mode == "select") id2e(id_checkb_xls).disabled = true
+        },
+
         dataLoaded: function () {
             if (id_mts == 0) return
             tabulator.selectRow(id_mts)
