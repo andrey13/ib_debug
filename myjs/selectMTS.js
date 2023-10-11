@@ -82,7 +82,7 @@ function tabulator_select_mts(
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
         // { title: "w", field: "old", widthGrow: 1, headerFilter: true },
         { title: "№", field: "numb", widthGrow: 1, headerFilter: true },
-        { title: "заявок", field: "z_count", width: 50, print: false, headerFilter: true },
+        { title: "операций", field: "z_count", width: 50, print: false, headerFilter: true },
         // { title: "дата", field: "date", width: 80, print: false },
         {
             title: "дата",
@@ -112,7 +112,7 @@ function tabulator_select_mts(
             widthGrow: 2,
             headerFilter: true
         },
-        { title: "статус", field: "status1", widthGrow: 2, headerFilter: true, },
+        { title: "exel", field: "status1", widthGrow: 2, headerFilter: true, },
         { title: "пользователь (сервис)", field: "uname", widthGrow: 6, headerFilter: true, },
         { title: "пользователь (exel)", field: "user", widthGrow: 6, headerFilter: true, },
         { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
@@ -141,9 +141,10 @@ function tabulator_select_mts(
     const id_button_add = 'add' + salt
     const id_button_del = 'del' + salt
     const id_button_his = 'his' + salt
-    const id_button_cre = 'cre' + salt
-    const id_checkb_flt = 'flt' + salt
-    const id_checkb_grp = 'grp' + salt
+    // const id_button_cre = 'cre' + salt
+    // const id_checkb_flt = 'flt' + salt
+    // const id_checkb_grp = 'grp' + salt
+    const id_checkb_xls = 'xls' + salt
 
     const msgFooter =
     `<span id="select-stats"></span>` +
@@ -153,10 +154,13 @@ function tabulator_select_mts(
     `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
     `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
     `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-    `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
-    `&nbsp;&nbsp;&nbsp;показать дубли&nbsp;<input type='checkbox' id='${id_checkb_flt}' unchecked style="vertical-align: middle;">` +
-    `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
+    `&nbsp;&nbsp;&nbsp;показать старые данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
     `</div>`
+
+    // `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
+    // `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
+    // `&nbsp;&nbsp;&nbsp;показать дубли&nbsp;<input type='checkbox' id='${id_checkb_flt}' unchecked style="vertical-align: middle;">` +
+
 
     const tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_mts.php",
@@ -177,6 +181,7 @@ function tabulator_select_mts(
         columns: cols2, 
         groupBy: group,
         footerElement: msgFooter,
+        // movableRows: true,
 
         dataLoaded: function () {
             if (id_mts == 0) return
@@ -214,7 +219,7 @@ function tabulator_select_mts(
                 id2e(id_button_mod).disabled = true
                 id2e(id_button_sel).disabled = true
                 id2e(id_button_his).disabled = true
-                id2e(id_button_cre).disabled = !isRole('su')
+                // id2e(id_button_cre).disabled = !isRole('su')
 
             } else {
                 id2e(id_button_del).disabled = isRole("tex")
@@ -222,7 +227,7 @@ function tabulator_select_mts(
                 id2e(id_button_mod).disabled = isRole("tex")
                 if (mode == "select") id2e(id_button_sel).disabled = false
                 id2e(id_button_his).disabled = false
-                id2e(id_button_cre).disabled = !isRole('su')
+                // id2e(id_button_cre).disabled = !isRole('su')
             }
         },
 
@@ -292,29 +297,54 @@ function tabulator_select_mts(
         )
     }
 
-    id2e(id_button_cre).onclick = () => {
-        create_absent_zayavki(
-            (win_return = win_current)
-        )
-    }    
+    // id2e(id_button_cre).onclick = () => {
+    //     create_absent_zayavki(
+    //         (win_return = win_current)
+    //     )
+    // }    
 
-    id2e(id_checkb_flt).onclick = () => {
-        console.log('id_checkb_flt')
-        if (id2e(id_checkb_flt).checked) {
+    // id2e(id_checkb_flt).onclick = () => {
+    //     console.log('id_checkb_flt')
+    //     if (id2e(id_checkb_flt).checked) {
+    //         tabulator.setFilter()
+    //     } else {
+    //         tabulator.setFilter("old", "=", 0)
+    //     }        
+    // }    
+
+    // id2e(id_checkb_grp).onclick = () => {
+    //     console.log('id_checkb_grp = ', id2e(id_checkb_grp).checked)
+    //     if (id2e(id_checkb_grp).checked) {
+    //         tabulator.setGroupBy('SN') 
+    //     } else {
+    //         tabulator.setGroupBy('')
+    //     }
+    // }    
+
+    id2e(id_checkb_xls).onclick = () => {
+        console.log('id_checkb_xls = ', id2e(id_checkb_xls).checked)
+        if (id2e(id_checkb_xls).checked) {
+            tabulator.showColumn('status1')
+            tabulator.showColumn('user')
+            tabulator.showColumn('otdel')
+            tabulator.setGroupBy('SN')
             tabulator.setFilter()
+            tabulator.redraw()
         } else {
+            tabulator.hideColumn('status1')
+            tabulator.hideColumn('user')
+            tabulator.hideColumn('otdel')
             tabulator.setFilter("old", "=", 0)
-        }        
-    }    
-
-    id2e(id_checkb_grp).onclick = () => {
-        console.log('id_checkb_grp = ', id2e(id_checkb_grp).checked)
-        if (id2e(id_checkb_grp).checked) {
-            tabulator.setGroupBy('SN') 
-        } else {
             tabulator.setGroupBy('')
+            tabulator.redraw()
         }
-    }    
+    }
+
+    tabulator.hideColumn('status1')
+    tabulator.hideColumn('user')
+    tabulator.hideColumn('otdel')
+    tabulator.redraw()
+
 
     return tabulator
 }
