@@ -130,6 +130,22 @@ function tabulator_opers(
             }
         },
 
+        cellClick: async function (e, cell) {
+            const fieldName = cell.getField()
+            // console.log('fieldName = ', fieldName)
+            if (fieldName == 'm_SN') {
+                const id_mts = cell.getRow().getData().zm_id_mts
+                console.log('id_mts = ', id_mts)
+                const d = await id_2_data(id_mts, 'mts')
+                console.log('d = ', d)
+                const res = await edit_mts_vocab(
+                    d,
+                    win_return = win_current,
+                    mode = "mod"
+                )
+            }
+        }        
+
     })
     return tabulator
 }

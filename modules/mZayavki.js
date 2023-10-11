@@ -764,7 +764,7 @@ function tabulator_zayavki(id_div, appH) {
 
         const doc_head = {
             pageSize: "A4",
-            pageOrientation: "portrait",
+            pageOrientation: "landscape",
             pageMargins: [30, 30, 30, 30],
             defaultStyle: { font: "times", fontSize: 9 },
             styles: {
@@ -821,7 +821,7 @@ function tabulator_zayavki(id_div, appH) {
             {
                 style: "table",
                 table: {
-                    widths: [100, 35, 14, 14, 100, 100, 100, 100],
+                    widths: [100, 35, 14, 14, 100, 100, 100, 160, 80],
                     headerRows: 1,
                     body: [
                         [
@@ -832,6 +832,8 @@ function tabulator_zayavki(id_div, appH) {
                             { text: "обоснование", style: "tableHeader" },
                             { text: "заводской номер", style: "tableHeader" },
                             { text: "комментарий", style: "tableHeader" },
+                            { text: "отметка о выполнении", style: "tableHeader" },
+                            { text: "подпись исполнителя", style: "tableHeader" },
                         ],
                     ],
                 },
@@ -848,6 +850,8 @@ function tabulator_zayavki(id_div, appH) {
                 d.reson,
                 d.mts_SN1,
                 d.comment,
+                " ",
+                " "
             ]
             i += 1
         })

@@ -4,6 +4,7 @@
 
 //
 function fio2dat(fio) {
+    if (!!!fio) return ''
     return fio2fio2(fio).split(' ').map(w => fam2dat(w)).join(' ')
 }
 
@@ -32,6 +33,7 @@ function fio2fio0(fio) {
 // Иванов Петр Сидорович -> Иванов П.С.
 //=======================================================================================
 function fio2fio(fio) {
+    if (!!!fio) return ''
     let arrayOffio = fio.split(' ');
     return arrayOffio[0] + ' ' + arrayOffio[1].substring(0, 1) + '.' + arrayOffio[2].substring(0, 1) + '.';
 }
@@ -39,6 +41,7 @@ function fio2fio(fio) {
 // Иванов Петр Сидорович -> Иванов П. С.
 //=======================================================================================
 function fio2fio1(fio) {
+    if (!!!fio) return ''
     let arrayOffio = fio.split(' ');
     return arrayOffio[0] + ' ' + arrayOffio[1].substring(0, 1) + '. ' + arrayOffio[2].substring(0, 1);
 }
@@ -47,6 +50,7 @@ function fio2fio1(fio) {
 // Иванов Петр Сидорович -> П.С. Иванов
 ///////////////////////////////////////////////////////////////////////////////////////////
 function fio2fio2(fio) {
+    if (!!!fio) return ''
     let arrayOffio = fio.split(' ');
     return arrayOffio[1].substring(0, 1) + '.' + arrayOffio[2].substring(0, 1) + '. ' + arrayOffio[0];
 }

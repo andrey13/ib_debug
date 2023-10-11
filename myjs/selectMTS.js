@@ -80,7 +80,7 @@ function tabulator_select_mts(
 
     const cols2 = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true },
-        { title: "w", field: "old", widthGrow: 1, headerFilter: true },
+        // { title: "w", field: "old", widthGrow: 1, headerFilter: true },
         { title: "№", field: "numb", widthGrow: 1, headerFilter: true },
         { title: "заявок", field: "z_count", width: 50, print: false, headerFilter: true },
         // { title: "дата", field: "date", width: 80, print: false },
@@ -96,31 +96,30 @@ function tabulator_select_mts(
             },
         },
 
-
+        { title: "Гб", field: "size_gb", widthGrow: 1, headerFilter: true, editor: "input", },
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
-        { title: "пользователь", field: "uname", widthGrow: 6, headerFilter: true, },
         {
             title: "ДСП", field: "dsp", widthGrow: 1, headerFilter: true, formatter: "lookup",
             formatterParams: { 0: "", 1: "дсп" },
         },
-        { title: "статус", field: "status1", widthGrow: 2, headerFilter: true, },
-        { title: "пользователь", field: "user", widthGrow: 6, headerFilter: true, },
-        { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
-        { title: "отдел", field: "dname", widthGrow: 4, headerFilter: true },
-        { title: "отдел", field: "otdel", widthGrow: 4, headerFilter: true },
         {
             title: "", field: "bad", headerFilter: true, width: 20, formatter: "lookup",
             formatterParams: { 0: "", 1: "<i class='fa fa-times'></i>" },
         },
-        { title: "Гб", field: "size_gb", widthGrow: 1, headerFilter: true, editor: "input", },
-        { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true, },
-        { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
         {
             title: "склад", field: "sklad", formatter: "lookup",
             formatterParams: { 0: "   ", 1: "на складе", 2: "выдано" },
             widthGrow: 2,
             headerFilter: true
         },
+        { title: "статус", field: "status1", widthGrow: 2, headerFilter: true, },
+        { title: "пользователь (сервис)", field: "uname", widthGrow: 6, headerFilter: true, },
+        { title: "пользователь (exel)", field: "user", widthGrow: 6, headerFilter: true, },
+        { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
+        { title: "отдел (сервис)", field: "dname", widthGrow: 4, headerFilter: true },
+        { title: "отдел (exel)", field: "otdel", widthGrow: 4, headerFilter: true },
+        { title: "Производитель", field: "manufacturer", widthGrow: 4, headerFilter: true, },
+        { title: "описание", field: "descr", widthGrow: 6, headerFilter: true },
         { title: "комментарий", field: "comment", widthGrow: 6, headerFilter: true, },
         // {
         //     title: "ЕСК", field: "user_esk_status", formatter: "lookup",
@@ -132,7 +131,8 @@ function tabulator_select_mts(
 
     cols = cols1.concat(cols2)
 
-    const group = (mode == 'select') ? '' : 'SN'
+    // const group = (mode == 'select') ? '' : 'SN'
+    const group = ''
 
     const salt = randomStr(10)
 
@@ -142,6 +142,8 @@ function tabulator_select_mts(
     const id_button_del = 'del' + salt
     const id_button_his = 'his' + salt
     const id_button_cre = 'cre' + salt
+    const id_checkb_flt = 'flt' + salt
+    const id_checkb_grp = 'grp' + salt
 
     const msgFooter =
     `<span id="select-stats"></span>` +
@@ -152,6 +154,8 @@ function tabulator_select_mts(
     `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
     `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
     `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
+    `&nbsp;&nbsp;&nbsp;показать дубли&nbsp;<input type='checkbox' id='${id_checkb_flt}' unchecked style="vertical-align: middle;">` +
+    `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
     `</div>`
 
     const tabulator = new Tabulator("#" + div, {
@@ -182,17 +186,24 @@ function tabulator_select_mts(
 
         rowFormatter: function (row) {
             if (row.getData().user_esk_status == 1) {
-                // row.getCell("user_esk_status").getElement().style.backgroundColor = '#ff9999'
-                row.getCell("uname").getElement().style.backgroundColor = '#ffcccc'
+                // пользователь отключен -------------------------------------------
+                row.getCell("uname").getElement().style.backgroundColor = '#cccccc'
             }
             if (row.getData().bad == 1) {
+                // неисправное МТС  ------------------------------------------------
                 row.getCell("bad").getElement().style.backgroundColor = '#ff0000'
             }
             if (row.getData().dsp == 1) {
+                // ДСП  ------------------------------------------------------------
                 row.getCell("dsp").getElement().style.backgroundColor = '#8888ff'
             }
-            if (row.getData().z_count > 0) {
-                row.getCell("SN").getElement().style.backgroundColor = '#88ff88'
+            if (ns(row.getData().SN) == '') {
+                // не указан SN  ---------------------------------------------------
+                row.getCell("SN").getElement().style.backgroundColor = '#ffcccc'
+            }
+            if (row.getData().z_count == 0) {
+                // нет операций  ---------------------------------------------------
+                row.getCell("z_count").getElement().style.backgroundColor = '#ffcccc'
             }
         },
 
@@ -227,7 +238,6 @@ function tabulator_select_mts(
             }
         },
 
-        
     })
 
     id2e(id_button_sel).onclick = () => {
@@ -288,8 +298,28 @@ function tabulator_select_mts(
         )
     }    
 
+    id2e(id_checkb_flt).onclick = () => {
+        console.log('id_checkb_flt')
+        if (id2e(id_checkb_flt).checked) {
+            tabulator.setFilter()
+        } else {
+            tabulator.setFilter("old", "=", 0)
+        }        
+    }    
+
+    id2e(id_checkb_grp).onclick = () => {
+        console.log('id_checkb_grp = ', id2e(id_checkb_grp).checked)
+        if (id2e(id_checkb_grp).checked) {
+            tabulator.setGroupBy('SN') 
+        } else {
+            tabulator.setGroupBy('')
+        }
+    }    
+
     return tabulator
 }
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 function create_absent_zayavki(win_return = null) {
