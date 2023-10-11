@@ -1449,16 +1449,27 @@ function tabulator_oper(
             let id_otdel = 0
             let sklad = 0
 
-            // для технолога показывать выданные отделу (id_otdel) МТС (sklad=2)
-            if (isRole("tex")) {
-                id_otdel = g_user.id_otdel
+            switch(d.id_oper) {
+                case '28': // выдача
+                    sklad = 1
+                    break
+                case '29': // возврат
                 sklad = 2
+                    break
             }
 
+
+
+            // для технолога показывать выданные отделу (id_otdel) МТС (sklad=2)
+            // if (isRole("tex")) {
+            //     id_otdel = g_user.id_otdel
+            //     sklad = 2
+            // }
+
             // для м/о показывать МТС на складе (sklad=1)
-            if (isRole("mo")) {
-                sklad = 1
-            }
+            // if (isRole("mo")) {
+            //     sklad = 1
+            // }
 
             d.id_mts_old = d.id_mts
 

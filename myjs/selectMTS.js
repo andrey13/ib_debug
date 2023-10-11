@@ -328,6 +328,7 @@ function tabulator_select_mts(
     id2e(id_checkb_xls).onclick = () => {
         console.log('id_checkb_xls = ', id2e(id_checkb_xls).checked)
         if (id2e(id_checkb_xls).checked) {
+            tabulator.showColumn('date')
             tabulator.showColumn('status1')
             tabulator.showColumn('user')
             tabulator.showColumn('otdel')
@@ -335,6 +336,7 @@ function tabulator_select_mts(
             tabulator.setFilter()
             tabulator.redraw()
         } else {
+            tabulator.hideColumn('date')
             tabulator.hideColumn('status1')
             tabulator.hideColumn('user')
             tabulator.hideColumn('otdel')
@@ -344,6 +346,7 @@ function tabulator_select_mts(
         }
     }
 
+    tabulator.hideColumn('date')
     tabulator.hideColumn('status1')
     tabulator.hideColumn('user')
     tabulator.hideColumn('otdel')
