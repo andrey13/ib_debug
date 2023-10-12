@@ -1,3 +1,11 @@
+async function recalc_mts(id_mts) {
+    let response = await fetch(`myphp/recalc_mts.php?m=${id_mts}`)
+    let data = await response.json()
+    return data[0];
+}
+
+
+
 async function id_mts_2_last_oper(id_mts) {
     let response = await fetch(`myphp/id_mts_2_last_oper.php?m=${id_mts}`)
     let data = await response.json()

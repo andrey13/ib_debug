@@ -11,7 +11,8 @@ function select_mts(
     win_return = null,
     id_mts = 0
 ) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
+        const result = await recalc_mts(0)
         const salt = randomStr(10)
         const win_current = 'selectMTS' + salt
 
@@ -79,7 +80,8 @@ function tabulator_select_mts(
     ]
 
     const cols2 = [
-        { title: "id", field: "id", widthGrow: 1, headerFilter: true },
+        { title: "m", field: "id", widthGrow: 1, headerFilter: true },
+        { title: "z", field: "id_zayavka", widthGrow: 1, headerFilter: true },
         // { title: "w", field: "old", widthGrow: 1, headerFilter: true },
         { title: "№", field: "numb", widthGrow: 1, headerFilter: true },
         { title: "операций", field: "z_count", width: 50, print: false, headerFilter: true },
@@ -95,7 +97,6 @@ function tabulator_select_mts(
                 outputFormat: "DD.MM.YYYY",
             },
         },
-
         { title: "Гб", field: "size_gb", widthGrow: 1, headerFilter: true, editor: "input", },
         { title: "SN", field: "SN", widthGrow: 6, headerFilter: true, topCalc: "count" },
         {
@@ -105,6 +106,19 @@ function tabulator_select_mts(
         {
             title: "", field: "bad", headerFilter: true, width: 20, formatter: "lookup",
             formatterParams: { 0: "", 1: "<i class='fa fa-times'></i>" },
+        },
+        { title: "последний пользователь", field: "uname1", widthGrow: 6, headerFilter: true, },
+        { title: "операция", field: "oname", widthGrow: 2, headerFilter: true, },
+        {
+            title: "дата",
+            field: "zdate",
+            width: 80,
+            headerFilter: true,
+            formatter: "datetime",
+            formatterParams: {
+                inputFormat: "YYYY-MM-DD",
+                outputFormat: "DD.MM.YYYY",
+            },
         },
         {
             title: "склад", field: "sklad", formatter: "lookup",
@@ -154,7 +168,7 @@ function tabulator_select_mts(
     `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
     `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
     `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-    `&nbsp;&nbsp;&nbsp;показать старые данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
+    `&nbsp;&nbsp;&nbsp;дополнительные данные&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
     `</div>`
 
     // `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
@@ -332,6 +346,9 @@ function tabulator_select_mts(
             tabulator.showColumn('status1')
             tabulator.showColumn('user')
             tabulator.showColumn('otdel')
+            tabulator.showColumn('sklad')
+            tabulator.showColumn('uname')
+            tabulator.showColumn('user')
             tabulator.setGroupBy('SN')
             tabulator.setFilter()
             tabulator.redraw()
@@ -340,6 +357,9 @@ function tabulator_select_mts(
             tabulator.hideColumn('status1')
             tabulator.hideColumn('user')
             tabulator.hideColumn('otdel')
+            tabulator.hideColumn('sklad')
+            tabulator.hideColumn('uname')
+            tabulator.hideColumn('user')
             tabulator.setFilter("old", "=", 0)
             tabulator.setGroupBy('')
             tabulator.redraw()
@@ -350,6 +370,10 @@ function tabulator_select_mts(
     tabulator.hideColumn('status1')
     tabulator.hideColumn('user')
     tabulator.hideColumn('otdel')
+    tabulator.hideColumn('sklad')
+    tabulator.hideColumn('uname')
+    tabulator.hideColumn('user')
+
     tabulator.redraw()
 
 

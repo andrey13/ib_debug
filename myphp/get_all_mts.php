@@ -8,52 +8,8 @@ if ($id_otdel == '0' and $sklad == '0') $sfx = "";
 if ($id_otdel != '0' and $sklad == '0') $sfx = "WHERE m.id_otdel=$id_otdel";
 if ($id_otdel == '0' and $sklad != '0') $sfx = "WHERE m.sklad=$sklad";
 if ($id_otdel != '0' and $sklad != '0') $sfx = "WHERE m.id_otdel=$id_otdel AND sklad=$sklad";
-
+    
 $sql = "SELECT 
-            m.id,
-            m.numb,
-            m.SN,
-            m.id_user,
-            m.id_comp,
-            m.id_depart,
-            m.id_otdel,
-            m.id_status,
-            m.id_oper,
-            m.id_zayavka,
-            m.id_vendor,
-            m.date_status,
-            m.otdel,
-            m.sono,
-            m.eko,
-            m.date2,
-            m.date,
-            m.user,
-            m.manufacturer,
-            m.product_model,
-            m.revision,
-            m.size,
-            m.usb_device_id,
-            m.descr,
-            m.sklad,
-            m.status1,
-            m.comment,
-            m.dsp,
-            m.size_gb,
-            m.status,
-            m.bad,
-            m.old,
-            u.name AS uname,
-            u.esk_status AS user_esk_status,
-            c.name AS cname,
-            d.name AS dname,
-            zm.id AS z_id
-        FROM mts AS m 
-        LEFT JOIN zayavka2mts AS zm ON zm.id_mts = m.id
-        LEFT JOIN user AS u ON u.id = m.id_user
-        LEFT JOIN comp AS c ON u.id = m.id_comp
-        LEFT JOIN depart AS d ON d.id = m.id_depart ";
-        
-        $sql = "SELECT 
         m.id,
         m.SN,
         m.id_user,
@@ -88,10 +44,19 @@ $sql = "SELECT
         u.name AS uname,
         u.esk_status AS user_esk_status,
         d.name AS dname,
+        u1.name AS uname1,
+        t.name AS oname,
+        z.date AS zdate,
         (SELECT COUNT(id) FROM zayavka2mts AS zm WHERE zm.id_mts = m.id) as z_count
     FROM mts AS m 
+    LEFT JOIN zayavka AS z ON z.id=m.id_zayavka
+    LEFT JOIN zayavka2mts AS zm ON zm.id=m.id_oper
+    LEFT JOIN user AS u1 ON u1.id=zm.id_user
+    LEFT JOIN types AS t ON t.id = zm.id_oper
     LEFT JOIN user AS u ON u.id = m.id_user
     LEFT JOIN depart AS d ON d.id = m.id_depart ";
+
+// (SELECT zm.id_zayavka FROM zayavka2mts AS zm LEFT JOIN zayavka AS z ON z.id=zm.id_zayavka WHERE m.id=zm.id_mts ORDER BY z.date DESC LIMIT 1) AS id_last_zay,
 
 //zm.id_zayavka AS z_id,
 //LEFT JOIN zayavka2mts AS zm ON zm.id_mts = m.id
