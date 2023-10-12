@@ -5,56 +5,48 @@ $id_mts = $_GET['m'];
 $result = "";
 
 if ($id_mts ==0) {
-    $sql="UPDATE mts AS m SET id_zayavka=(
+    $sql="UPDATE mts AS m SET 
+        id_zayavka=(
             SELECT zm.id_zayavka 
             FROM zayavka2mts AS zm 
             LEFT JOIN zayavka AS z ON z.id=zm.id_zayavka 
             WHERE m.id=zm.id_mts 
             ORDER BY z.date DESC 
+            LIMIT 1),
+        id_oper=(
+            SELECT zm.id 
+            FROM zayavka2mts AS zm 
+            WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
+            ORDER BY zm.id_oper DESC 
+            LIMIT 1),
+        id_user=(
+            SELECT zm.id_user 
+            FROM zayavka2mts AS zm 
+            WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
+            ORDER BY zm.id_oper DESC 
             LIMIT 1)";
 } else {
-    $sql="UPDATE mts AS m SET id_zayavka=(
+    $sql="UPDATE mts AS m SET 
+        id_zayavka=(
             SELECT zm.id_zayavka 
             FROM zayavka2mts AS zm 
             LEFT JOIN zayavka AS z ON z.id=zm.id_zayavka 
             WHERE m.id=zm.id_mts 
-            ORDER BY z.date DESC LIMIT 1) 
-          WHERE m.id=$id_mts";
-}
-
-$result = $conn->query($sql);
-
-if ($id_mts ==0) {
-    $sql="UPDATE mts AS m SET id_oper=(
-            select zm.id 
-            from zayavka2mts as zm 
-            where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
-            order by zm.id_oper 
-            desc 
-            limit 1),
-            id_user=(
-            select zm.id_user 
-            from zayavka2mts as zm 
-            where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
-            order by zm.id_oper 
-            desc 
-            limit 1)";
-} else {
-    $sql="UPDATE mts AS m SET id_oper=(
-            select zm.id 
-            from zayavka2mts as zm 
-            where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
-            order by zm.id_oper 
-            desc 
-            limit 1),
-            id_user=(
-            select zm.id_user 
-            from zayavka2mts as zm 
-            where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
-            order by zm.id_oper 
-            desc 
-            limit 1) 
-          WHERE m.id=$id_mts";
+            ORDER BY z.date DESC 
+            LIMIT 1),
+        id_oper=(
+            SELECT zm.id 
+            FROM zayavka2mts AS zm 
+            WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
+            ORDER BY zm.id_oper DESC 
+            LIMIT 1),
+        id_user=(
+            SELECT zm.id_user 
+            FROM zayavka2mts AS zm 
+            WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
+            ORDER BY zm.id_oper DESC 
+            LIMIT 1)          
+            WHERE m.id=$id_mts";
 }
 
 $result = $conn->query($sql);
