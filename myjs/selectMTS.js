@@ -315,12 +315,6 @@ function tabulator_select_mts(
         )
     }
 
-    // id2e(id_button_cre).onclick = () => {
-    //     create_absent_zayavki(
-    //         (win_return = win_current)
-    //     )
-    // }    
-
     // id2e(id_checkb_flt).onclick = () => {
     //     console.log('id_checkb_flt')
     //     if (id2e(id_checkb_flt).checked) {
@@ -375,7 +369,6 @@ function tabulator_select_mts(
     tabulator.hideColumn('user')
 
     tabulator.redraw()
-
 
     return tabulator
 }

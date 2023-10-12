@@ -46,10 +46,29 @@ if ($id_mts ==0) {
             WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
             ORDER BY zm.id_oper DESC 
             LIMIT 1)          
-            WHERE m.id=$id_mts";
+        WHERE m.id=$id_mts";
 }
 
 $result = $conn->query($sql);
+
+if ($id_mts ==0) {
+    $sql="UPDATE mts AS m SET 
+        id_depart=(
+            SELECT u.id_depart
+            FROM user AS u 
+            WHERE u.id=id_user)";
+} else {
+    $sql="UPDATE mts AS m SET 
+        id_depart=(
+            SELECT u.id_depart
+            FROM user AS u 
+            WHERE u.id=id_user)
+    WHERE m.id=$id_mts";
+}
+
+$result = $conn->query($sql);
+
+
 
 if (!$result) {
     // echo $sql;
