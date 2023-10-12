@@ -45,6 +45,7 @@ $sql = "SELECT
         u.esk_status AS user_esk_status,
         d.name AS dname,
         u1.name AS uname1,
+        u1.esk_status AS user1_esk_status,
         t.name AS oname,
         z.date AS zdate,
         (SELECT COUNT(id) FROM zayavka2mts AS zm WHERE zm.id_mts = m.id) as z_count

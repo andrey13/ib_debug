@@ -208,9 +208,9 @@ function tabulator_select_mts(
         },
 
         rowFormatter: function (row) {
-            if (row.getData().user_esk_status == 1) {
+            if (row.getData().user1_esk_status == 1) {
                 // пользователь отключен -------------------------------------------
-                row.getCell("uname").getElement().style.backgroundColor = '#cccccc'
+                row.getCell("uname1").getElement().style.backgroundColor = '#cccccc'
             }
             if (row.getData().bad == 1) {
                 // неисправное МТС  ------------------------------------------------
