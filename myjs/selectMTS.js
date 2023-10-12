@@ -107,7 +107,7 @@ function tabulator_select_mts(
             title: "", field: "bad", headerFilter: true, width: 20, formatter: "lookup",
             formatterParams: { 0: "", 1: "<i class='fa fa-times'></i>" },
         },
-        { title: "последний пользователь", field: "uname1", widthGrow: 6, headerFilter: true, },
+        { title: "последний пользователь", field: "uname", widthGrow: 6, headerFilter: true, },
         { title: "операция", field: "oname", widthGrow: 2, headerFilter: true, },
         {
             title: "дата",
@@ -127,7 +127,7 @@ function tabulator_select_mts(
             headerFilter: true
         },
         { title: "exel", field: "status1", widthGrow: 2, headerFilter: true, },
-        { title: "пользователь (сервис)", field: "uname", widthGrow: 6, headerFilter: true, },
+        // { title: "пользователь (сервис)", field: "uname", widthGrow: 6, headerFilter: true, },
         { title: "пользователь (exel)", field: "user", widthGrow: 6, headerFilter: true, },
         { title: "№О", field: "id_otdel", widthGrow: 1, headerFilter: true },
         { title: "отдел (сервис)", field: "dname", widthGrow: 4, headerFilter: true },
@@ -210,7 +210,7 @@ function tabulator_select_mts(
         rowFormatter: function (row) {
             if (row.getData().user1_esk_status == 1) {
                 // пользователь отключен -------------------------------------------
-                row.getCell("uname1").getElement().style.backgroundColor = '#cccccc'
+                row.getCell("uname").getElement().style.backgroundColor = '#cccccc'
             }
             if (row.getData().bad == 1) {
                 // неисправное МТС  ------------------------------------------------
@@ -347,7 +347,7 @@ function tabulator_select_mts(
             tabulator.showColumn('user')
             tabulator.showColumn('otdel')
             tabulator.showColumn('sklad')
-            tabulator.showColumn('uname')
+            // tabulator.showColumn('uname')
             tabulator.showColumn('user')
             tabulator.setGroupBy('SN')
             tabulator.setFilter()
@@ -358,7 +358,7 @@ function tabulator_select_mts(
             tabulator.hideColumn('user')
             tabulator.hideColumn('otdel')
             tabulator.hideColumn('sklad')
-            tabulator.hideColumn('uname')
+            // tabulator.hideColumn('uname')
             tabulator.hideColumn('user')
             tabulator.setFilter("old", "=", 0)
             tabulator.setGroupBy('')
@@ -371,7 +371,7 @@ function tabulator_select_mts(
     tabulator.hideColumn('user')
     tabulator.hideColumn('otdel')
     tabulator.hideColumn('sklad')
-    tabulator.hideColumn('uname')
+    // tabulator.hideColumn('uname')
     tabulator.hideColumn('user')
 
     tabulator.redraw()

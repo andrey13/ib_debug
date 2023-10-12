@@ -1399,7 +1399,7 @@ function tabulator_oper(
         // кнопка selectUser ---------------------------------------------------------------------
         e_selectUser.onclick = async () => {
             // if (d.oper == 'возврат') return
-            const id_depart = isRole('su') ? 0 : g_user.id_depart
+            const id_depart = isRole('tex') ? g_user.id_depart : 0
 
             const selectedUsers = await selectUser(
                 "6100",

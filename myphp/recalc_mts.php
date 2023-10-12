@@ -31,10 +31,24 @@ if ($id_mts ==0) {
             where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
             order by zm.id_oper 
             desc 
+            limit 1),
+            id_user=(
+            select zm.id_user 
+            from zayavka2mts as zm 
+            where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
+            order by zm.id_oper 
+            desc 
             limit 1)";
 } else {
     $sql="UPDATE mts AS m SET id_oper=(
             select zm.id 
+            from zayavka2mts as zm 
+            where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
+            order by zm.id_oper 
+            desc 
+            limit 1),
+            id_user=(
+            select zm.id_user 
             from zayavka2mts as zm 
             where zm.id_mts=m.id and zm.id_zayavka=m.id_zayavka 
             order by zm.id_oper 
