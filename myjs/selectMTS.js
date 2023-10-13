@@ -83,8 +83,8 @@ function tabulator_select_mts(
     ]
 
     const cols2 = [
-        { title: "m", field: "id", widthGrow: 1, headerFilter: true },
-        { title: "z", field: "id_zayavka", widthGrow: 1, headerFilter: true },
+        { title: "id", field: "id", widthGrow: 1, headerFilter: true },
+        { title: "обращение", field: "id_zayavka", widthGrow: 1, headerFilter: true },
         // { title: "w", field: "old", widthGrow: 1, headerFilter: true },
         { title: "№", field: "numb", widthGrow: 1, headerFilter: true },
         { title: "операций", field: "z_count", width: 50, print: false, headerFilter: true },
@@ -376,8 +376,6 @@ function tabulator_select_mts(
     return tabulator
 }
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////////
 function create_absent_zayavki(win_return = null) {
     
@@ -472,8 +470,9 @@ async function show_mts_history(id_mts, win_return = null) {
                     outputFormat: "DD.MM.YYYY",
                 },
             }, 
+            { title: 'статус', field: 'status', widthGrow: 2, headerFilter: true },
             // { title: 'тип', field: 'z_id_type', widthGrow: 1, headerFilter: true },
-            { title: 'тип', field: 'type', widthGrow: 4, headerFilter: true },
+            // { title: 'тип', field: 'type', widthGrow: 4, headerFilter: true },
             // { title: 'статус', field: 'z_id_status', widthGrow: 1, headerFilter: true },
             // { title: 'операция', field: 'zm_id_oper', widthGrow: 1, headerFilter: true },
             { title: 'операция', field: 'oper', widthGrow: 2, headerFilter: true },
@@ -484,7 +483,6 @@ async function show_mts_history(id_mts, win_return = null) {
             { title: 'заявитель', field: 'user_name', widthGrow: 4, headerFilter: true },
             // { title: 'исполнитель', field: 'z_id_user_isp', widthGrow: 1, headerFilter: true },
             { title: 'исполнитель', field: 'user_isp_name', widthGrow: 4, headerFilter: true },
-            { title: 'статус', field: 'status', widthGrow: 2, headerFilter: true },
         ],
         footerElement: '',
     })

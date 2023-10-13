@@ -110,7 +110,7 @@ function tabulator_zayavki(id_div, appH) {
 
         columns: [
             { title: "id", field: "id", width: 50, headerFilter: true, print: false },
-            { title: "id_dep", field: "id_depart", width: 50, headerFilter: true, print: false },
+            // { title: "id_dep", field: "id_depart", width: 50, headerFilter: true, print: false },
             {
                 title: "дата",
                 field: "date",

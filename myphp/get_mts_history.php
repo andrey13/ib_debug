@@ -68,9 +68,10 @@ if ($id_mts == 0) {
     LEFT JOIN types AS t3 ON t3.id = zm.id_oper
     LEFT JOIN mts   AS m ON m.id = zm.id_mts
     WHERE zm.id_mts=$id_mts
-    ORDER BY z_date DESC, zm_id DESC";
+    ORDER BY z_date, zm_id";
 }
 
+// ORDER BY z_date DESC, zm_id DESC";
 // --  AS m 
 // --         LEFT JOIN user AS u ON u.id = m.id_user
 // --         LEFT JOIN comp AS c ON u.id = m.id_comp
