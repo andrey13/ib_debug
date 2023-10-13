@@ -1448,13 +1448,16 @@ function tabulator_oper(
         e_selectMTS1.onclick = async () => {
             let id_otdel = 0
             let sklad = 0
+            let id_oper = 0 // последняя операция МТС
 
             switch(d.id_oper) {
                 case '28': // выдача
                     sklad = 1
+                    id_oper = 29 // выдать из возвращенных
                     break
                 case '29': // возврат
-                sklad = 2
+                    sklad = 2
+                    id_oper = 28 // вернуть из выданных
                     break
             }
 
@@ -1478,6 +1481,7 @@ function tabulator_oper(
                 "6100",
                 id_otdel,
                 sklad,
+                id_oper,
                 (selectable = 1),
                 (mode = "select"),
                 (win_return = win_current)

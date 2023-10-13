@@ -19,6 +19,12 @@ if ($id_mts ==0) {
             WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
             ORDER BY zm.id_oper DESC 
             LIMIT 1),
+        id_type_oper=(
+            SELECT zm.id_oper 
+            FROM zayavka2mts AS zm 
+            WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
+            ORDER BY zm.id_oper DESC 
+            LIMIT 1),
         id_user=(
             SELECT zm.id_user 
             FROM zayavka2mts AS zm 
@@ -36,6 +42,12 @@ if ($id_mts ==0) {
             LIMIT 1),
         id_oper=(
             SELECT zm.id 
+            FROM zayavka2mts AS zm 
+            WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
+            ORDER BY zm.id_oper DESC 
+            LIMIT 1),
+        id_type_oper=(
+            SELECT zm.id_oper 
             FROM zayavka2mts AS zm 
             WHERE zm.id_mts=m.id AND zm.id_zayavka=m.id_zayavka 
             ORDER BY zm.id_oper DESC 
