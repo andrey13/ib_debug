@@ -83,6 +83,7 @@ function tabulator_opers(
         columns: [
             { title: 'id', field: 'zm_id', width: 60, headerFilter: true },
             { title: 'обращение', field: 'z_id', widthGrow: 1, headerFilter: true, topCalc: 'count' },
+            { title: 'id_mts', field: 'zm_id_mts', widthGrow: 1, headerFilter: true },
             // { title: 'дата', field: 'z_date', width: 75, headerFilter: true },
             {
                 title: "дата",
@@ -97,11 +98,10 @@ function tabulator_opers(
             }, 
             { title: 'статус', field: 'status', widthGrow: 1, headerFilter: true },
             // { title: 'тип', field: 'z_id_type', widthGrow: 1, headerFilter: true },
-            { title: 'тип', field: 'type', widthGrow: 2, headerFilter: true },
+            // { title: 'тип', field: 'type', widthGrow: 2, headerFilter: true },
             // { title: 'статус', field: 'z_id_status', widthGrow: 1, headerFilter: true },
             // { title: 'операция', field: 'zm_id_oper', widthGrow: 1, headerFilter: true },
             { title: 'операция', field: 'oper', widthGrow: 1, headerFilter: true },
-            { title: 'id_mts', field: 'zm_id_mts', widthGrow: 1, headerFilter: true },
             { title: 'SN', field: 'm_SN', widthGrow: 5, headerFilter: true },
             { title: 'дсп', field: 'zm_dsp', width: 60, headerFilter: true },
             // { title: 'ответственный', field: 'zm_id_user', widthGrow: 1, headerFilter: true },
