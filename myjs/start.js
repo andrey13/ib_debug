@@ -6,7 +6,16 @@ async function start_app() {
     g_user.mask = ip2mask(g_user.ip);
     g_id_scan_last = await get_id_scan_last();
 
-    let res = await identUser();
+    let usr = getCookie('g_user')
+    let res = ''
+
+    if (!!usr) {
+        g_user.usr = s_usr
+        let r = await initUser(usr)
+    } else {
+        res = await identUser();
+    }
+
     g_moduleActive = 'mNews';
     mNews();
 
@@ -26,8 +35,6 @@ function addTabRow(table, d, top = true) {
 //=======================================================================================
 async function identUser() {
     return new Promise(function (resolve, reject) {
-
-        //let div_modal = '';
 
         // создание модального окна ----------------------------------------------------------
         let div_modal = document.createElement('div');
@@ -88,7 +95,7 @@ async function identUser() {
             }
 
             if (g_user.result == "YES") {
-                // console.log('YES');
+                setCookie('g_user', g_user.usr, {secure: true, 'max-age': 2592000})
 
                 if (await initUser(g_user.usr)) {
                     div_modal.style.display = "none";
@@ -183,7 +190,10 @@ function isRole(role) {
 async function initMenu(modules) {
     //alert('initMenu-1');
     if (modules.length == 0) { return ``; }
-    let ht = `<p style="margin:0; padding:0; text-align:right;">` + g_user.name + `&nbsp;&nbsp;<a href="http://10.161.214.25"><i class="fa fa-sign-out" aria-hidden="true"></i></a>&nbsp;&nbsp;</p>`;
+    let ht = `<p style="margin:0; padding:0; text-align:right;">` + g_user.name + `&nbsp;&nbsp;
+              <a href="http://10.161.208.25">
+              <i id='logout' onclick='deleteCookie("g_user")' class="fa fa-sign-out" aria-hidden="true"></i>
+              </a>&nbsp;&nbsp;</p>`;
     let script;
 
     // цикл по всем модулям, доступным пользователю -------------------------------------

@@ -1,7 +1,8 @@
 function mIFNS() {
-    $("#appBody").html('<div id="tabIT"><div id="tabI"></div><div id="tabT"></div></div>');
-    createTabulatorIFNS("tabI", appBodyHeight());
-    createTabulatorTORM("tabT", appBodyHeight());
+    $("#appBody").html('<div id="tabIT"><div id="tabI"></div><div id="tabT"></div><div id="tabP"></div></div>')
+    createTabulatorIFNS("tabI", appBodyHeight())
+    createTabulatorTORM("tabT", appBodyHeight())
+    createTabulatorPoint("tabP", appBodyHeight())
 }
 
 //=======================================================================================
@@ -28,8 +29,10 @@ function createTabulatorIFNS(id_div, appH) {
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
+        selectable: 1,
+        selectableRangeMode: "click",
         columns: [
-          //{ title: "id", field: "id", widthGrow: 1, print: false },
+            { title: "id", field: "id", widthGrow: 1, print: false },
             { title: "СОНО", field: "sono", headerFilter: true, widthGrow: 2, topCalc: "count" },
             { title: "ЕКП",  field: "ekp",  headerFilter: true, widthGrow: 2 },
             { title: "наименование", field: "name", headerFilter: true, widthGrow: 8 },
@@ -50,21 +53,8 @@ function createTabulatorIFNS(id_div, appH) {
             { title: "вне<br>ЕСК", field: "n_esk_out", widthGrow: 1 },
         ],
 
-        rowFormatter: function (row) {
-            rowFormatterCursor(row, g_tableIFNS);
-        },
-
-        renderStarted: function () {
-            renderStartedCursor(tableIFNS, g_tableIFNS);
-            tableTORM.setFilter("id_co", "=", g_tableIFNS.id_current);
-        },
-
         rowClick: function (e, row) {
-            rowClickCursor(row, g_tableIFNS);
-            tableTORM.setFilter("id_co", "=", g_tableIFNS.id_current);
-            let id = tableTORM.rowManager.activeRows[0].data.id;
-            let r = tableTORM.searchRows("id", "=", id)[0];
-            rowClickCursor(r, g_tableTORM)
+            tableTORM.setFilter("id_co", "=", tableIFNS.getSelectedData()[0].id);
         },
 
         cellDblClick: function (e, cell) { editIFNS(cell); },
@@ -85,15 +75,20 @@ function createTabulatorIFNS(id_div, appH) {
 
     // кнопка удаления инспекции --------------------------------------------------------
     $("#delIFNS").click(function () {
-        dialogYESNO(`Инспекция:<br><b>${g_tableIFNS.row_current.getData().sono}<br>${g_tableIFNS.row_current.getData().name}</b><br>будет удалена, вы уверены?<br>`)
+        let d = tableIFNS.getSelectedData()[0]
+        let id = d.id
+        let sono = d.sono
+        let name = d.name
+
+        dialogYESNO(`Инспекция:<br><b>${sono}<br>${name}</b><br>будет удалена, вы уверены?<br>`)
             .then(ans => {
                 if (ans == "YES") {
-                    runSQL_p(`DELETE FROM torm WHERE id_co=${g_tableIFNS.id_current}`);
-                    runSQL_p(`DELETE FROM ifns WHERE id=${g_tableIFNS.id_current}`)
+                    runSQL_p(`DELETE FROM torm WHERE id_co=${id}`);
+                    runSQL_p(`DELETE FROM ifns WHERE id=${id}`)
                         .then((res) => {
-                            g_tableIFNS.id_current = 0;
+                            // g_tableIFNS.id_current = 0;
                             tableIFNS.replaceData();
-                            g_tableIFNS.id_current = 0;
+                            // g_tableIFNS.id_current = 0;
                         });
                 }
             });
@@ -126,17 +121,20 @@ function createTabulatorTORM(id_div, appH) {
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
+        selectable: 1,
+        selectableRangeMode: "click",
         columns: [
           //{ title: "id_co",        field:"id_co",   editor: ed,                        widthGrow:1, print:false },
-          //{ title: "id", field: "id", widthGrow: 1, print: false },
+            { title: "id", field: "id", widthGrow: 1, print: false },
             { title: "СОНО ц.о.", field: "sono", headerFilter: true, widthGrow: 2, editor: ed },
             { title: "СОНО ТОРМ", field: "sono_torm", headerFilter: true, widthGrow: 2, topCalc: "count", editor: ed },
             { title: "ЕКП",       field: "ekp",  headerFilter: true, widthGrow: 2, editor: ed },
             { title: "наименование", field: "name", headerFilter: true, widthGrow: 6, editor: ed },
         ],
-        rowFormatter: function (row) { rowFormatterCursor(row, g_tableTORM); },
-        renderStarted: function () { renderStartedCursor(tableTORM, g_tableTORM); },
-        rowClick: function (e, row) { rowClickCursor(row, g_tableTORM) },
+        rowClick: function (e, row) {
+            tablePoint.setFilter("id_torm", "=", tableTORM.getSelectedData()[0].id);
+        },
+
         cellEdited: function (cell) { updateREC(cell.getRow().getData(), "myphp/updateTORM.php"); },
 
         footerElement: ms,
@@ -144,42 +142,125 @@ function createTabulatorTORM(id_div, appH) {
 
     // кнопка добавление нового ТОРМа ---------------------------------------------------
     $("#addTORM").click(function () {
-        let sono = tableIFNS.searchRows("id", "=", g_tableIFNS.id_current)[0].getData().sono;
-        let sql = `INSERT INTO torm (id_co,sono) VALUES (${g_tableIFNS.id_current},${sono})`;
+        let d = tableIFNS.getSelectedData()[0]
+        let id_co = d.id
+        let sono = d.sono
+
+        let sql = `INSERT INTO torm (id_co,sono) VALUES (${id_co},${sono})`;
         runSQL_p(sql)
             .then(id => tableTORM.addData(
                 [{
                     id: id,
-                    id_co: g_tableIFNS.id_current,
+                    id_co: id_co,
                     sono: sono,
                     ekp: ekp,
+                }],
+                false
+            ))
+    })
+
+    // кнопка удаления ТОРМа ------------------------------------------------------------
+    $("#delTORM").click(function () {
+        let d = tableTORM.getSelectedData()[0]
+        let id = d.id
+        let sono = d.sono
+        let sono_torm = d.sono_torm
+        let name = d.name
+
+        dialogYESNO(`ТОРМ:<br><b>${sono}-${sono_torm}<br>${name}</b><br>будет удален, вы уверены?<br>`)
+            .then(ans => {
+                if (ans == "YES") {
+                    runSQL_p(`DELETE FROM torm WHERE id=${id}`)
+                        .then((res) => {
+                            // g_tableTORM.id_current = 0
+                            tableTORM.replaceData()
+                            // g_tableTORM.id_current = 0
+                        })
+                }
+            })
+    })
+}
+
+//=======================================================================================
+//  табулятор справочника точек подключения =============================================
+//=======================================================================================
+
+function createTabulatorPoint(id_div, appH) {
+    let allow = getAllows();
+    let ed = (allow.E == 1) ? "input" : "";
+    let bADD = (allow.C == 1) ? "<button id='addPoint' class='w3-button w3-white w3-border w3-hover-teal'>Добавить</button>" : "";
+    let bDEL = (allow.D == 1) ? "<button id='delPoint' class='w3-button w3-white w3-border w3-hover-teal'>Удалить</button>" : "";
+    let ms = bDEL + bADD;
+
+    tablePoint = new Tabulator('#'+id_div, {
+        ajaxURL: "myphp/loadData.php",
+        ajaxParams: { t: "connect_point", o: "ip" },
+        ajaxConfig: "GET",
+        ajaxContentType: "json",
+        height: appH,
+        layout: "fitColumns",
+        tooltipsHeader: true,
+        printAsHtml: true,
+        printHeader: "<h1>Точки подключения<h1>",
+        printFooter: "",
+        rowContextMenu: rowMenu(),
+        headerFilterPlaceholder: "",
+        selectable: 1,
+        selectableRangeMode: "click",
+        columns: [
+            { title: "id", field: "id", widthGrow: 1, print: false },
+            { title: "ip", field: "ip", headerFilter: true, widthGrow: 2, editor: ed },
+            { title: "mask", field: "mask", headerFilter: true, widthGrow: 2, topCalc: "count", editor: ed },
+            { title: "sklad",       field: "stock",  headerFilter: true, widthGrow: 2, editor: ed },
+        ],
+        cellEdited: function (cell) { updateREC(cell.getRow().getData(), "myphp/updatePoint.php"); },
+
+        footerElement: ms,
+    });
+
+    // кнопка добавление новой точки подключения ---------------------------------------------------
+    $("#addPoint").click(function () {
+        let d = tableTORM.getSelectedData()[0]
+        let id_torm = d.id
+
+        let sql = `INSERT INTO connect_point (id_torm) VALUES (${id_torm})`;
+        
+        runSQL_p(sql)
+            .then(id => tablePoint.addData(
+                [{
+                    id: id,
+                    id_torm: id_torm,
                 }],
                 false
             ));
 
     });
 
-    // кнопка удаления ТОРМа ------------------------------------------------------------
-    $("#delTORM").click(function () {
-        dialogYESNO(`ТОРМ:<br><b>${g_tableTORM.row_current.getData().sono}-${g_tableTORM.row_current.getData().sono_torm}<br>${g_tableTORM.row_current.getData().name}</b><br>будет удален, вы уверены?<br>`)
+    // кнопка удаления точки подключения -----------------------------------------------------------
+    $("#delPoint").click(function () {
+        let d = tablePoint.getSelectedData()[0]
+        let id = d.id
+
+        dialogYESNO(`ТОРМ:<br><b>Точка подключения</b><br>будет удален, вы уверены?<br>`)
             .then(ans => {
                 if (ans == "YES") {
-                    runSQL_p(`DELETE FROM torm WHERE id=${g_tableTORM.id_current}`)
+                    runSQL_p(`DELETE FROM connect_point WHERE id=${id}`)
                         .then((res) => {
-                            g_tableTORM.id_current = 0;
-                            tableTORM.replaceData();
-                            g_tableTORM.id_current = 0;
-                        });
+                            // tablePoint.id_current = 0
+                            tablePoint.replaceData()
+                            // tablePoint.id_current = 0
+                        })
                 }
-            });
-    });
-
-
+            })
+    })
 }
+
+
 
 
 //=======================================================================================
 // модальное окно редактора ИФНС ========================================================
+// c - данные текущей колонки
 //=======================================================================================
 function editIFNS(c) {
     let allow = getAllows();

@@ -110,6 +110,7 @@ div.c {
 #tabLT,
 #tabI,
 #tabT,
+#tabP,
 #tabMod,
 #tabUsr,
 #tabStat {
@@ -195,16 +196,20 @@ div.c {
     width: 20%;
 }
 #tabIT {
-    height: 50%;
+    height:100%;
     width: 100%;
 }
 #tabI {
     height: 100%;
-    width: 50%;
+    width: 35%;
 }
 #tabT {
     height: 100%;
-    width: 50%;
+    width: 35%;
+}
+#tabP {
+    height: 100%;
+    width: 30%;
 }
 #tabModUsr {
     height: 100%;

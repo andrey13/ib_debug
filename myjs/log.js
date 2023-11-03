@@ -1,7 +1,8 @@
 // протоколирование работы программы- ---------------------------------------------------------
 function log_reg(comment, ppp) {
-    // if (g_user.usr == '6100-02-708' || g_user.ip == '10.161.214.3') { return; }
-    let dt = moment().format('YYYY-MM-DD HH:mm:ss');
+    if (g_user.usr == '6100-02-708') return
+
+    let dt = moment().format('YYYY-MM-DD HH:mm:ss')
 
     //console.log("g_user.name=", g_user.name)
 
@@ -11,10 +12,10 @@ function log_reg(comment, ppp) {
                       '${comment}',
                       '${g_user.name}',
                       '${g_user.usr}',
-                      '')`);
+                      '')`)
 }
 
 //=======================================================================================
 function clog(text) {
-    console.log(text);
+    console.log(text)
 }
