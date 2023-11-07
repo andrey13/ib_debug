@@ -12,7 +12,7 @@ async function mComp() {
 }
 
 
-function customFilterComp(data, filterParams){
+function customFilterComp(data, filterParams) {
     return (g_tableComp.cESK2 && data.esk_status == 2) || (g_tableComp.cESK0 && data.esk_status == 0 && ((g_tableComp.cVLN1 && data.n_vulner != 0) || (g_tableComp.cVLN0 && data.n_vulner == 0)));
 }
 
@@ -51,7 +51,7 @@ function createTabulatorComp(id_div, appH, msgF) {
     sono_mask = g_user.sono;
     //let callerName = arguments.callee.caller.name;
     //console.log("callerName="+callerName);
-    tableComp = new Tabulator('#'+id_div, {
+    tableComp = new Tabulator('#' + id_div, {
         ajaxURL: "myphp/loadDataComp.php",
         ajaxParams: { s: sono_mask },
         ajaxConfig: "GET",
@@ -230,7 +230,7 @@ function createReest(reestr) {
                       </div>`;
 
 
-    newModalWindow('viewReestr', `Реестр узлов ( ${type_ARM})`, formReestr, '', '600px', '5%', '5%');                      
+    newModalWindow('viewReestr', `Реестр узлов ( ${type_ARM})`, formReestr, '', '600px', '5%', '5%');
 }
 
 //=======================================================================================
@@ -243,7 +243,7 @@ function getReestr(reestr) {
     data_array.forEach(element => {
         let ip = ip10(element.ip).trim();
         if (element.maxreestr == reestr && ip != '') {
-            if (reestr_string=='') {
+            if (reestr_string == '') {
                 reestr_string = reestr_string + ip;
             } else {
                 reestr_string = reestr_string + ',' + ip;
@@ -270,6 +270,9 @@ function getReestr(reestr) {
 //=======================================================================================
 
 function editComp(c) {
+    const salt = randomStr(10)
+    const win_current = 'editComp' + salt
+
     let v_description = c.getRow().getData().description;
     let v_distinguishedName = c.getRow().getData().distinguishedName;
     let v_dt1 = c.getRow().getData().dt1;
@@ -322,7 +325,18 @@ function editComp(c) {
                       </div>`;
 
 
-    newModalWindow('editComp', '', formComp, '', '600px', '5%');                      
+    newModalWindow(
+        win_current,
+        '',
+        formComp,
+        '',
+        width = '600px',
+        marginLeft = '5%',
+        marginTop = '5%',
+        win_return = null
+    )
+
+    id_2_set_focus(win_current)
 
     //$("#mainModalBody").html(formComp);
 
@@ -335,7 +349,7 @@ function editComp(c) {
 
 function createTabulatorCompSoft(id_div, comp_id, comp_name, appH, id_status_filter) {
     console.log("COMP:", id_div, comp_id, comp_name);
-    tableCompSoft = new Tabulator('#'+id_div, {
+    tableCompSoft = new Tabulator('#' + id_div, {
         ajaxURL: "myphp/loadDataCompSoft.php",
         ajaxParams: { с: comp_id.toString() },
         ajaxConfig: "GET",
@@ -377,7 +391,7 @@ function createTabulatorCompSoft(id_div, comp_id, comp_name, appH, id_status_fil
 
 function createTabulatorCompVulner(id_div, comp_id, comp_name, appH, id_level_filter, id_scan) {
     console.log("comp_id:", comp_id);
-    tableCompVulner = new Tabulator('#'+id_div, {
+    tableCompVulner = new Tabulator('#' + id_div, {
         ajaxURL: "myphp/loadDataCompVulner.php",
         ajaxParams: { c: comp_id.toString(), sc: id_scan },
         ajaxConfig: "GET",
