@@ -336,7 +336,7 @@ function editComp(c) {
         win_return = null
     )
 
-    id_2_set_focus(win_current)
+    // id_2_set_focus(win_current)
 
     //$("#mainModalBody").html(formComp);
 

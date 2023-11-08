@@ -56,6 +56,8 @@ function newModalWindow(
     div_modal.oncancel = () => {
         // console.log('oncancel = ', div_modal)
     }
+
+    id_2_set_focus(modal)
 }
 
 // удаление модального окна ==========================================================

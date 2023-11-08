@@ -72,18 +72,28 @@ function tabulator_select_dionis(
 ) {
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count"  },
-        { title: "владелец", field: "sono1", widthGrow: 1, headerFilter: true },
-        { title: "нахождение", field: "sono2", widthGrow: 1, headerFilter: true },
-        { title: "владелец", field: "ifns1", widthGrow: 2, headerFilter: true },
-        { title: "нахождение", field: "ifns2", widthGrow: 2, headerFilter: true },
-        { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
-        { title: "тип", field: "tip", widthGrow: 1, headerFilter: true },
-        { title: "Модель", field: "model", widthGrow: 1, headerFilter: true },
-        { title: "SN", field: "sn", widthGrow: 1, headerFilter: true },
-        { title: "Инв№", field: "inv_n", widthGrow: 1, headerFilter: true },
-        { title: "Версия", field: "ver", widthGrow: 1, headerFilter: true },
-        { title: "Сертификат", field: "date_cert", widthGrow: 1, headerFilter: true },
-        { title: "Статус", field: "status", widthGrow: 1, headerFilter: true },
+        {//группа владелец
+            title: "владелец",
+            columns: [
+                { title: "СОНО", field: "sono1", widthGrow: 1, headerFilter: true },
+                { title: "ТНО", field: "ifns1", widthGrow: 3, headerFilter: true },
+            ],
+        },
+        {//группа нахождение
+            title: "нахождение",
+            columns: [
+                { title: "СОНО", field: "sono2", widthGrow: 1, headerFilter: true },
+                { title: "ТНО", field: "ifns2", widthGrow: 3, headerFilter: true },
+            ],
+        },
+        // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
+        { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
+        { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
+        { title: "SN", field: "sn", widthGrow: 2, headerFilter: true },
+        { title: "Инв №", field: "inv_n", widthGrow: 2, headerFilter: true },
+        { title: "Версия", field: "ver", widthGrow: 2, headerFilter: true },
+        { title: "Сертификат", field: "date_sert", widthGrow: 2, headerFilter: true },
+        { title: "Статус", field: "status", widthGrow: 2, headerFilter: true },
         {
             title: "дата установки",
             field: "date1",
@@ -95,12 +105,9 @@ function tabulator_select_dionis(
                 outputFormat: "DD.MM.YYYY",
             },
         },
-        { title: "комментарий", field: "comm", widthGrow: 6, headerFilter: true, },
+        { title: "комментарий", field: "comm", widthGrow: 4, headerFilter: true, },
     ]
 
-    // cols = cols1.concat(cols2)
-
-    // const group = (mode == 'select') ? '' : 'SN'
     const group = ''
 
     const salt = randomStr(10)
@@ -120,14 +127,12 @@ function tabulator_select_dionis(
     `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
     `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
     `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-    `&nbsp;&nbsp;&nbsp;дополнительные данные&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
     `</div>`
 
     // `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
     // `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
     // `&nbsp;&nbsp;&nbsp;показать дубли&nbsp;<input type='checkbox' id='${id_checkb_flt}' unchecked style="vertical-align: middle;">` +
-
-    console.log("cols = ", cols)
+    //`&nbsp;&nbsp;&nbsp;дополнительные данные&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
 
     const tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_dionis.php",
@@ -161,57 +166,41 @@ function tabulator_select_dionis(
         },
 
         rowFormatter: function (row) {
-            // if (row.getData().user1_esk_status == 1) {
-            //     // пользователь отключен -------------------------------------------
-            //     row.getCell("uname").getElement().style.backgroundColor = '#cccccc'
-            // }
-            // if (row.getData().bad == 1) {
-            //     // неисправное МТС  ------------------------------------------------
-            //     row.getCell("bad").getElement().style.backgroundColor = '#ff0000'
-            // }
-            // if (row.getData().dsp == 1) {
-            //     // ДСП  ------------------------------------------------------------
-            //     row.getCell("dsp").getElement().style.backgroundColor = '#8888ff'
-            // }
-            // if (ns(row.getData().SN) == '') {
-            //     // не указан SN  ---------------------------------------------------
-            //     row.getCell("SN").getElement().style.backgroundColor = '#ffcccc'
-            // }
-            // if (row.getData().z_count == 0) {
-            //     // нет операций  ---------------------------------------------------
-            //     row.getCell("z_count").getElement().style.backgroundColor = '#ffcccc'
-            // }
+            let d = row.getData()
+            if (d.sono1 != d.sono2) {
+                // место приписки не совпадает с нахождением
+                row.getCell("sono2").getElement().style.backgroundColor = '#ffcccc'
+                row.getCell("ifns2").getElement().style.backgroundColor = '#ffcccc'
+            }
         },
 
-        rowSelectionChanged: function (data, rows) {            
-            // if (data.length == 0) {
-            //     id2e(id_button_del).disabled = true
-            //     id2e(id_button_add).disabled = isRole("tex")
-            //     id2e(id_button_mod).disabled = true
-            //     id2e(id_button_sel).disabled = true
-            //     id2e(id_button_his).disabled = true
-            //     // id2e(id_button_cre).disabled = !isRole('su')
-
-            // } else {
-            //     id2e(id_button_del).disabled = isRole("tex")
-            //     id2e(id_button_add).disabled = isRole("tex")
-            //     id2e(id_button_mod).disabled = isRole("tex")
-            //     if (mode == "select") id2e(id_button_sel).disabled = false
-            //     id2e(id_button_his).disabled = false
-            //     // id2e(id_button_cre).disabled = !isRole('su')
-            // }
+        rowSelectionChanged: function (data, rows) {      
+            if (data.length == 0) {
+                id2e(id_button_mod).disabled = true
+                id2e(id_button_del).disabled = true
+                id2e(id_button_his).disabled = true
+                id2e(id_button_sel).disabled = true
+                id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
+            } else {
+                id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
+                id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
+                id2e(id_button_his).disabled = false
+                id2e(id_button_sel).disabled = false
+                id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
+                id2e(id_button_mod).disabled =!isRole("dionis") && !isRole("su")
+            }
         },
 
         cellDblClick: async function (e, cell) {
-            // if ((mode == "select")) {
-            //     removeModalWindow(win_current, win_return)
-            //     resolve(cell.getRow().getData())
-            // } else {
-            //     const res = await edit_mts_vocab(
-            //         tabulator.getSelectedData()[0],
-            //         (win_return = win_current)
-            //     )
-            // }
+            if ((mode == "select")) {
+                removeModalWindow(win_current, win_return)
+                resolve(cell.getRow().getData())
+            } else {
+                const res = await edit_dionis(
+                    tabulator.getSelectedData()[0],
+                    (win_return = win_current)
+                )
+            }
         },
 
     })
@@ -222,12 +211,12 @@ function tabulator_select_dionis(
     }
 
     id2e(id_button_add).onclick = async () => {
-        const d = factory_MTS()
-        d.id = await save_mts(d)
+        const d = factory_dionis()
+        d.id = await save_dionis(d)
 
         addTabRow(tabulator, d, (top = true))
 
-        const res = await edit_mts_vocab(
+        const res = await edit_dionis(
             d,
             (win_return = win_current),
             (mode = "new")
@@ -237,7 +226,7 @@ function tabulator_select_dionis(
     }
 
     id2e(id_button_mod).onclick = async () => {
-        const res = await edit_mts_vocab(
+        const res = await edit_dionis(
             tabulator.getSelectedData()[0],
             (win_return = win_current),
             (mode = "mod")
@@ -246,14 +235,14 @@ function tabulator_select_dionis(
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить МТС"),
+            (text = "Удалить Dionis"),
             (win_return = win_current)
         )
 
         if (ans == 'YES') {
             const data = tabulator.getSelectedData()
             data.forEach((d) => {
-                del_mts_vocab(d.id)
+                del_dionis(d.id)
                 tabulator.deleteRow(d.id)
             })
             const id_dionis = getFirstID(tabulator)
@@ -262,7 +251,7 @@ function tabulator_select_dionis(
     }
 
     id2e(id_button_his).onclick = () => {
-        show_mts_history(
+        show_dionis_history(
             tabulator.getSelectedData()[0].id,
             (win_return = win_current)
         )
@@ -286,32 +275,32 @@ function tabulator_select_dionis(
     //     }
     // }    
 
-    id2e(id_checkb_xls).onclick = () => {
-        console.log('id_checkb_xls = ', id2e(id_checkb_xls).checked)
-        if (id2e(id_checkb_xls).checked) {
-            tabulator.showColumn('date')
-            tabulator.showColumn('status1')
-            tabulator.showColumn('user')
-            tabulator.showColumn('otdel')
-            tabulator.showColumn('sklad')
-            // tabulator.showColumn('uname')
-            tabulator.showColumn('user')
-            tabulator.setGroupBy('SN')
-            tabulator.setFilter()
-            tabulator.redraw()
-        } else {
-            tabulator.hideColumn('date')
-            tabulator.hideColumn('status1')
-            tabulator.hideColumn('user')
-            tabulator.hideColumn('otdel')
-            tabulator.hideColumn('sklad')
-            // tabulator.hideColumn('uname')
-            tabulator.hideColumn('user')
-            tabulator.setFilter("old", "=", 0)
-            tabulator.setGroupBy('')
-            tabulator.redraw()
-        }
-    }
+    // id2e(id_checkb_xls).onclick = () => {
+    //     console.log('id_checkb_xls = ', id2e(id_checkb_xls).checked)
+    //     if (id2e(id_checkb_xls).checked) {
+    //         tabulator.showColumn('date')
+    //         tabulator.showColumn('status1')
+    //         tabulator.showColumn('user')
+    //         tabulator.showColumn('otdel')
+    //         tabulator.showColumn('sklad')
+    //         // tabulator.showColumn('uname')
+    //         tabulator.showColumn('user')
+    //         tabulator.setGroupBy('SN')
+    //         tabulator.setFilter()
+    //         tabulator.redraw()
+    //     } else {
+    //         tabulator.hideColumn('date')
+    //         tabulator.hideColumn('status1')
+    //         tabulator.hideColumn('user')
+    //         tabulator.hideColumn('otdel')
+    //         tabulator.hideColumn('sklad')
+    //         // tabulator.hideColumn('uname')
+    //         tabulator.hideColumn('user')
+    //         tabulator.setFilter("old", "=", 0)
+    //         tabulator.setGroupBy('')
+    //         tabulator.redraw()
+    //     }
+    // }
 
     // tabulator.hideColumn('date')
     // tabulator.hideColumn('status1')
@@ -328,28 +317,307 @@ function tabulator_select_dionis(
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-async function show_mts_history(id_dionis, win_return = null) {
-    const data_mts = await id_2_data(id_dionis, 'mts')
-    const win_current = 'historyMTS' + randomStr(10)
-    const header = `<h4>история МТС id: ${data_mts.id}, SN: ${data_mts.SN}</h4>`
+function edit_dionis(d, win_return = null, mode = "") {
+    return new Promise(function (resolve, reject) {
+        const salt = randomStr(10)
+        const win_current = 'editdionis' + salt
+
+        const headerdionis = `<h4>параметры Dionis</h4>`
+
+        const bodydionis = `<div style="margin: 0; padding: 1%;">
+            <table class="w3-table-all">
+            <b>ТНО приписки:</b><br>
+            <input class="o3-border" type="text" v-model="dv.sono1"><br>
+            <textarea rows="3" style="width:100%" v-model="dv.ifns1"></textarea><br><br>
+            <b>ТНО нахождения:</b><br>
+            <input class="o3-border" type="text" v-model="dv.sono2"><br>
+            <textarea rows="3" style="width:100%" v-model="dv.ifns2"></textarea><br><br>
+            <input class="o3-border" type="text" v-model="dv.status"> - статус<br>
+            <input class="o3-border" type="text" v-model="dv.inv_n"> - инвентарный номер<br>
+            <input class="o3-border" type="text" v-model="dv.sn"> - заводской номер<br>
+            <input class="o3-border" type="text" v-model="dv.type"> - тип<br>
+            <input class="o3-border" type="text" v-model="dv.model"> - модель<br>
+            <input class="o3-border" type="text" v-model="dv.ver"> - версия<br>
+            <input class="o3-border" type="text" v-model="dv.date1"> - дата установки<br>
+            <br>           
+            Комментарии:<br>
+            <textarea rows="3" style="width:100%" v-model="dv.comm"></textarea>
+            <br>
+            <br>
+            <button id="btnEnterdionis"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
+            <button id="btnCanceldionis" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
+            <button id="btnApplaydionis" class="w3-btn w3-padding-small o3-border w3-hover-teal">применить</button>
+            <button id="btnPrevdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущий Dionis</button>
+            <button id="btnNextdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующий Dionis</button>
+        </div>`
+
+        // <tr>
+        //   <td>
+        //     <button id="selectdionisComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
+        //     <span v-show="shExl">id_comp: {{dv.id_comp}}</span>
+        //   </td>
+        //   <td></td>
+        // </tr>
+
+
+        const footdionis = ``
+
+        const esc_dionis = mode == "new"
+            ? () => { 
+                remove_selected_dionis() 
+                vapp.unmount()
+            }
+            : () => { 
+                console.log("esc_callback") 
+                vapp.unmount()
+            }
+
+        newModalWindow(
+            win_current,
+            headerdionis,
+            bodydionis,
+            footdionis,
+            (width = "60%"),
+            (marginLeft = "15%"),
+            (marginTop = "5%"),
+            win_return,
+            esc_dionis
+        )
+
+        //--- View Model-------------------------------------------------------start
+        const vapp = Vue.createApp({
+            data() {
+                return {
+                    dv: d,
+                    /*
+                    chg: false,
+                    dsp: d.dsp,
+                    shExl: false,
+                    style_dsp: ({ focused, checked }) => {
+                        const style = {}
+                        style.background = (checked) ? "#8888ff" : "grey"
+                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                        return style
+                    },
+                    style_bad: ({ focused, checked }) => {
+                        const style = {}
+                        style.background = (checked) ? "red" : "green"
+                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                        return style
+                    },
+                    style_old: ({ focused, checked }) => {
+                        const style = {}
+                        style.background = (checked) ? "red" : "green"
+                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                        return style
+                    }
+                    */
+                }
+            },
+            /*
+            computed: {
+                uname() {
+                    return !!!this.dv.uname
+                        ? "<выбрать пользователя>"
+                        : this.dv.uname
+                },
+                cname() {
+                    return !!!this.dv.cname
+                        ? "<выбрать компьютер>"
+                        : this.dv.cname
+                },
+                dname() {
+                    return !!!this.dv.dname
+                        ? "<выбрать отдел>"
+                        : this.dv.dname
+                },
+                dsp() {
+                    if (!!!this.dsp) return ""
+                    return this.dv.dsp == "1" ? "дсп" : ""
+                },
+            },
+            watch: {
+                dv: {
+                    handler(newValue, oldValue) {
+                        this.chg = true
+                    },
+                    deep: true,
+                },
+            },
+            */
+        })
+
+        const vm = vapp.use(naive).mount('#' + win_current)
+        //--- View Model-------------------------------------------------------stop
+
+        // id_2_set_focus(win_current)
+
+        // кнопка выбора пользователя -----------------------------------------------
+        // id2e('btnShowExl').onclick = () => {
+        //     vm.$data.shExl = !vm.$data.shExl
+        // }
+        // кнопка выбора пользователя -----------------------------------------------
+        // id2e("selectdionisUser").onclick = async () => {
+        //     const id_depart = isRole("tex") ? g_user.id_depart : 0
+        //     const selectedUsers = await selectUser(
+        //         "6100",
+        //         "",
+        //         id_depart,
+        //         1,
+        //         (header = "Выбор ответственного лица"),
+        //         (width = "40%"),
+        //         (marginLeft = "30%"),
+        //         (marginTop = "5%"),
+        //         win_current,
+        //         vm.$data.dv.id_user
+        //     )
+        //     selectedUsers.forEach(async (u) => {
+        //         vm.$data.dv.id_user = u.id
+        //         vm.$data.dv.uname = u.name
+        //         vm.$data.dv.user_esk_status = u.esk_status
+        //         if (u.esk_status == 2) {
+        //             console.log('u.esk_status == 2')
+        //             vm.$data.dv.id_depart = u.id_depart
+        //             const depart_data = await id_depart_2_data(u.id_depart)
+        //             vm.$data.dv.id_otdel = depart_data.id_otdel
+        //             vm.$data.dv.dname = depart_data.name
+        //         } else {
+        //             console.log('u.esk_status != 2')
+        //             vm.$data.dv.id_depart = 0
+        //             vm.$data.dv.dname = 'отключен'
+        //         }
+        //         id2e("selectdionisUser").innerHTML = vm.$data.dv.uname
+        //         id_2_set_focus(win_current)
+        //     })
+        // }
+        // кнопка выбора отдела -----------------------------------------------------
+        // id2e("selectdionisDepart").onclick = async () => {
+        //     const dep = await selectVocab(
+        //         (table = "depart"),
+        //         (sort = "id_otdel"),
+        //         (ok = -1),
+        //         (tite = "отдел"),
+        //         (allow = ""),
+        //         (width = "60%"),
+        //         (marginLeft = "20%"),
+        //         (marginTop = "5%"),
+        //         win_current,
+        //         sono = g_user.sono
+        //     )
+        //     console.log('dep = ', dep)
+        //     vm.$data.dv.id_depart = dep.id
+        //     vm.$data.dv.id_otdel = dep.id_otdel
+        //     vm.$data.dv.dname = (await id_depart_2_data(dep.id)).name
+        //     id_2_set_focus(win_current)
+        // }
+        // кнопка сохранения и выхода -----------------------------------------------
+        id2e("btnEnterdionis").onclick = () => {
+            const d = vm.$data.dv
+            vapp.unmount()
+            save_dionis(d)
+            removeModalWindow(win_current, win_return)
+            table_select_dionis.updateRow(d.id, d)
+            table_select_dionis.redraw()
+            resolve("OK")
+        }
+        // кнопка отмены изменений --------------------------------------------------
+        id2e("btnCanceldionis").onclick = () => {
+            vapp.unmount()
+            if (mode == "new") remove_selected_dionis()
+            removeModalWindow(win_current, win_return)
+            resolve("CANCEL")
+        }
+        // кнопка сохранения без выхода ---------------------------------------------
+        id2e("btnApplaydionis").onclick = () => {
+            const d = vm.$data.dv
+            save_dionis(d)
+            table_select_dionis.updateRow(d.id, d)
+            table_select_dionis.redraw()
+        }
+        // кнопка перехода на предыдущее МТС ----------------------------------------
+        id2e("btnPrevdionis").onclick = () => {
+            const d = vm.$data.dv
+            save_dionis(d)
+            table_select_dionis.updateRow(d.id, d)
+            table_select_dionis.redraw()
+            // if (vm.$data.chg) {
+            //     dialogYESNO('Данные были изменены<br>сохранить изменения')
+            //         .then(ans => {
+            //             if (ans == "YES") {
+            //                 const d = vm.$data.dv
+            //                 save_dionis(d)
+            //                 table_select_dionis.updateRow(d.id, d)
+            //                 table_select_dionis.redraw()
+            //             } else {
+            //                 return
+            //             }
+            //         })
+            // }
+            const selected_row = table_select_dionis.getSelectedRows()[0]
+            const id_curr = selected_row.id
+            const id_prev = selected_row.getPrevRow().getData().id
+            table_select_dionis.deselectRow(id_curr)
+            table_select_dionis.selectRow(id_prev)
+            table_select_dionis.scrollToRow(id_prev, "center", false)
+            const d_prev = table_select_dionis.getSelectedData()[0]
+            vm.$data.dv = d_prev
+            vm.$data.chg = false
+        }
+        // кнопка перехода на следующее МТС -----------------------------------------
+        id2e("btnNextdionis").onclick = () => {
+            const d = vm.$data.dv
+            save_dionis(d)
+            table_select_dionis.updateRow(d.id, d)
+            table_select_dionis.redraw()
+            // if (vm.$data.chg) {
+            //     dialogYESNO('Данные были изменены<br>сохранить изменения')
+            //         .then(ans => {
+            //             if (ans == "YES") {
+            //                 const d = vm.$data.dv
+            //                 save_dionis(d)
+            //                 table_select_dionis.updateRow(d.id, d)
+            //                 table_select_dionis.redraw()
+            //             } else {
+            //                 return
+            //             }
+            //         })
+            // }
+            const selected_row = table_select_dionis.getSelectedRows()[0]
+            const id_curr = selected_row.id
+            const id_next = selected_row.getNextRow().getData().id
+            table_select_dionis.deselectRow(id_curr)
+            table_select_dionis.selectRow(id_next)
+            table_select_dionis.scrollToRow(id_next, "center", false)
+            const d_next = table_select_dionis.getSelectedData()[0]
+            vm.$data.dv = d_next
+            vm.$data.chg = false
+        }
+    })
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+async function show_dionis_history(id_dionis, win_return = null) {
+    const data_dionis = await id_2_data(id_dionis, 'dionis')
+    const win_current = 'historydionis' + randomStr(10)
+    const header = `<h4>история МТС id: ${data_dionis.id}, SN: ${data_dionis.SN}</h4>`
     const body = `<div class="w3-container"></div>`
     const foot = ``
     
-    const esc_mts_history = () => { 
+    const esc_dionis_history = () => { 
         console.log("esc_callback") 
     }
 
     newModalWindow( 
         win_current, header, body, foot,
         width = "59%", marginLeft = "40%", marginTop = "1%",
-        win_return, esc_mts_history
+        win_return, esc_dionis_history
     )
     
     const table_histoty = new Tabulator('#' + win_current + 'Body', {
-        ajaxURL: "myphp/get_mts_history.php",
+        ajaxURL: "myphp/get_dionis_history.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
-        ajaxParams: { i: data_mts.id },
+        ajaxParams: { i: data_dionis.id },
         height: appBodyHeight()-100,
         layout: "fitColumns",
         tooltipsHeader: true,
@@ -383,7 +651,7 @@ async function show_mts_history(id_dionis, win_return = null) {
             { title: 'операция', field: 'oper', widthGrow: 2, headerFilter: true },
             { title: 'дсп', field: 'zm_dsp', widthGrow: 1, headerFilter: true },
             // { title: 'ответственный', field: 'zm_id_user', widthGrow: 1, headerFilter: true },
-            { title: 'ответственный', field: 'user_mts_name', widthGrow: 4, headerFilter: true },
+            { title: 'ответственный', field: 'user_dionis_name', widthGrow: 4, headerFilter: true },
             // { title: 'заявитель', field: 'z_id_user', widthGrow: 1, headerFilter: true },
             { title: 'заявитель', field: 'user_name', widthGrow: 4, headerFilter: true },
             // { title: 'исполнитель', field: 'z_id_user_isp', widthGrow: 1, headerFilter: true },
@@ -394,512 +662,104 @@ async function show_mts_history(id_dionis, win_return = null) {
     id_2_set_focus(win_current)
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-function edit_mts_vocab(d, win_return = null, mode = "") {
-    return new Promise(function (resolve, reject) {
-        const salt = randomStr(10)
-        const win_current = 'editMTSVocab' + salt
-
-        const headerMTSVocab = `<h4>параметры МТС</h4>`
-
-        const bodyMTSVocab = `<div style="margin: 0; padding: 1%;">
-            <table class="w3-table-all">
-                <tr>
-                  <td>id:{{dv.id}} id_zayavka:{{dv.id_zayavka}} id_oper:{{dv.id_oper}} id_status:{{dv.id_status}} status:{{dv.status}}</td>
-                  <td>
-                    <button id="btnShowExl" style="border: 0; background-color: white;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                  </td>
-                </tr>
-                <!--
-                <tr>
-                  <td>
-                  <v-switch
-                      v-model="dv.dsp"
-                      color="blue"
-                      hide-details
-                      true-value="1"
-                      false-value="0"
-                      label="ДСП"
-                    ></v-switch>
-                  </td>
-                  <td>
-                    <v-switch 
-                      v-model="dv.bad"
-                      color="red"
-                      hide-details
-                      true-value="1"
-                      false-value="0"
-                      label="неисправно"
-                    ></v-switch>
-                  </td>
-                </tr>
-                -->
-                <tr>
-                  <td>
-                    ДСП
-                    <n-switch  :rail-style="style_dsp"
-                      size="small"
-                      checked-value="1"
-                      unchecked-value="0"
-                      v-model:value="dv.dsp"
-                    />                        
-                  </td>
-                  <td>
-                    {{ (dv.bad == "0") ? "исправно" : "неисправно" }}
-                    <n-switch :rail-style="style_bad"
-                      size="small"                          
-                      checked-value="1"
-                      unchecked-value="0"
-                      v-model:value="dv.bad"
-                    />                        
-                  </td>
-                </tr>
-                <tr>
-                  <td>№: <input class="o3-border" type="text" id="MTS_Numb" v-model="dv.numb" style="width: 300px;"></td>
-                  <td>SN: <input class="o3-border" type="text" id="MTS_SN1" v-model="dv.SN" style="width: 300px;"></td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>
-                  <span style="display: flex; align-items: center;">
-                    <input type="radio" id="sklad-0" name="skaldSatus" value="0" v-model="dv.sklad">-неизвестно&nbsp;&nbsp;
-                    <input type="radio" id="sklad-1" name="skaldSatus" value="1" v-model="dv.sklad">-склад&nbsp;&nbsp;
-                    <input type="radio" id="sklad-2" name="skaldSatus" value="2" v-model="dv.sklad">-выдано&nbsp;&nbsp;
-                  </span>
-                  </td>
-                  <td><span v-show="shExl">{{dv.status1}}</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <button id="selectMtsUser" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{uname}}</button>
-                    <span v-show="shExl">id_user: {{dv.id_user}}</span>
-                  </td>
-                  <td><span v-show="shExl">{{dv.user}}</span></td>
-                </tr>
-                <tr>
-                  <td>
-                    <button id="selectMtsDepart" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{dname}}</button>
-                    <span v-show="shExl">id_depart: {{dv.id_depart}}</span>
-                  </td>
-                  <td><span v-show="shExl">{{dv.otdel}}</span></td>
-                </tr>
-                <tr>
-                  <td>объем:<input class="o3-border" type="number" v-model="dv.size_gb" style="width: 100px;"></td>
-                  <td>{{dv.size}}</td>
-                </tr>
-                <tr>
-                  <td>
-                    производитель: <input class="o3-border" type="text" v-model="dv.manufacturer">
-                    модель: <input class="o3-border" type="text" v-model="dv.product_model">
-                    ревизия: <input class="o3-border" type="text" v-model="dv.revision">
-                  </td>
-                  <td>
-                    ЕКО: <input class="o3-border" type="text" v-model="dv.eko">
-                  </td>
-                </tr>
-                </table>                      
-            Описание: <br>
-            <textarea rows="3" style="width:100%" v-model="dv.descr"></textarea>
-            <br>
-            Комментарии:<br>
-            <textarea rows="3" style="width:100%" v-model="dv.comment"></textarea>
-            <br>
-            дата операции {{dv.date}}<br>
-            <br>
-            <button id="btnEnterMTSVocab"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
-            <button id="btnCancelMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
-            <button id="btnApplayMTSVocab" class="w3-btn w3-padding-small o3-border w3-hover-teal">применить</button>
-            <button id="btnPrevMTSVocab"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущее МТС</button>
-            <button id="btnNextMTSVocab"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующее МТС</button>
-            Дубль
-            <n-switch  :rail-style="style_old"
-              size="small"
-              checked-value="1"
-              unchecked-value="0"
-              v-model:value="dv.old"
-            />
-        </div>`
-
-        // <tr>
-        //   <td>
-        //     <button id="selectMtsComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
-        //     <span v-show="shExl">id_comp: {{dv.id_comp}}</span>
-        //   </td>
-        //   <td></td>
-        // </tr>
-
-
-        const footMTSVocab = ``
-
-        const esc_mts_vocab = mode == "new"
-            ? () => { 
-                remove_selected_mts_vocab() 
-                vapp.unmount()
-            }
-            : () => { 
-                console.log("esc_callback") 
-                vapp.unmount()
-            }
-
-        newModalWindow(
-            win_current,
-            headerMTSVocab,
-            bodyMTSVocab,
-            footMTSVocab,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_mts_vocab
-        )
-        const vapp = Vue.createApp({
-            data() {
-                return {
-                    dv: d,
-                    chg: false,
-                    dsp: d.dsp,
-                    shExl: false,
-                    style_dsp: ({ focused, checked }) => {
-                        const style = {}
-                        style.background = (checked) ? "#8888ff" : "grey"
-                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
-                        return style
-                    },
-                    style_bad: ({ focused, checked }) => {
-                        const style = {}
-                        style.background = (checked) ? "red" : "green"
-                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
-                        return style
-                    },
-                    style_old: ({ focused, checked }) => {
-                        const style = {}
-                        style.background = (checked) ? "red" : "green"
-                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
-                        return style
-                    }
-                }
-            },
-            computed: {
-                uname() {
-                    return !!!this.dv.uname
-                        ? "<выбрать пользователя>"
-                        : this.dv.uname
-                },
-                cname() {
-                    return !!!this.dv.cname
-                        ? "<выбрать компьютер>"
-                        : this.dv.cname
-                },
-                dname() {
-                    return !!!this.dv.dname
-                        ? "<выбрать отдел>"
-                        : this.dv.dname
-                },
-                // dsp() {
-                //     if (!!!this.dsp) return ""
-                //     return this.dv.dsp == "1" ? "дсп" : ""
-                // },
-            },
-            watch: {
-                dv: {
-                    handler(newValue, oldValue) {
-                        this.chg = true
-                    },
-                    deep: true,
-                },
-            },
-        })
-        const vm = vapp.use(naive).mount('#' + win_current)
-
-        id_2_set_focus(win_current)
-        // кнопка выбора пользователя -----------------------------------------------
-        id2e('btnShowExl').onclick = () => {
-            vm.$data.shExl = !vm.$data.shExl
-        }
-        // кнопка выбора пользователя -----------------------------------------------
-        id2e("selectMtsUser").onclick = async () => {
-            const id_depart = isRole("tex") ? g_user.id_depart : 0
-            const selectedUsers = await selectUser(
-                "6100",
-                "",
-                id_depart,
-                1,
-                (header = "Выбор ответственного лица"),
-                (width = "40%"),
-                (marginLeft = "30%"),
-                (marginTop = "5%"),
-                win_current,
-                vm.$data.dv.id_user
-            )
-            selectedUsers.forEach(async (u) => {
-                vm.$data.dv.id_user = u.id
-                vm.$data.dv.uname = u.name
-                vm.$data.dv.user_esk_status = u.esk_status
-                if (u.esk_status == 2) {
-                    console.log('u.esk_status == 2')
-                    vm.$data.dv.id_depart = u.id_depart
-                    const depart_data = await id_depart_2_data(u.id_depart)
-                    vm.$data.dv.id_otdel = depart_data.id_otdel
-                    vm.$data.dv.dname = depart_data.name
-                } else {
-                    console.log('u.esk_status != 2')
-                    vm.$data.dv.id_depart = 0
-                    vm.$data.dv.dname = 'отключен'
-                }
-                id2e("selectMtsUser").innerHTML = vm.$data.dv.uname
-                id_2_set_focus(win_current)
-            })
-        }
-        // кнопка выбора отдела -----------------------------------------------------
-        id2e("selectMtsDepart").onclick = async () => {
-            const dep = await selectVocab(
-                (table = "depart"),
-                (sort = "id_otdel"),
-                (ok = -1),
-                (tite = "отдел"),
-                (allow = ""),
-                (width = "60%"),
-                (marginLeft = "20%"),
-                (marginTop = "5%"),
-                win_current,
-                sono = g_user.sono
-            )
-            console.log('dep = ', dep)
-            vm.$data.dv.id_depart = dep.id
-            vm.$data.dv.id_otdel = dep.id_otdel
-            vm.$data.dv.dname = (await id_depart_2_data(dep.id)).name
-            id_2_set_focus(win_current)
-        }
-        // кнопка сохранения и выхода -----------------------------------------------
-        id2e("btnEnterMTSVocab").onclick = () => {
-            const d = vm.$data.dv
-            vapp.unmount()
-            save_mts(d)
-            removeModalWindow(win_current, win_return)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
-            resolve("OK")
-        }
-        // кнопка отмены изменений --------------------------------------------------
-        id2e("btnCancelMTSVocab").onclick = () => {
-            vapp.unmount()
-            if (mode == "new") remove_selected_mts_vocab()
-            removeModalWindow(win_current, win_return)
-            resolve("CANCEL")
-        }
-        // кнопка сохранения без выхода ---------------------------------------------
-        id2e("btnApplayMTSVocab").onclick = () => {
-            const d = vm.$data.dv
-            save_mts(d)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
-        }
-        // кнопка перехода на предыдущее МТС ----------------------------------------
-        id2e("btnPrevMTSVocab").onclick = () => {
-            const d = vm.$data.dv
-            save_mts(d)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
-            // if (vm.$data.chg) {
-            //     dialogYESNO('Данные были изменены<br>сохранить изменения')
-            //         .then(ans => {
-            //             if (ans == "YES") {
-            //                 const d = vm.$data.dv
-            //                 save_mts(d)
-            //                 table_select_dionis.updateRow(d.id, d)
-            //                 table_select_dionis.redraw()
-            //             } else {
-            //                 return
-            //             }
-            //         })
-            // }
-            const selected_row = table_select_dionis.getSelectedRows()[0]
-            const id_curr = selected_row.id
-            const id_prev = selected_row.getPrevRow().getData().id
-            table_select_dionis.deselectRow(id_curr)
-            table_select_dionis.selectRow(id_prev)
-            table_select_dionis.scrollToRow(id_prev, "center", false)
-            const d_prev = table_select_dionis.getSelectedData()[0]
-            vm.$data.dv = d_prev
-            vm.$data.chg = false
-        }
-        // кнопка перехода на следующее МТС -----------------------------------------
-        id2e("btnNextMTSVocab").onclick = () => {
-            const d = vm.$data.dv
-            save_mts(d)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
-            // if (vm.$data.chg) {
-            //     dialogYESNO('Данные были изменены<br>сохранить изменения')
-            //         .then(ans => {
-            //             if (ans == "YES") {
-            //                 const d = vm.$data.dv
-            //                 save_mts(d)
-            //                 table_select_dionis.updateRow(d.id, d)
-            //                 table_select_dionis.redraw()
-            //             } else {
-            //                 return
-            //             }
-            //         })
-            // }
-            const selected_row = table_select_dionis.getSelectedRows()[0]
-            const id_curr = selected_row.id
-            const id_next = selected_row.getNextRow().getData().id
-            table_select_dionis.deselectRow(id_curr)
-            table_select_dionis.selectRow(id_next)
-            table_select_dionis.scrollToRow(id_next, "center", false)
-            const d_next = table_select_dionis.getSelectedData()[0]
-            vm.$data.dv = d_next
-            vm.$data.chg = false
-        }
-    })
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function remove_selected_mts_vocab() {
+function remove_selected_dionis() {
     let id_dionis = table_select_dionis.getSelectedData()[0].id
-    del_mts_vocab(id_dionis)
+    del_dionis(id_dionis)
     table_select_dionis.deleteRow(id_dionis)
     id_dionis = getFirstID(table_select_dionis)
     table_select_dionis.selectRow(id_dionis)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-async function new_mts() {
-    const id = await runSQL_p("INSERT INTO mts () VALUES ()")
+async function new_dionis() {
+    const id = await runSQL_p("INSERT INTO dionis () VALUES ()")
     return id
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-async function save_mts(d) {
+async function save_dionis(d) {
     const sql =
         d.id == 0
-            ? `INSERT INTO mts ( 
-            numb,
-            SN, 
-            id_user,
-            id_comp,
-            id_otdel,
-            id_depart,
-            id_status,
-            id_oper,
-            id_type_oper,
-            id_zayavka,
-            id_vendor,
-            size_gb,
-            dsp,
-            sono,
-            sklad,
-            descr,
-            comment,
+            ? `INSERT INTO dionis ( 
+            id,
+            sono1,
+            sono2,
+            ifns1,
+            ifns2,
+            type,
+            model,
+            sn,
+            inv_n,
+            ver,
+            date_sert,
             status,
-            manufacturer,
-            product_model,
-            revision,
-            usb_device_id,
-            eko,
-            bad,
-            old
+            date1,
+            ifns3,
+            comm
         ) VALUES (
-           "${d.numb}", 
-           "${d.SN}", 
-            ${nn(d.id_user)},
-            ${nn(d.id_comp)},
-            ${nn(d.id_otdel)},
-            ${nn(d.id_depart)},
-            ${nn(d.id_status)},
-            ${nn(d.id_oper)},
-            ${nn(d.id_type_oper)},
-            ${nn(d.id_zayavka)},
-            ${nn(d.id_vendor)},
-            ${nn(d.size_gb)},
-            ${nn(d.dsp)},
-           '${d.sono}',
-            ${nn(d.sklad)},
-           '${d.descr}',
-           '${d.comment}',
-           '${d.status}',
-           '${d.manufacturer}',
-           '${d.product_model}',
-           '${d.revision}',
-           '${d.usb_device_id}',
-           '${d.eko}',
-            ${d.bad},
-            ${d.old}
-        )`
-            : `UPDATE mts SET 
-            numb="${d.numb}",
-            SN="${d.SN}", 
-            id_user=${nn(d.id_user)},
-            id_comp=${nn(d.id_comp)},
-            id_otdel=${nn(d.id_otdel)},
-            id_depart=${nn(d.id_depart)},
-            id_status=${nn(d.id_status)},
-            id_oper=${nn(d.id_oper)},
-            id_type_oper=${nn(d.id_type_oper)},
-            id_zayavka=${nn(d.id_zayavka)},
-            id_vendor=${nn(d.id_vendor)},
-            size_gb=${nn(d.size_gb)},
-            dsp=${nn(d.dsp)},
-            sono='${d.sono}',
-            sklad=${nn(d.sklad)},
-            descr='${d.descr}',
-            comment='${d.comment}',
-            status='${d.status}',
-            manufacturer='${d.manufacturer}',
-            product_model='${d.product_model}',
-            revision='${d.revision}',
-            usb_device_id='${d.usb_device_id}',
-            eko='${d.eko}',
-            bad=${d.bad},
-            old=${d.old}
+            ${d.id},
+            ${d.sono1},
+            ${d.sono2},
+            ${d.ifns1},
+            ${d.ifns2},
+            ${d.type},
+            ${d.model},
+            ${d.sn},
+            ${d.inv_n},
+            ${d.ver},
+            ${d.date_sert},
+            ${d.status},
+            ${d.date1},
+            ${d.ifns3},
+            ${d.comm}
+    )`
+            : `UPDATE dionis SET 
+            id=${d.id},
+            sono1=${d.sono1},
+            sono2=${d.sono2},
+            ifns1=${d.ifns1},
+            ifns2=${d.ifns2},
+            type=${d.type},
+            model=${d.model},
+            sn=${d.sn},
+            inv_n${d.inv_n},
+            ver=${d.ver},
+            date_sert=${d.date_sert},
+            status=${d.status},
+            ${d.date1},
+            ${d.ifns3},
+            ${d.comm}
         WHERE id=${d.id}`
 
     return runSQL_p(sql)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-// function del_mts_vocab(id) {
-//     runSQL_p(`DELETE FROM mts WHERE id=${id}`)
-//     runSQL_p(`DELETE FROM mts2comp WHERE id_dionis=${id}`)
-// }
+function del_dionis(id) {
+    runSQL_p(`DELETE FROM dionis WHERE id=${id}`)
+    runSQL_p(`DELETE FROM dionis_oper WHERE id_dionis=${id}`)
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function factory_MTS() {
+function factory_dionis() {
     return {
         id: 0,
-        numb: '',
-        SN: '',
-        id_user: 0,
-        id_comp: 0,
-        id_otdel: 0,
-        id_depart: 0,
-        id_status: 0,
-        id_oper: 0,
-        id_type_oper: 0,
-        id_zayavka: 0,
-        id_vendor: 0,
-        date_status: '',
-        otdel: '',
-        sono: '',
-        eko: '',
-        date2: '',
-        date: '',
-        user: '',
-        manufacturer: '',
-        product_model: '',
-        revision: '',
-        size: '',
-        usb_device_id: '',
-        descr: '',
-        sklad: 0,
-        status1: '',
-        comment: '',
-        dsp: '',
-        size_gb: 0,
+        sono1: '',
+        sono2: '',
+        ifns1: '',
+        ifns2: '',
+        type: '',
+        model: '',
+        sn: '',
+        inv_n: '',
+        ver: '',
+        date_sert: '',
         status: '',
-        bad: 0,
-        old: 0
+        date1: '',
+        ifns3: '',
+        comm: ''
     }
 }
 

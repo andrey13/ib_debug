@@ -6,6 +6,7 @@ async function mStockDionis() {
     const tex = isRole('tex')
     const mo  = isRole('mo')
     const su  = isRole('su')
+    const dionis  = isRole('dionis')
 
     const id_otdel = tex ? g_user.id_otdel : 0
     const sklad = 0
