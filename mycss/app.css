@@ -23,6 +23,18 @@
     margin-bottom: 1px;
     width: 100px;
 }
+.o3-button-200 {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 200px;
+}
+.o3-button-300 {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 300px;
+}
 .o3-button {
     border: 1px solid black;
     margin-right: 1px;

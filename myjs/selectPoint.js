@@ -1,26 +1,22 @@
-let table_select_dionis = null
+let table_select_point = null
 //=======================================================================================
 // модальное окно выбора МТС
 //=======================================================================================
-function select_dionis(
-    sono = '6100',
-    id_otdel = 0,
-    sklad = 0,
-    id_type_oper = 0,
+function select_point(
     selectable = 1,
     mode = 'select',
     win_return = null,
-    id_dionis = 0
+    id_point = 0
 ) {
     return new Promise(async function (resolve, reject) {
         // const result = await recalc_mts(0)
         const salt = randomStr(10)
-        const win_current = 'selectDionis' + salt
+        const win_current = 'selectpoint' + salt
 
         if (mode == 'select') {
             newModalWindow(
                 modal = win_current,
-                html_header = 'Dionis',
+                html_header = 'Расположения Dionis',
                 html_body = '',
                 html_footer = '',
                 width = '90%',
@@ -32,83 +28,38 @@ function select_dionis(
 
         const appHeight = appBodyHeight()
 
-        table_select_dionis = tabulator_select_dionis(
+        table_select_point = tabulator_select_point(
             div = (mode == 'select') ? win_current + 'Body' : 'appBody',
-            sono,
             tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
             resolve,
             reject,
-            id_otdel,
-            sklad,
-            id_type_oper,
             selectable,
             mode,
             win_current,
             win_return,
-            id_dionis,
+            id_point,
         )
 
-        // table_select_dionis.setFilter("old", "=", 0)
+        // table_select_point.setFilter("old", "=", 0)
 
         if (mode == "select") id_2_set_focus(win_current)
     })
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function tabulator_select_dionis(
+function tabulator_select_point(
     div,
-    sono,
     tabHeight,
     resolve,
     reject,
-    id_otdel = 0,
-    sklad = 0,
-    id_type_oper,
     selectable = 1,
     mode = "select",
     win_current = null,
     win_return = null,
-    id_dionis = 0,
+    id_point = 0,
 ) {
-    const cols = [
-        { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count"  },
-        {//группа владелец
-            title: "владелец",
-            columns: [
-                { title: "СОНО", field: "sono1", widthGrow: 1, headerFilter: true },
-                { title: "ТНО", field: "ifns1", widthGrow: 3, headerFilter: true },
-            ],
-        },
-        {//группа нахождение
-            title: "нахождение",
-            columns: [
-                { title: "СОНО", field: "sono2", widthGrow: 1, headerFilter: true },
-                { title: "ТНО", field: "ifns2", widthGrow: 3, headerFilter: true },
-            ],
-        },
-        // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
-        { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
-        { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
-        { title: "SN", field: "sn", widthGrow: 2, headerFilter: true },
-        { title: "Инв №", field: "inv_n", widthGrow: 2, headerFilter: true },
-        { title: "Версия", field: "ver", widthGrow: 2, headerFilter: true },
-        { title: "Сертификат", field: "date_sert", widthGrow: 2, headerFilter: true },
-        { title: "Статус", field: "status", widthGrow: 2, headerFilter: true },
-        {
-            title: "дата установки",
-            field: "date1",
-            width: 80,
-            headerFilter: true,
-            formatter: "datetime",
-            formatterParams: {
-                inputFormat: "YYYY-MM-DD",
-                outputFormat: "DD.MM.YYYY",
-            },
-        },
-        { title: "комментарий", field: "comm", widthGrow: 4, headerFilter: true, },
-    ]
-
-    const group = ''
+    let allow = getAllows();
+    let ed = (allow.E == 1) ? "input" : "";
 
     const salt = randomStr(10)
 
@@ -128,28 +79,30 @@ function tabulator_select_dionis(
     `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
     `</div>`
 
-    // `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
-    // `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
-    // `&nbsp;&nbsp;&nbsp;показать дубли&nbsp;<input type='checkbox' id='${id_checkb_flt}' unchecked style="vertical-align: middle;">` +
-    //`&nbsp;&nbsp;&nbsp;дополнительные данные&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
-
     const tabulator = new Tabulator("#" + div, {
-        ajaxURL: "myphp/get_all_dionis.php",
+        ajaxURL: "myphp/get_all_point.php",
+        // ajaxParams: { t: "connect_point", o: "ip" },
         ajaxConfig: "GET",
         ajaxContentType: "json",
-        ajaxParams: { s: sono, o: id_otdel, k: sklad, t: id_type_oper },
         height: tabHeight,
         layout: "fitColumns",
         tooltipsHeader: true,
         printAsHtml: true,
-        printHeader: "<h1>Dionis<h1>",
+        printHeader: "<h1>point<h1>",
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
         selectable: selectable,
         selectableRangeMode: "click",
         reactiveData: true,
-        columns: cols, 
+        columns: [
+            { title: "id", field: "id", width: 60, print: false },
+            { title: "ИФНС", field: "ifns_sono", headerFilter: true, width: 80, editor: ed },
+            { title: "ТОРМ", field: "torm_sono", headerFilter: true, width: 80, editor: ed },
+            { title: "расположение", field: "ip", headerFilter: true, widthGrow: 3, editor: ed },
+            // { title: "mask", field: "mask", headerFilter: true, widthGrow: 2, topCalc: "count", editor: ed },
+            // { title: "sklad",       field: "stock",  headerFilter: true, widthGrow: 2, editor: ed },
+        ],
         footerElement: msgFooter,
 
         // renderComplete: function() {
@@ -157,35 +110,35 @@ function tabulator_select_dionis(
         // },
 
         dataLoaded: function () {
-            if (id_dionis == 0) return
-            tabulator.selectRow(id_dionis)
-            tabulator.scrollToRow(id_dionis, "center", false)
+            if (id_point == 0) return
+            tabulator.selectRow(id_point)
+            tabulator.scrollToRow(id_point, "center", false)
         },
 
         rowFormatter: function (row) {
             let d = row.getData()
-            if (d.sono1 != d.sono2) {
-                // место приписки не совпадает с нахождением
-                row.getCell("sono2").getElement().style.backgroundColor = '#ffcccc'
-                row.getCell("ifns2").getElement().style.backgroundColor = '#ffcccc'
-            }
+            // if (d.sono1 != d.sono2) {
+            //     // место приписки не совпадает с нахождением
+            //     row.getCell("sono2").getElement().style.backgroundColor = '#ffcccc'
+            //     row.getCell("ifns2").getElement().style.backgroundColor = '#ffcccc'
+            // }
         },
 
         rowSelectionChanged: function (data, rows) {      
-            if (data.length == 0) {
-                id2e(id_button_mod).disabled = true
-                id2e(id_button_del).disabled = true
-                id2e(id_button_his).disabled = true
-                id2e(id_button_sel).disabled = true
-                id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
-            } else {
-                id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
-                id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
-                id2e(id_button_his).disabled = false
-                id2e(id_button_sel).disabled = false
-                id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
-                id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
-            }
+            // if (data.length == 0) {
+            //     id2e(id_button_mod).disabled = true
+            //     id2e(id_button_del).disabled = true
+            //     id2e(id_button_his).disabled = true
+            //     id2e(id_button_sel).disabled = true
+            //     id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
+            // } else {
+            //     id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
+            //     id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
+            //     id2e(id_button_his).disabled = false
+            //     id2e(id_button_sel).disabled = false
+            //     id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
+            //     id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
+            // }
         },
 
         cellDblClick: async function (e, cell) {
@@ -193,7 +146,7 @@ function tabulator_select_dionis(
                 removeModalWindow(win_current, win_return)
                 resolve(cell.getRow().getData())
             } else {
-                const res = await edit_dionis(
+                const res = await edit_point(
                     tabulator.getSelectedData()[0],
                     (win_return = win_current)
                 )
@@ -208,118 +161,56 @@ function tabulator_select_dionis(
     }
 
     id2e(id_button_add).onclick = async () => {
-        const d = factory_dionis()
-        d.id = await save_dionis(d)
+        // const d = factory_point()
+        // d.id = await save_point(d)
 
-        addTabRow(tabulator, d, (top = true))
+        // addTabRow(tabulator, d, (top = true))
 
-        const res = await edit_dionis(
-            d,
-            (win_return = win_current),
-            (mode = "new")
-        )
+        // const res = await edit_point(
+        //     d,
+        //     (win_return = win_current),
+        //     (mode = "new")
+        // )
     }
 
     id2e(id_button_mod).onclick = async () => {
-        const res = await edit_dionis(
-            tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
-        )
+        // const res = await edit_point(
+        //     tabulator.getSelectedData()[0],
+        //     (win_return = win_current),
+        //     (mode = "mod")
+        // )
     }
 
     id2e(id_button_del).onclick = async () => {
-        const ans = await dialogYESNO(
-            (text = "Удалить Dionis"),
-            (win_return = win_current)
-        )
+        // const ans = await dialogYESNO(
+        //     (text = "Удалить point"),
+        //     (win_return = win_current)
+        // )
 
-        if (ans == 'YES') {
-            const data = tabulator.getSelectedData()
-            data.forEach((d) => {
-                del_dionis(d.id)
-                tabulator.deleteRow(d.id)
-            })
-            const id_dionis = getFirstID(tabulator)
-            tabulator.selectRow(id_dionis)
-        }
+        // if (ans == 'YES') {
+        //     const data = tabulator.getSelectedData()
+        //     data.forEach((d) => {
+        //         del_point(d.id)
+        //         tabulator.deleteRow(d.id)
+        //     })
+        //     const id_point = getFirstID(tabulator)
+        //     tabulator.selectRow(id_point)
+        // }
     }
-
-    id2e(id_button_his).onclick = () => {
-        show_dionis_history(
-            tabulator.getSelectedData()[0].id,
-            (win_return = win_current)
-        )
-    }
-
-    // id2e(id_checkb_flt).onclick = () => {
-    //     console.log('id_checkb_flt')
-    //     if (id2e(id_checkb_flt).checked) {
-    //         tabulator.setFilter()
-    //     } else {
-    //         tabulator.setFilter("old", "=", 0)
-    //     }        
-    // }    
-
-    // id2e(id_checkb_grp).onclick = () => {
-    //     console.log('id_checkb_grp = ', id2e(id_checkb_grp).checked)
-    //     if (id2e(id_checkb_grp).checked) {
-    //         tabulator.setGroupBy('SN') 
-    //     } else {
-    //         tabulator.setGroupBy('')
-    //     }
-    // }    
-
-    // id2e(id_checkb_xls).onclick = () => {
-    //     console.log('id_checkb_xls = ', id2e(id_checkb_xls).checked)
-    //     if (id2e(id_checkb_xls).checked) {
-    //         tabulator.showColumn('date')
-    //         tabulator.showColumn('status1')
-    //         tabulator.showColumn('user')
-    //         tabulator.showColumn('otdel')
-    //         tabulator.showColumn('sklad')
-    //         // tabulator.showColumn('uname')
-    //         tabulator.showColumn('user')
-    //         tabulator.setGroupBy('SN')
-    //         tabulator.setFilter()
-    //         tabulator.redraw()
-    //     } else {
-    //         tabulator.hideColumn('date')
-    //         tabulator.hideColumn('status1')
-    //         tabulator.hideColumn('user')
-    //         tabulator.hideColumn('otdel')
-    //         tabulator.hideColumn('sklad')
-    //         // tabulator.hideColumn('uname')
-    //         tabulator.hideColumn('user')
-    //         tabulator.setFilter("old", "=", 0)
-    //         tabulator.setGroupBy('')
-    //         tabulator.redraw()
-    //     }
-    // }
-
-    // tabulator.hideColumn('date')
-    // tabulator.hideColumn('status1')
-    // tabulator.hideColumn('user')
-    // tabulator.hideColumn('otdel')
-    // tabulator.hideColumn('sklad')
-    // tabulator.hideColumn('uname')
-    // tabulator.hideColumn('user')
-
-    // tabulator.redraw()
 
     return tabulator
 }
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function edit_dionis(d, win_return = null, mode = "") {
+function edit_point(d, win_return = null, mode = "") {
     return new Promise(function (resolve, reject) {
         const salt = randomStr(10)
-        const win_current = 'editdionis' + salt
+        const win_current = 'editpoint' + salt
 
-        const headerdionis = `<h4>параметры Dionis</h4>`
+        const headerpoint = `<h4>параметры point</h4>`
 
-        const bodydionis = `
+        const bodypoint = `
         <div style="margin: 0; padding: 1%;">
             <b>ТНО приписки:</b><br>
             <input class="o3-border" type="text" v-model="dv.sono1"><br>
@@ -339,26 +230,26 @@ function edit_dionis(d, win_return = null, mode = "") {
             <textarea rows="3" style="width:100%" v-model="dv.comm"></textarea>
             <br>
             <br>
-            <button id="btnEnterdionis"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
-            <button id="btnCanceldionis" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
-            <button id="btnPrevdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущий Dionis</button>
-            <button id="btnNextdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующий Dionis</button>
+            <button id="btnEnterpoint"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
+            <button id="btnCancelpoint" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
+            <button id="btnPrevpoint"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущий point</button>
+            <button id="btnNextpoint"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующий point</button>
         </div>`
 
         // <tr>
         //   <td>
-        //     <button id="selectdionisComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
+        //     <button id="selectpointComp" class="w3-btn w3-padding-small o3-button w3-hover-teal">{{cname}}</button></button>
         //     <span v-show="shExl">id_comp: {{dv.id_comp}}</span>
         //   </td>
         //   <td></td>
         // </tr>
 
 
-        const footdionis = ``
+        const footpoint = ``
 
-        const esc_dionis = mode == "new"
+        const esc_point = mode == "new"
             ? () => { 
-                remove_selected_dionis() 
+                remove_selected_point() 
                 vapp.unmount()
             }
             : () => { 
@@ -368,14 +259,14 @@ function edit_dionis(d, win_return = null, mode = "") {
 
         newModalWindow(
             win_current,
-            headerdionis,
-            bodydionis,
-            footdionis,
+            headerpoint,
+            bodypoint,
+            footpoint,
             (width = "60%"),
             (marginLeft = "15%"),
             (marginTop = "5%"),
             win_return,
-            esc_dionis
+            esc_point
         )
 
         //--- View Model-------------------------------------------------------start
@@ -452,7 +343,7 @@ function edit_dionis(d, win_return = null, mode = "") {
         //     vm.$data.shExl = !vm.$data.shExl
         // }
         // кнопка выбора пользователя -----------------------------------------------
-        // id2e("selectdionisUser").onclick = async () => {
+        // id2e("selectpointUser").onclick = async () => {
         //     const id_depart = isRole("tex") ? g_user.id_depart : 0
         //     const selectedUsers = await selectUser(
         //         "6100",
@@ -481,12 +372,12 @@ function edit_dionis(d, win_return = null, mode = "") {
         //             vm.$data.dv.id_depart = 0
         //             vm.$data.dv.dname = 'отключен'
         //         }
-        //         id2e("selectdionisUser").innerHTML = vm.$data.dv.uname
+        //         id2e("selectpointUser").innerHTML = vm.$data.dv.uname
         //         id_2_set_focus(win_current)
         //     })
         // }
         // кнопка выбора отдела -----------------------------------------------------
-        // id2e("selectdionisDepart").onclick = async () => {
+        // id2e("selectpointDepart").onclick = async () => {
         //     const dep = await selectVocab(
         //         (table = "depart"),
         //         (sort = "id_otdel"),
@@ -506,84 +397,84 @@ function edit_dionis(d, win_return = null, mode = "") {
         //     id_2_set_focus(win_current)
         // }
         // кнопка сохранения и выхода -----------------------------------------------
-        id2e("btnEnterdionis").onclick = () => {
+        id2e("btnEnterpoint").onclick = () => {
             const d = vm.$data.dv
             vapp.unmount()
-            save_dionis(d)
+            save_point(d)
             removeModalWindow(win_current, win_return)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
+            table_select_point.updateRow(d.id, d)
+            table_select_point.redraw()
             resolve("OK")
         }
         // кнопка отмены изменений --------------------------------------------------
-        id2e("btnCanceldionis").onclick = () => {
+        id2e("btnCancelpoint").onclick = () => {
             vapp.unmount()
-            if (mode == "new") remove_selected_dionis()
+            if (mode == "new") remove_selected_point()
             removeModalWindow(win_current, win_return)
             resolve("CANCEL")
         }
         // кнопка сохранения без выхода ---------------------------------------------
-        // id2e("btnApplaydionis").onclick = () => {
+        // id2e("btnApplaypoint").onclick = () => {
         //     const d = vm.$data.dv
-        //     save_dionis(d)
-        //     table_select_dionis.updateRow(d.id, d)
-        //     table_select_dionis.redraw()
+        //     save_point(d)
+        //     table_select_point.updateRow(d.id, d)
+        //     table_select_point.redraw()
         // }
         // кнопка перехода на предыдущее МТС ----------------------------------------
-        id2e("btnPrevdionis").onclick = () => {
+        id2e("btnPrevpoint").onclick = () => {
             const d = vm.$data.dv
-            save_dionis(d)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
+            save_point(d)
+            table_select_point.updateRow(d.id, d)
+            table_select_point.redraw()
             // if (vm.$data.chg) {
             //     dialogYESNO('Данные были изменены<br>сохранить изменения')
             //         .then(ans => {
             //             if (ans == "YES") {
             //                 const d = vm.$data.dv
-            //                 save_dionis(d)
-            //                 table_select_dionis.updateRow(d.id, d)
-            //                 table_select_dionis.redraw()
+            //                 save_point(d)
+            //                 table_select_point.updateRow(d.id, d)
+            //                 table_select_point.redraw()
             //             } else {
             //                 return
             //             }
             //         })
             // }
-            const selected_row = table_select_dionis.getSelectedRows()[0]
+            const selected_row = table_select_point.getSelectedRows()[0]
             const id_curr = selected_row.id
             const id_prev = selected_row.getPrevRow().getData().id
-            table_select_dionis.deselectRow(id_curr)
-            table_select_dionis.selectRow(id_prev)
-            table_select_dionis.scrollToRow(id_prev, "center", false)
-            const d_prev = table_select_dionis.getSelectedData()[0]
+            table_select_point.deselectRow(id_curr)
+            table_select_point.selectRow(id_prev)
+            table_select_point.scrollToRow(id_prev, "center", false)
+            const d_prev = table_select_point.getSelectedData()[0]
             vm.$data.dv = d_prev
             vm.$data.chg = false
         }
         // кнопка перехода на следующее МТС -----------------------------------------
-        id2e("btnNextdionis").onclick = () => {
+        id2e("btnNextpoint").onclick = () => {
             const d = vm.$data.dv
-            save_dionis(d)
-            table_select_dionis.updateRow(d.id, d)
-            table_select_dionis.redraw()
+            save_point(d)
+            table_select_point.updateRow(d.id, d)
+            table_select_point.redraw()
             // if (vm.$data.chg) {
             //     dialogYESNO('Данные были изменены<br>сохранить изменения')
             //         .then(ans => {
             //             if (ans == "YES") {
             //                 const d = vm.$data.dv
-            //                 save_dionis(d)
-            //                 table_select_dionis.updateRow(d.id, d)
-            //                 table_select_dionis.redraw()
+            //                 save_point(d)
+            //                 table_select_point.updateRow(d.id, d)
+            //                 table_select_point.redraw()
             //             } else {
             //                 return
             //             }
             //         })
             // }
-            const selected_row = table_select_dionis.getSelectedRows()[0]
+            const selected_row = table_select_point.getSelectedRows()[0]
             const id_curr = selected_row.id
             const id_next = selected_row.getNextRow().getData().id
-            table_select_dionis.deselectRow(id_curr)
-            table_select_dionis.selectRow(id_next)
-            table_select_dionis.scrollToRow(id_next, "center", false)
-            const d_next = table_select_dionis.getSelectedData()[0]
+            table_select_point.deselectRow(id_curr)
+            table_select_point.selectRow(id_next)
+            table_select_point.scrollToRow(id_next, "center", false)
+            const d_next = table_select_point.getSelectedData()[0]
             vm.$data.dv = d_next
             vm.$data.chg = false
         }
@@ -591,28 +482,28 @@ function edit_dionis(d, win_return = null, mode = "") {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-async function show_dionis_history(id_dionis, win_return = null) {
-    const data_dionis = await id_2_data(id_dionis, 'dionis')
-    const win_current = 'historydionis' + randomStr(10)
-    const header = `<h4>история МТС id: ${data_dionis.id}, SN: ${data_dionis.SN}</h4>`
+async function show_point_history(id_point, win_return = null) {
+    const data_point = await id_2_data(id_point, 'point')
+    const win_current = 'historypoint' + randomStr(10)
+    const header = `<h4>история МТС id: ${data_point.id}, SN: ${data_point.SN}</h4>`
     const body = `<div class="w3-container"></div>`
     const foot = ``
     
-    const esc_dionis_history = () => { 
+    const esc_point_history = () => { 
         console.log("esc_callback") 
     }
 
     newModalWindow( 
         win_current, header, body, foot,
         width = "59%", marginLeft = "40%", marginTop = "1%",
-        win_return, esc_dionis_history
+        win_return, esc_point_history
     )
     
     const table_histoty = new Tabulator('#' + win_current + 'Body', {
-        ajaxURL: "myphp/get_dionis_history.php",
+        ajaxURL: "myphp/get_point_history.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
-        ajaxParams: { i: data_dionis.id },
+        ajaxParams: { i: data_point.id },
         height: appBodyHeight()-100,
         layout: "fitColumns",
         tooltipsHeader: true,
@@ -646,7 +537,7 @@ async function show_dionis_history(id_dionis, win_return = null) {
             { title: 'операция', field: 'oper', widthGrow: 2, headerFilter: true },
             { title: 'дсп', field: 'zm_dsp', widthGrow: 1, headerFilter: true },
             // { title: 'ответственный', field: 'zm_id_user', widthGrow: 1, headerFilter: true },
-            { title: 'ответственный', field: 'user_dionis_name', widthGrow: 4, headerFilter: true },
+            { title: 'ответственный', field: 'user_point_name', widthGrow: 4, headerFilter: true },
             // { title: 'заявитель', field: 'z_id_user', widthGrow: 1, headerFilter: true },
             { title: 'заявитель', field: 'user_name', widthGrow: 4, headerFilter: true },
             // { title: 'исполнитель', field: 'z_id_user_isp', widthGrow: 1, headerFilter: true },
@@ -659,25 +550,25 @@ async function show_dionis_history(id_dionis, win_return = null) {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function remove_selected_dionis() {
-    let id_dionis = table_select_dionis.getSelectedData()[0].id
-    del_dionis(id_dionis)
-    table_select_dionis.deleteRow(id_dionis)
-    id_dionis = getFirstID(table_select_dionis)
-    table_select_dionis.selectRow(id_dionis)
+function remove_selected_point() {
+    let id_point = table_select_point.getSelectedData()[0].id
+    del_point(id_point)
+    table_select_point.deleteRow(id_point)
+    id_point = getFirstID(table_select_point)
+    table_select_point.selectRow(id_point)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-async function new_dionis() {
-    const id = await runSQL_p("INSERT INTO dionis () VALUES ()")
+async function new_point() {
+    const id = await runSQL_p("INSERT INTO point () VALUES ()")
     return id
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-async function save_dionis(d) {
+async function save_point(d) {
     const sql =
         d.id == 0
-            ? `INSERT INTO dionis ( 
+            ? `INSERT INTO point ( 
             id,
             sono1,
             sono2,
@@ -710,7 +601,7 @@ async function save_dionis(d) {
             '${d.ifns3}',
             '${d.comm}'
     )`
-            : `UPDATE dionis SET 
+            : `UPDATE point SET 
             id=${d.id},
             sono1=${d.sono1},
             sono2=${d.sono2},
@@ -732,13 +623,13 @@ async function save_dionis(d) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function del_dionis(id) {
-    runSQL_p(`DELETE FROM dionis WHERE id=${id}`)
-    runSQL_p(`DELETE FROM dionis_oper WHERE id_dionis=${id}`)
+function del_point(id) {
+    runSQL_p(`DELETE FROM point WHERE id=${id}`)
+    runSQL_p(`DELETE FROM point_oper WHERE id_point=${id}`)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function factory_dionis() {
+function factory_point() {
     return {
         id: 0,
         sono1: 0,
@@ -757,32 +648,3 @@ function factory_dionis() {
         comm: ''
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function filterSelect(data, filterParams) {
-//     let id = data.id
-//     let row = table_select_dionis.searchRows("id", "=", data.id)[0]
-//     return row.isSelected()
-// }

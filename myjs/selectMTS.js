@@ -707,10 +707,12 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
         const vm = vapp.use(naive).mount('#' + win_current)
 
         id_2_set_focus(win_current)
+
         // кнопка выбора пользователя -----------------------------------------------
         id2e('btnShowExl').onclick = () => {
             vm.$data.shExl = !vm.$data.shExl
         }
+
         // кнопка выбора пользователя -----------------------------------------------
         id2e("selectMtsUser").onclick = async () => {
             const id_depart = isRole("tex") ? g_user.id_depart : 0
@@ -745,6 +747,7 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                 id_2_set_focus(win_current)
             })
         }
+
         // кнопка выбора отдела -----------------------------------------------------
         id2e("selectMtsDepart").onclick = async () => {
             const dep = await selectVocab(
