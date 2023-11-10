@@ -185,6 +185,14 @@ function tabulator_dionis_opers(
                 row.getCell("ip1").getElement().style.backgroundColor = '#ccccff'
             }
 
+            // передача оборудования -----------------------------------------------
+            if (d.stock1 == 1 && d.stock2 == 1) {
+                row.getCell("ip1").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("ip2").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("ifns_sono2").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("torm_sono2").getElement().style.backgroundColor = '#ffccff'
+            }
+
             // подключение к точке доступа -----------------------------------------
             if (d.stock2 == 0) {
                 row.getCell("ip2").getElement().style.backgroundColor = '#ccffcc'
