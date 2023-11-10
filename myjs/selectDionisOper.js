@@ -228,6 +228,7 @@ function tabulator_dionis_opers(
 
     id2e(id_button_add).onclick = async () => {
         const d = factory_dionis_oper()
+
         d.id = await save_dionis_oper(d)
 
         addTabRow(tabulator, d, (top = false))
@@ -235,7 +236,8 @@ function tabulator_dionis_opers(
         const res = await edit_dionis_oper(
             d,
             (win_return = win_current),
-            (mode = "new")
+            (mode = "new"),
+            id_dionis
         )
     }
 
@@ -270,10 +272,20 @@ function tabulator_dionis_opers(
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function edit_dionis_oper(d, win_return = null, mode = "") {
-    return new Promise(function (resolve, reject) {
+function edit_dionis_oper(
+    d, 
+    win_return = null, 
+    mode = "",
+    id_dionis = 0
+) {
+    return new Promise(async function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'edit' + salt
+        if (mode == 'new' && id_dionis != 0) {
+            const d_dionis = await id_2_data(id_dionis, 'dionis')
+            d.sn = d_dionis.sn
+            console.log('d_dionis = ', d_dionis)
+        }
 
         const id_button_enter = 'ent' + salt
         const id_button_cancel = 'cancel' + salt
@@ -576,10 +588,10 @@ function del_dionis_oper(id) {
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-function factory_dionis_oper() {
+function factory_dionis_oper(id_dionis = 0) {
     return {
         id: 0,
-        id_dionis: 0,
+        id_dionis: id_dionis,
         id_connect_point1: 0,
         id_connect_point2: 0,
         date: '',
