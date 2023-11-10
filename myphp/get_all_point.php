@@ -6,13 +6,22 @@ include 'openConn.php';
 // $sklad = $_GET['k'];
 // $id_type_oper = $_GET['t'];
 
+// $sql = "SELECT 
+//     p.*,
+//     i.sono AS ifns_sono,
+//     t.sono AS torm_sono
+//     FROM connect_point AS p 
+//     LEFT JOIN torm AS t ON t.id=p.id_torm
+//     LEFT JOIN ifns AS i ON i.id=t.id_co
+//     ORDER By ifns_sono,p.ip ";
+
 $sql = "SELECT 
     p.*,
-    i.sono AS ifns_sono,
-    t.sono AS torm_sono
+    t.sono AS ifns_sono,
+    t.sono_torm AS torm_sono,
+    t.name AS torm_name
     FROM connect_point AS p 
     LEFT JOIN torm AS t ON t.id=p.id_torm
-    LEFT JOIN ifns AS i ON i.id=t.id_co
     ORDER By ifns_sono,p.ip ";
 
 $result = $conn->query($sql);

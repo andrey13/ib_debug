@@ -5,8 +5,10 @@ function select_dionis_oper(
     selectable = 1,
     mode = 'select',
     win_return = null,
-    id_oper = 0
+    id_oper = 0,
+    id_dionis = 0
 ) {
+    console.log('id_dionis2 = ', id_dionis)
     return new Promise(function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'selectOper' + salt
@@ -14,7 +16,7 @@ function select_dionis_oper(
         if (mode == 'select') {
             newModalWindow(
                 modal = win_current,
-                html_header = '',
+                html_header = 'операции Dionis',
                 html_body = '',
                 html_footer = '',
                 width = '90%',
@@ -26,6 +28,7 @@ function select_dionis_oper(
 
         const appHeight = appBodyHeight()
 
+        console.log('id_dionis3 = ', id_dionis)
         table_dionis_opers = tabulator_dionis_opers(
             div = (mode == 'select') ? win_current + 'Body' : 'appBody',
             sono,
@@ -39,6 +42,7 @@ function select_dionis_oper(
             win_current,
             win_return,
             id_oper,
+            id_dionis
         )
 
         // table_opers.setSort([
@@ -62,7 +66,9 @@ function tabulator_dionis_opers(
     win_current = null,
     win_return = null,
     id_oper = 0,
+    id_dionis = 0
 ) {
+    console.log('id_dionis4 = ', id_dionis)
     const salt = randomStr(10)
 
     const id_button_sel = 'sel' + salt
@@ -71,17 +77,17 @@ function tabulator_dionis_opers(
     const id_button_del = 'del' + salt
 
     const msgFooter =
-    `<span id="select-stats"></span>` +
-    `<div style="width: 100%; text-align: left;">` +
-    `<button id='${id_button_sel}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
-    `<button id='${id_button_mod}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
-    `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
-    `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
-    `</div>`
+        `<span id="select-stats"></span>` +
+        `<div style="width: 100%; text-align: left;">` +
+        `<button id='${id_button_sel}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
+        `<button id='${id_button_mod}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
+        `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
+        `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
+        `</div>`
 
     const tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_dioins_opers.php",
-        ajaxParams: { i: 0 },
+        ajaxParams: { d: id_dionis },
         ajaxConfig: "GET",
         ajaxContentType: "json",
         height: tabHeight,
@@ -98,7 +104,7 @@ function tabulator_dionis_opers(
         footerElement: msgFooter,
 
         columns: [
-            { title: 'id', field: 'id', width: 60, headerFilter: true },
+            { title: 'id', field: 'id', width: 60, headerFilter: true, topCalc: "count" },
             {
                 title: "дата",
                 field: "date",
@@ -109,27 +115,58 @@ function tabulator_dionis_opers(
                     inputFormat: "YYYY-MM-DD",
                     outputFormat: "DD.MM.YYYY",
                 },
-            }, 
+            },
             // { title: 'p1', field: 'id_connect_point1', width: 60, headerFilter: true },
             // { title: 'p2', field: 'id_connect_point2', width: 60, headerFilter: true },            
-            { title: 'Dinois', field: 'sn', widthGrow: 1, headerFilter: true },
-            { 
+            {
+                title: 'Dinois',
+                columns: [
+                    { title: 'инв№', field: 'inv_n', width: 100, headerFilter: true },
+                    { title: 'SN', field: 'sn', width: 100, headerFilter: true },
+                    { title: 'модель', field: 'model', width: 150, headerFilter: true },
+                    { title: 'тип', field: 'type', width: 100, headerFilter: true },
+                    { title: 'версия', field: 'ver', width: 100, headerFilter: true },
+                ]
+            },
+            {
                 title: 'источник',
                 columns: [
                     { title: 'ТНО', field: 'ifns_sono1', width: 60, headerFilter: true },
-                    { title: 'ТОРМ', field: 'torm_sono1', width: 60, headerFilter: true },
+                    { title: 'ТОРМ', field: 'torm_sono1', width: 62, headerFilter: true },
+                    // { 
+                    //     title: 'ТОРМ', 
+                    //     field: 'torm_sono1', 
+                    //     width: 60, 
+                    //     headerFilter: true,
+                    //     formatter:function(cell, formatterParams, onRendered){
+                    //         let d = cell.getRow().getData()
+                    //         if (d.ifns_sono1 == d.torm_sono1) return ''
+                    //         return cell.getValue()
+                    //     }
+                    // },
                     { title: '', field: 'ip1', widthGrow: 2, headerFilter: true },
                 ]
             },
-            { 
+            {
                 title: 'приемник',
                 columns: [
                     { title: 'ТНО', field: 'ifns_sono2', width: 60, headerFilter: true },
-                    { title: 'ТОРМ', field: 'torm_sono2', width: 60, headerFilter: true },
+                    { title: 'ТОРМ', field: 'torm_sono2', width: 62, headerFilter: true },
+                    // { 
+                    //     title: 'ТОРМ', 
+                    //     field: 'torm_sono2', 
+                    //     width: 60, 
+                    //     headerFilter: true,
+                    //     formatter:function(cell, formatterParams, onRendered){
+                    //         let d = cell.getRow().getData()
+                    //         if (d.ifns_sono2 == d.torm_sono2) return ''
+                    //         return cell.getValue()
+                    //     }
+                    // },
                     { title: '', field: 'ip2', widthGrow: 2, headerFilter: true },
                 ]
             },
-            
+            { title: 'временно', field: 'temp', width: 90, headerFilter: true },
             { title: 'описание', field: 'dscr', widthGrow: 2, headerFilter: true },
             { title: 'комментарий', field: 'comm', widthGrow: 2, headerFilter: true },
         ],
@@ -142,9 +179,24 @@ function tabulator_dionis_opers(
 
         rowFormatter: function (row) {
             let d = row.getData()
+
+            // поставка оборудования -----------------------------------------------
+            if (d.stock1 == 3) {
+                row.getCell("ip1").getElement().style.backgroundColor = '#ccccff'
+            }
+
+            // подключение к точке доступа -----------------------------------------
+            if (d.stock2 == 0) {
+                row.getCell("ip2").getElement().style.backgroundColor = '#ccffcc'
+            }
+
+            // отключение от точки доступа -----------------------------------------
+            if (d.stock1 == 0) {
+                row.getCell("ip1").getElement().style.backgroundColor = '#ffcccc'
+            }
         },
 
-        rowSelectionChanged: function (data, rows) {      
+        rowSelectionChanged: function (data, rows) {
             if (data.length == 0) {
                 id2e(id_button_mod).disabled = true
                 id2e(id_button_del).disabled = true
@@ -178,7 +230,7 @@ function tabulator_dionis_opers(
         const d = factory_dionis_oper()
         d.id = await save_dionis_oper(d)
 
-        addTabRow(tabulator, d, (top = true))
+        addTabRow(tabulator, d, (top = false))
 
         const res = await edit_dionis_oper(
             d,
@@ -223,25 +275,40 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
         const salt = randomStr(10)
         const win_current = 'edit' + salt
 
-        const id_button_enter  = 'ent' + salt
+        const id_button_enter = 'ent' + salt
         const id_button_cancel = 'cancel' + salt
-        const id_button_prev   = 'add' + salt
-        const id_button_next   = 'del' + salt
+        const id_button_prev = 'add' + salt
+        const id_button_next = 'del' + salt
 
-        const sel_dionis   = 'select_dionis' + salt
-        const sel_point1   = 'select_point1' + salt  
-        const sel_point2   = 'select_point2' + salt
+        const sel_dionis = 'select_dionis' + salt
+        const sel_point1 = 'select_point1' + salt
+        const sel_point2 = 'select_point2' + salt
 
         const header = `<h4>id: ${d.id} операция Dionis</h4>`
 
         const body = `
         <div style="margin: 0; padding: 1%;">
-            {{dv.id_connect_point1}} ---> {{dv.id_dionis}} ---> {{dv.id_connect_point2}}
+            {{dv.id_dionis}} : {{dv.id_connect_point1}} ---> {{dv.id_connect_point2}}
             <br>
             <br>
-            <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{comp_ip1}}</button> --->
-            <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{comp_sn}}</button> --->
-            <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{comp_ip2}}</button>
+            <input class="o3-border" type="date" id="d_date" v-model="dv.date">
+            <label for="d_date">  Дата операции</label>
+            <br>
+            <br>
+            <div>
+                <n-switch :rail-style="style_temp"
+                    size="small"                          
+                    checked-value="1"
+                    unchecked-value="0"
+                    v-model:value="dv.temp"
+                />                                   
+            </div>
+            {{ (dv.temp == "0") ? "на баланс" : "на временное хранение" }}
+            <br>
+            <br>
+            <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> :
+            <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> --->
+            <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button>
             <br>
             <br>           
             Описание:<br>
@@ -261,12 +328,12 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
         const foot = ``
 
         const esc = mode == "new"
-            ? () => { 
-                remove_selected_dionis_oper() 
+            ? () => {
+                remove_selected_dionis_oper()
                 vapp.unmount()
             }
-            : () => { 
-                console.log("esc_callback") 
+            : () => {
+                console.log("esc_callback")
                 vapp.unmount()
             }
 
@@ -288,6 +355,13 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
                 return {
                     dv: d,
                     chg: false,
+                    style_temp: ({ focused, checked }) => {
+                        const style = {}
+                        style.background = (checked) ? "red" : "green"
+                        style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
+                        return style
+                    }
+
                 }
             },
             computed: {
@@ -299,12 +373,14 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
                 comp_ip1() {
                     return !!!this.dv.ip1
                         ? "<выбрать источник>"
-                        : this.dv.ifns_sono1 + '/' + this.dv.torm_sono1 + '/' + this.dv.ip1
+                        // : this.dv.ifns_sono1 + '/' + this.dv.torm_sono1 + '/' + this.dv.ip1
+                        : format_point(this.dv.ifns_sono1, this.dv.torm_sono1, this.dv.ip1, this.dv.stock1)
                 },
                 comp_ip2() {
                     return !!!this.dv.ip2
                         ? "<выбрать приемник>"
-                        : this.dv.ifns_sono2 + '/' + this.dv.torm_sono2 + '/' + this.dv.ip2
+                        // : this.dv.ifns_sono2 + '/' + this.dv.torm_sono2 + '/' + this.dv.ip2
+                        : format_point(this.dv.ifns_sono2, this.dv.torm_sono2, this.dv.ip2, this.dv.stock2)
                 },
             },
 
@@ -385,10 +461,13 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
 
             vm.$data.dv.id_dionis = selected_dionis.id
             vm.$data.dv.sn = selected_dionis.sn
+            vm.$data.dv.type = selected_dionis.type
+            vm.$data.dv.ver = selected_dionis.ver
+
             id2e(sel_dionis).innerHTML = vm.$data.dv.sn
             id_2_set_focus(win_current)
         }
-        
+
         // кнопка выбора источника -----------------------------------------------
         id2e(sel_point1).onclick = async () => {
             console.log('sel_point1')
@@ -407,10 +486,12 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
             vm.$data.dv.ip1 = selected_point.ip
             vm.$data.dv.ifns_sono1 = selected_point.ifns_sono
             vm.$data.dv.torm_sono1 = selected_point.torm_sono
+            vm.$data.dv.stock1 = selected_point.stock
+
             id2e(sel_point1).innerHTML = vm.$data.dv.ip1
             id_2_set_focus(win_current)
         }
-        
+
         // кнопка выбора приемника -----------------------------------------------
         id2e(sel_point2).onclick = async () => {
             console.log('sel_point2')
@@ -429,6 +510,7 @@ function edit_dionis_oper(d, win_return = null, mode = "") {
             vm.$data.dv.ip2 = selected_point.ip
             vm.$data.dv.ifns_sono2 = selected_point.ifns_sono
             vm.$data.dv.torm_sono2 = selected_point.torm_sono
+            vm.$data.dv.stock2 = selected_point.stock
 
             id2e(sel_point2).innerHTML = vm.$data.dv.ip2
             id_2_set_focus(win_current)
@@ -462,7 +544,8 @@ async function save_dionis_oper(d) {
                 id_connect_point2,
                 date,
                 dscr,
-                comm
+                comm,
+                temp
             ) VALUES (
                 ${d.id},
                 ${d.id_dionis},
@@ -470,15 +553,18 @@ async function save_dionis_oper(d) {
                 ${d.id_connect_point1},
                '${d.date}',
                '${d.dscr}',
-               '${d.comm}'
+               '${d.comm}',
+                ${d.temp}
             )`
             : `UPDATE dionis_oper SET 
                 id=${d.id},
                 id_dionis=${d.id_dionis},
                 id_connect_point1=${d.id_connect_point1},
                 id_connect_point2=${d.id_connect_point2},
+                date='${d.date}',
                 dscr='${d.dscr}',
-                comm='${d.comm}'
+                comm='${d.comm}',
+                temp=${d.temp}
             WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -498,6 +584,31 @@ function factory_dionis_oper() {
         id_connect_point2: 0,
         date: '',
         dscr: '',
-        comm: ''
+        comm: '',
+        temp: 0
     }
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function format_point(
+    sono1 = '',
+    sono2 = '',
+    point = '',
+    stock = 0
+) {
+    // console.log(`sono1, sono2, point, stock = ${sono1}, ${sono2}, ${point}, ${stock}`)
+
+    // -------------- ДНР ----------------------------------
+    if (stock == 2) return point
+
+    // -------------- поставщик ----------------------------
+    if (stock == 3) return point
+
+    // -------------- ц.о. ТНО -----------------------------
+    if (sono1 == sono2) {
+        return sono1 + '/' + point
+    }
+
+    // -------------- ТОРМ ТНО -----------------------------
+    return sono1 + '/' + sono2 + '/' + point
 }

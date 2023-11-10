@@ -246,10 +246,21 @@ function tabulator_select_dionis(
     }
 
     id2e(id_button_his).onclick = () => {
-        show_dionis_history(
-            tabulator.getSelectedData()[0].id,
-            (win_return = win_current)
+        console.log('id_dionis1 = ', tabulator.getSelectedData()[0].id)
+        select_dionis_oper(
+            sono = '6100',
+            id_otdel = 0,
+            sklad = 0,
+            selectable = 1,
+            mode = 'select',
+            win_return = null,
+            id_oper = 0,
+            id_dionis = tabulator.getSelectedData()[0].id
         )
+        // show_dionis_history(
+        //     tabulator.getSelectedData()[0].id,
+        //     (win_return = win_current)
+        // )
     }
 
     // id2e(id_checkb_flt).onclick = () => {

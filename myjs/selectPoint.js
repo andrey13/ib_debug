@@ -96,10 +96,11 @@ function tabulator_select_point(
         selectableRangeMode: "click",
         reactiveData: true,
         columns: [
-            { title: "id", field: "id", width: 60, print: false },
+            { title: "id", field: "id", width: 60, print: false, topCalc: "count" },
             { title: "ИФНС", field: "ifns_sono", headerFilter: true, width: 80, editor: ed },
             { title: "ТОРМ", field: "torm_sono", headerFilter: true, width: 80, editor: ed },
-            { title: "расположение", field: "ip", headerFilter: true, widthGrow: 3, editor: ed },
+            { title: "местонахождение Dionis", field: "ip", headerFilter: true, widthGrow: 3, editor: ed },
+            { title: "ТНО", field: "torm_name", headerFilter: true, widthGrow: 3, editor: ed },
             // { title: "mask", field: "mask", headerFilter: true, widthGrow: 2, topCalc: "count", editor: ed },
             // { title: "sklad",       field: "stock",  headerFilter: true, widthGrow: 2, editor: ed },
         ],
