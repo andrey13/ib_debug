@@ -1,6 +1,6 @@
 let table_select_dionis = null
 //=======================================================================================
-// модальное окно выбора МТС
+// модальное окно выбора Dionis
 //=======================================================================================
 function select_dionis(
     sono = '6100',
@@ -70,6 +70,8 @@ function tabulator_select_dionis(
     win_return = null,
     id_dionis = 0,
 ) {
+    console.log('win_current = ', win_current)
+    console.log('win_return = ', win_return)
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count"  },
         {//группа владелец
@@ -86,6 +88,8 @@ function tabulator_select_dionis(
                 { title: "ТНО", field: "ifns2", widthGrow: 3, headerFilter: true },
             ],
         },
+        { title: "id_p1", field: "id_p1", width: 70, headerFilter: true },
+        { title: "id_p2", field: "id_p2", width: 70, headerFilter: true },
         // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
         { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
         { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
@@ -540,7 +544,7 @@ function edit_dionis(d, win_return = null, mode = "") {
         //     table_select_dionis.updateRow(d.id, d)
         //     table_select_dionis.redraw()
         // }
-        // кнопка перехода на предыдущее МТС ----------------------------------------
+        // кнопка перехода на предыдущее Dionis ----------------------------------------
         id2e("btnPrevdionis").onclick = () => {
             const d = vm.$data.dv
             save_dionis(d)
@@ -569,7 +573,7 @@ function edit_dionis(d, win_return = null, mode = "") {
             vm.$data.dv = d_prev
             vm.$data.chg = false
         }
-        // кнопка перехода на следующее МТС -----------------------------------------
+        // кнопка перехода на следующее Dionis -----------------------------------------
         id2e("btnNextdionis").onclick = () => {
             const d = vm.$data.dv
             save_dionis(d)
@@ -605,7 +609,7 @@ function edit_dionis(d, win_return = null, mode = "") {
 async function show_dionis_history(id_dionis, win_return = null) {
     const data_dionis = await id_2_data(id_dionis, 'dionis')
     const win_current = 'historydionis' + randomStr(10)
-    const header = `<h4>история МТС id: ${data_dionis.id}, SN: ${data_dionis.SN}</h4>`
+    const header = `<h4>история Dionis id: ${data_dionis.id}, SN: ${data_dionis.SN}</h4>`
     const body = `<div class="w3-container"></div>`
     const foot = ``
     
@@ -628,7 +632,7 @@ async function show_dionis_history(id_dionis, win_return = null) {
         layout: "fitColumns",
         tooltipsHeader: true,
         printAsHtml: true,
-        printHeader: "<h1>история МТС<h1>",
+        printHeader: "<h1>история Dionis<h1>",
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",

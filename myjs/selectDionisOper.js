@@ -29,6 +29,7 @@ function select_dionis_oper(
         const appHeight = appBodyHeight()
 
         console.log('id_dionis3 = ', id_dionis)
+
         table_dionis_opers = tabulator_dionis_opers(
             div = (mode == 'select') ? win_current + 'Body' : 'appBody',
             sono,
@@ -291,6 +292,7 @@ function edit_dionis_oper(
         const win_current = 'edit' + salt
         if (mode == 'new' && id_dionis != 0) {
             const d_dionis = await id_2_data(id_dionis, 'dionis')
+            d.id_dionis = id_dionis
             d.sn = d_dionis.sn
             console.log('d_dionis = ', d_dionis)
         }

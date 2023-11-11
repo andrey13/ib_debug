@@ -70,6 +70,9 @@ function tabulator_select_mts(
     win_return = null,
     id_mts = 0,
 ) {
+    console.log('win_current = ', win_current)
+    console.log('win_return = ', win_return)
+
     let cols = []
 
     const cols1 = [

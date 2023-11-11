@@ -16,7 +16,9 @@ $id_type_oper = $_GET['t'];
 // if ($id_otdel != '0' and $id_type_oper != '0') $sfx = "WHERE m.id_type_otdel=$id_otdel AND id_oper=$id_type_oper";
 
 $sql = "SELECT 
-        d.*
+        d.*,
+        (SELECT id FROM dionis_oper AS do WHERE do.id_dionis=d.id AND do.temp=1  ORDER BY date DESC LIMIT 1) as id_p1,
+        (SELECT id FROM dionis_oper AS do WHERE do.id_dionis=d.id ORDER BY date DESC LIMIT 1) as id_p2
     FROM dionis AS d
     ORDER BY d.sono1, d.sono2 ";
 
