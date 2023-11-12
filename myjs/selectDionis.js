@@ -73,23 +73,53 @@ function tabulator_select_dionis(
     console.log('win_current = ', win_current)
     console.log('win_return = ', win_return)
     const cols = [
-        { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count"  },
+        { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
         {//группа владелец
-            title: "владелец",
+            title: "владелец (exel)",
             columns: [
                 { title: "СОНО", field: "sono1", widthGrow: 1, headerFilter: true },
                 { title: "ТНО", field: "ifns1", widthGrow: 3, headerFilter: true },
             ],
         },
         {//группа нахождение
-            title: "нахождение",
+            title: "нахождение (exel)",
             columns: [
                 { title: "СОНО", field: "sono2", widthGrow: 1, headerFilter: true },
                 { title: "ТНО", field: "ifns2", widthGrow: 3, headerFilter: true },
             ],
         },
-        { title: "id_p1", field: "id_p1", width: 70, headerFilter: true },
-        { title: "id_p2", field: "id_p2", width: 70, headerFilter: true },
+        // { title: "id_oper", field: "id_oper", width: 70, headerFilter: true },
+        // { title: "id_p1", field: "id_connect_point1", width: 70, headerFilter: true },
+        // { title: "id_p2", field: "id_connect_point2", width: 70, headerFilter: true },
+        { title: "temp", field: "temp", width: 70, headerFilter: true },
+        {//группа владелец
+            title: "владелец (операции)",
+            columns: [
+                {
+                    title: "СОНО", field: "ifns_sono1", widthGrow: 1, headerFilter: true,
+                    formatter: function (cell, formatterParams) {
+                        var d = cell.getRow().getData()
+                        if (d.temp == 1) return d.ifns_sono1
+                        return d.ifns_sono2
+                    }
+                },
+                {
+                    title: "ТНО", field: "t1name", widthGrow: 3, headerFilter: true,
+                    formatter: function (cell, formatterParams) {
+                        var d = cell.getRow().getData()
+                        if (d.temp == 1) return d.t1name
+                        return d.t2name
+                    }
+                },
+            ],
+        },
+        {//группа нахождение
+            title: "нахождение (операции)",
+            columns: [
+                { title: "СОНО", field: "ifns_sono2", widthGrow: 1, headerFilter: true },
+                { title: "ТНО", field: "t2name", widthGrow: 3, headerFilter: true },
+            ],
+        },
         // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
         { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
         { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
@@ -121,16 +151,18 @@ function tabulator_select_dionis(
     const id_button_add = 'add' + salt
     const id_button_del = 'del' + salt
     const id_button_his = 'his' + salt
+    const id_checkb_sht = 'sht' + salt
 
     const msgFooter =
-    `<span id="select-stats"></span>` +
-    `<div style="width: 100%; text-align: left;">` +
-    `<button id='${id_button_sel}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
-    `<button id='${id_button_mod}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
-    `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
-    `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
-    `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-    `</div>`
+        `<span id="select-stats"></span>` +
+        `<div style="width: 100%; text-align: left;">` +
+        `<button id='${id_button_sel}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Выбрать</button>` +
+        `<button id='${id_button_mod}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
+        `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
+        `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
+        `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
+        `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
+        `</div>`
 
     // `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
     // `<button id='${id_button_cre}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Создать недостающие обращения</button>` +
@@ -153,7 +185,7 @@ function tabulator_select_dionis(
         selectable: selectable,
         selectableRangeMode: "click",
         reactiveData: true,
-        columns: cols, 
+        columns: cols,
         footerElement: msgFooter,
 
         // renderComplete: function() {
@@ -173,9 +205,13 @@ function tabulator_select_dionis(
                 row.getCell("sono2").getElement().style.backgroundColor = '#ffcccc'
                 row.getCell("ifns2").getElement().style.backgroundColor = '#ffcccc'
             }
+            if (d.temp == 1) {
+                row.getCell("ifns_sono2").getElement().style.backgroundColor = '#ffcccc'
+                row.getCell("t2name").getElement().style.backgroundColor = '#ffcccc'
+            }
         },
 
-        rowSelectionChanged: function (data, rows) {      
+        rowSelectionChanged: function (data, rows) {
             if (data.length == 0) {
                 id2e(id_button_mod).disabled = true
                 id2e(id_button_del).disabled = true
@@ -285,32 +321,25 @@ function tabulator_select_dionis(
     //     }
     // }    
 
-    // id2e(id_checkb_xls).onclick = () => {
-    //     console.log('id_checkb_xls = ', id2e(id_checkb_xls).checked)
-    //     if (id2e(id_checkb_xls).checked) {
-    //         tabulator.showColumn('date')
-    //         tabulator.showColumn('status1')
-    //         tabulator.showColumn('user')
-    //         tabulator.showColumn('otdel')
-    //         tabulator.showColumn('sklad')
-    //         // tabulator.showColumn('uname')
-    //         tabulator.showColumn('user')
-    //         tabulator.setGroupBy('SN')
-    //         tabulator.setFilter()
-    //         tabulator.redraw()
-    //     } else {
-    //         tabulator.hideColumn('date')
-    //         tabulator.hideColumn('status1')
-    //         tabulator.hideColumn('user')
-    //         tabulator.hideColumn('otdel')
-    //         tabulator.hideColumn('sklad')
-    //         // tabulator.hideColumn('uname')
-    //         tabulator.hideColumn('user')
-    //         tabulator.setFilter("old", "=", 0)
-    //         tabulator.setGroupBy('')
-    //         tabulator.redraw()
-    //     }
-    // }
+    id2e(id_checkb_sht).onclick = () => {
+        if (id2e(id_checkb_sht).checked) {
+            tabulator.hideColumn('type')
+            tabulator.hideColumn('model')
+            tabulator.hideColumn('ver')
+            tabulator.hideColumn('date_sert')
+            tabulator.hideColumn('date1')
+            tabulator.hideColumn('comm')
+            tabulator.redraw()
+        } else {
+            tabulator.showColumn('type')
+            tabulator.showColumn('model')
+            tabulator.showColumn('ver')
+            tabulator.showColumn('date_sert')
+            tabulator.showColumn('date1')
+            tabulator.showColumn('comm')
+            tabulator.redraw()
+        }
+    }
 
     // tabulator.hideColumn('date')
     // tabulator.hideColumn('status1')
@@ -372,12 +401,12 @@ function edit_dionis(d, win_return = null, mode = "") {
         const footdionis = ``
 
         const esc_dionis = mode == "new"
-            ? () => { 
-                remove_selected_dionis() 
+            ? () => {
+                remove_selected_dionis()
                 vapp.unmount()
             }
-            : () => { 
-                console.log("esc_callback") 
+            : () => {
+                console.log("esc_callback")
                 vapp.unmount()
             }
 
@@ -612,23 +641,23 @@ async function show_dionis_history(id_dionis, win_return = null) {
     const header = `<h4>история Dionis id: ${data_dionis.id}, SN: ${data_dionis.SN}</h4>`
     const body = `<div class="w3-container"></div>`
     const foot = ``
-    
-    const esc_dionis_history = () => { 
-        console.log("esc_callback") 
+
+    const esc_dionis_history = () => {
+        console.log("esc_callback")
     }
 
-    newModalWindow( 
+    newModalWindow(
         win_current, header, body, foot,
         width = "59%", marginLeft = "40%", marginTop = "1%",
         win_return, esc_dionis_history
     )
-    
+
     const table_histoty = new Tabulator('#' + win_current + 'Body', {
         ajaxURL: "myphp/get_dionis_history.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
         ajaxParams: { i: data_dionis.id },
-        height: appBodyHeight()-100,
+        height: appBodyHeight() - 100,
         layout: "fitColumns",
         tooltipsHeader: true,
         printAsHtml: true,
@@ -652,7 +681,7 @@ async function show_dionis_history(id_dionis, win_return = null) {
                     inputFormat: "YYYY-MM-DD",
                     outputFormat: "DD.MM.YYYY",
                 },
-            }, 
+            },
             { title: 'статус', field: 'status', widthGrow: 2, headerFilter: true },
             // { title: 'тип', field: 'z_id_type', widthGrow: 1, headerFilter: true },
             // { title: 'тип', field: 'type', widthGrow: 4, headerFilter: true },
