@@ -152,6 +152,7 @@ function tabulator_select_dionis(
     const id_button_del = 'del' + salt
     const id_button_his = 'his' + salt
     const id_checkb_sht = 'sht' + salt
+    const id_checkb_opr = 'opr' + salt
 
     const msgFooter =
         `<span id="select-stats"></span>` +
@@ -161,6 +162,7 @@ function tabulator_select_dionis(
         `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
         `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
         `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
+        `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' unchecked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
         `</div>`
 
@@ -321,6 +323,24 @@ function tabulator_select_dionis(
     //     }
     // }    
 
+    id2e(id_checkb_opr).onclick = () => {
+        if (id2e(id_checkb_opr).checked) {
+            tabulator.showColumn('temp')
+            tabulator.showColumn('ifns_sono1')
+            tabulator.showColumn('ifns_sono2')
+            tabulator.showColumn('t1name')
+            tabulator.showColumn('t2name')
+            tabulator.redraw()
+        } else {
+            tabulator.hideColumn('temp')
+            tabulator.hideColumn('ifns_sono1')
+            tabulator.hideColumn('ifns_sono2')
+            tabulator.hideColumn('t1name')
+            tabulator.hideColumn('t2name')
+            tabulator.redraw()
+        }
+    }
+
     id2e(id_checkb_sht).onclick = () => {
         if (id2e(id_checkb_sht).checked) {
             tabulator.hideColumn('type')
@@ -341,15 +361,13 @@ function tabulator_select_dionis(
         }
     }
 
-    // tabulator.hideColumn('date')
-    // tabulator.hideColumn('status1')
-    // tabulator.hideColumn('user')
-    // tabulator.hideColumn('otdel')
-    // tabulator.hideColumn('sklad')
-    // tabulator.hideColumn('uname')
-    // tabulator.hideColumn('user')
+    tabulator.hideColumn('temp')
+    tabulator.hideColumn('ifns_sono1')
+    tabulator.hideColumn('ifns_sono2')
+    tabulator.hideColumn('t1name')
+    tabulator.hideColumn('t2name')
 
-    // tabulator.redraw()
+    tabulator.redraw()
 
     return tabulator
 }
