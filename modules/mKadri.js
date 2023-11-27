@@ -452,9 +452,11 @@ function createTabulatorD(id_div, appH, id_change, id_type) {
                         let d1name = '';
                         runSQL_p(`SELECT * FROM depart WHERE id=${user.id_depart}`)
                             .then((r) => {
-                                d1name = JSON.parse(r)[0].name;
+                                // console.log('r = ', r)
+                                console.log('r.length = ', r.length)
+                                d1name = (JSON.parse(r).length == 0) ? ' ' : JSON.parse(r)[0].name
                                 let sql = `INSERT INTO kadri_change_detail (id_change, id_user, id_type, id_depart, id_title, fio_old) 
-                                   VALUES (${id_sz}, ${user.id}, ${id_type}, ${user.id_depart}, ${user.id_title}, "${user.name}")`;
+                                   VALUES (${id_sz}, ${user.id}, ${id_type}, ${user.id_depart}, ${user.id_title}, "${user.name}")`
                                 runSQL_p(sql)
                                     .then((id) => {
                                         tableD[id_type].addData([{
