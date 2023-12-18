@@ -211,6 +211,36 @@ function tabulator_select_dionis(
                 row.getCell("ifns_sono2").getElement().style.backgroundColor = '#ffcccc'
                 row.getCell("t2name").getElement().style.backgroundColor = '#ffcccc'
             }
+
+            let sono1 = d.sono1
+            let sono2 = d.sono2
+            let sono3 = (d.temp == 1) ? d.ifns_sono1 : d.ifns_sono2
+            // let sono3 = d.ifns_sono1
+            let sono4 = d.ifns_sono2
+            let id = d.id
+
+            // if (id == 6194) {
+                console.log(`id s1 s3 s2 s4:  ${id} -> ${sono1} = ${sono3}    ${sono2} = ${sono4}`)
+            // }
+
+
+            if (!!sono1 && !!sono2 && !!sono3 && !!sono4) {
+                sono1 = sono1.toString().trim()
+                sono2 = sono2.toString().trim()
+                sono3 = sono3.toString().trim()
+                sono4 = sono4.toString().trim()
+                if (sono1 == sono3 && sono2 == sono4) {
+                    row.getCell("type").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("model").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("sn").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("inv_n").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("ver").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("date_sert").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("status").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("date1").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("comm").getElement().style.backgroundColor = '#ccffcc'
+                }
+            }
         },
 
         rowSelectionChanged: function (data, rows) {
