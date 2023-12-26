@@ -70,8 +70,8 @@ function tabulator_select_dionis(
     win_return = null,
     id_dionis = 0,
 ) {
-    console.log('win_current = ', win_current)
-    console.log('win_return = ', win_return)
+    // console.log('win_current = ', win_current)
+    // console.log('win_return = ', win_return)
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
         {//группа владелец
@@ -121,16 +121,20 @@ function tabulator_select_dionis(
             ],
         },
         // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
+        { title: "SN", field: "sn", widthGrow: 2, headerFilter: true },
         { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
         { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
-        { title: "SN", field: "sn", widthGrow: 2, headerFilter: true },
+        { title: "тип", field: "type_name", widthGrow: 2, headerFilter: true },
+        { title: "Модель", field: "model_name", widthGrow: 2, headerFilter: true },
         { title: "Инв №", field: "inv_n", widthGrow: 2, headerFilter: true },
         { title: "Версия", field: "ver", widthGrow: 2, headerFilter: true },
         { title: "Сертификат", field: "date_sert", widthGrow: 2, headerFilter: true },
         { title: "Статус", field: "status", widthGrow: 2, headerFilter: true },
+        // { title: "Поставка", field: "postavka", width: 80, headerFilter: true },
+        { title: "Поставка", field: "gk_name", width: 80, headerFilter: true },
         {
             title: "дата установки",
-            field: "date1",
+            field: "date2",
             width: 80,
             headerFilter: true,
             formatter: "datetime",
@@ -220,7 +224,7 @@ function tabulator_select_dionis(
             let id = d.id
 
             // if (id == 6194) {
-                console.log(`id s1 s3 s2 s4:  ${id} -> ${sono1} = ${sono3}    ${sono2} = ${sono4}`)
+                // console.log(`id s1 s3 s2 s4:  ${id} -> ${sono1} = ${sono3}    ${sono2} = ${sono4}`)
             // }
 
 
@@ -237,7 +241,9 @@ function tabulator_select_dionis(
                     row.getCell("ver").getElement().style.backgroundColor = '#ccffcc'
                     row.getCell("date_sert").getElement().style.backgroundColor = '#ccffcc'
                     row.getCell("status").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("date1").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("postavka").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("gk_name").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("date2").getElement().style.backgroundColor = '#ccffcc'
                     row.getCell("comm").getElement().style.backgroundColor = '#ccffcc'
                 }
             }
@@ -318,7 +324,7 @@ function tabulator_select_dionis(
     }
 
     id2e(id_button_his).onclick = () => {
-        console.log('id_dionis1 = ', tabulator.getSelectedData()[0].id)
+        // console.log('id_dionis1 = ', tabulator.getSelectedData()[0].id)
         select_dionis_oper(
             sono = '6100',
             id_otdel = 0,
@@ -377,7 +383,7 @@ function tabulator_select_dionis(
             tabulator.hideColumn('model')
             tabulator.hideColumn('ver')
             tabulator.hideColumn('date_sert')
-            tabulator.hideColumn('date1')
+            tabulator.hideColumn('date2')
             tabulator.hideColumn('comm')
             tabulator.redraw()
         } else {
@@ -385,7 +391,7 @@ function tabulator_select_dionis(
             tabulator.showColumn('model')
             tabulator.showColumn('ver')
             tabulator.showColumn('date_sert')
-            tabulator.showColumn('date1')
+            tabulator.showColumn('date2')
             tabulator.showColumn('comm')
             tabulator.redraw()
         }
@@ -411,6 +417,9 @@ function edit_dionis(d, win_return = null, mode = "") {
 
         const headerdionis = `<h4>параметры Dionis</h4>`
 
+        const sel_gk = 'select_gk' + salt
+        const sel_model = 'select_model' + salt
+
         const bodydionis = `
         <div style="margin: 0; padding: 1%;">
             <b>ТНО приписки:</b><br>
@@ -425,8 +434,16 @@ function edit_dionis(d, win_return = null, mode = "") {
             <input class="o3-border" type="text" v-model="dv.type"> - тип<br>
             <input class="o3-border" type="text" v-model="dv.model"> - модель<br>
             <input class="o3-border" type="text" v-model="dv.ver"> - версия<br>
-            <input class="o3-border" type="text" v-model="dv.date1"> - дата установки<br>
-            <br>           
+            <input class="o3-border" type="text" v-model="dv.date2"> - дата установки<br>
+            <br>      
+            модел/тип:<br>
+            <button id=${sel_model} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{model_type}}</button>
+            <br>
+            <br>     
+            поставка:<br>
+            <button id=${sel_gk} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{goskontrakt}}</button>
+            <br>
+            <br>     
             Комментарии:<br>
             <textarea rows="3" style="width:100%" v-model="dv.comm"></textarea>
             <br>
@@ -436,6 +453,10 @@ function edit_dionis(d, win_return = null, mode = "") {
             <button id="btnPrevdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущий Dionis</button>
             <button id="btnNextdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующий Dionis</button>
         </div>`
+
+
+        // <input class="o3-border" type="text" v-model="dv.postavka"> - поставка<br>
+
 
         // <tr>
         //   <td>
@@ -454,7 +475,7 @@ function edit_dionis(d, win_return = null, mode = "") {
                 vapp.unmount()
             }
             : () => {
-                console.log("esc_callback")
+                // console.log("esc_callback")
                 vapp.unmount()
             }
 
@@ -501,102 +522,62 @@ function edit_dionis(d, win_return = null, mode = "") {
                     */
                 }
             },
-            /*
             computed: {
-                uname() {
-                    return !!!this.dv.uname
-                        ? "<выбрать пользователя>"
-                        : this.dv.uname
+                goskontrakt() {
+                    return !!!this.dv.gk_name
+                        ? "<выбрать ГК>"
+                        : this.dv.gk_name
                 },
-                cname() {
-                    return !!!this.dv.cname
-                        ? "<выбрать компьютер>"
-                        : this.dv.cname
-                },
-                dname() {
-                    return !!!this.dv.dname
-                        ? "<выбрать отдел>"
-                        : this.dv.dname
-                },
-                dsp() {
-                    if (!!!this.dsp) return ""
-                    return this.dv.dsp == "1" ? "дсп" : ""
+                model_type() {
+                    return !!!this.dv.model_name
+                        ? "<выбрать модель>"
+                        : this.dv.model_name + '/' + this.dv.type_name
                 },
             },
-            watch: {
-                dv: {
-                    handler(newValue, oldValue) {
-                        this.chg = true
-                    },
-                    deep: true,
-                },
-            },
-            */
         })
 
         const vm = vapp.use(naive).mount('#' + win_current)
         //--- View Model-------------------------------------------------------stop
 
-        // id_2_set_focus(win_current)
+        // кнопка выбора модели -----------------------------------------------
+        id2e(sel_model).onclick = async () => {
+            // console.log('sel_gk')
 
-        // кнопка выбора пользователя -----------------------------------------------
-        // id2e('btnShowExl').onclick = () => {
-        //     vm.$data.shExl = !vm.$data.shExl
-        // }
-        // кнопка выбора пользователя -----------------------------------------------
-        // id2e("selectdionisUser").onclick = async () => {
-        //     const id_depart = isRole("tex") ? g_user.id_depart : 0
-        //     const selectedUsers = await selectUser(
-        //         "6100",
-        //         "",
-        //         id_depart,
-        //         1,
-        //         (header = "Выбор ответственного лица"),
-        //         (width = "40%"),
-        //         (marginLeft = "30%"),
-        //         (marginTop = "5%"),
-        //         win_current,
-        //         vm.$data.dv.id_user
-        //     )
-        //     selectedUsers.forEach(async (u) => {
-        //         vm.$data.dv.id_user = u.id
-        //         vm.$data.dv.uname = u.name
-        //         vm.$data.dv.user_esk_status = u.esk_status
-        //         if (u.esk_status == 2) {
-        //             console.log('u.esk_status == 2')
-        //             vm.$data.dv.id_depart = u.id_depart
-        //             const depart_data = await id_depart_2_data(u.id_depart)
-        //             vm.$data.dv.id_otdel = depart_data.id_otdel
-        //             vm.$data.dv.dname = depart_data.name
-        //         } else {
-        //             console.log('u.esk_status != 2')
-        //             vm.$data.dv.id_depart = 0
-        //             vm.$data.dv.dname = 'отключен'
-        //         }
-        //         id2e("selectdionisUser").innerHTML = vm.$data.dv.uname
-        //         id_2_set_focus(win_current)
-        //     })
-        // }
-        // кнопка выбора отдела -----------------------------------------------------
-        // id2e("selectdionisDepart").onclick = async () => {
-        //     const dep = await selectVocab(
-        //         (table = "depart"),
-        //         (sort = "id_otdel"),
-        //         (ok = -1),
-        //         (tite = "отдел"),
-        //         (allow = ""),
-        //         (width = "60%"),
-        //         (marginLeft = "20%"),
-        //         (marginTop = "5%"),
-        //         win_current,
-        //         sono = g_user.sono
-        //     )
-        //     console.log('dep = ', dep)
-        //     vm.$data.dv.id_depart = dep.id
-        //     vm.$data.dv.id_otdel = dep.id_otdel
-        //     vm.$data.dv.dname = (await id_depart_2_data(dep.id)).name
-        //     id_2_set_focus(win_current)
-        // }
+            const selected_model = await select_dionis_model(
+                selectable = 1,
+                mode = 'select',
+                win_return = win_current,
+                id_model = vm.$data.dv.id_model
+            )
+
+            vm.$data.dv.id_model = selected_model.id
+            vm.$data.dv.model_name = selected_model.model
+            vm.$data.dv.type_name = selected_model.type
+
+            id2e(sel_model).innerHTML = vm.$data.dv.model_name + '/' + vm.$data.dv.type_name
+            id_2_set_focus(win_current)
+        }
+        
+        // кнопка выбора ГК -----------------------------------------------
+        id2e(sel_gk).onclick = async () => {
+            // console.log('sel_gk')
+
+            const selected_gk = await select_gk(
+                selectable = 1,
+                mode = 'select',
+                win_return = win_current,
+                id_gk = vm.$data.dv.id_gk
+            )
+
+            // console.log('selected_gk = ', selected_gk)
+
+            vm.$data.dv.id_gk = selected_gk.id
+            vm.$data.dv.gk_name = selected_gk.name
+
+            id2e(sel_gk).innerHTML = vm.$data.dv.gk_name
+            id_2_set_focus(win_current)
+        }
+
         // кнопка сохранения и выхода -----------------------------------------------
         id2e("btnEnterdionis").onclick = () => {
             const d = vm.$data.dv
@@ -627,19 +608,6 @@ function edit_dionis(d, win_return = null, mode = "") {
             save_dionis(d)
             table_select_dionis.updateRow(d.id, d)
             table_select_dionis.redraw()
-            // if (vm.$data.chg) {
-            //     dialogYESNO('Данные были изменены<br>сохранить изменения')
-            //         .then(ans => {
-            //             if (ans == "YES") {
-            //                 const d = vm.$data.dv
-            //                 save_dionis(d)
-            //                 table_select_dionis.updateRow(d.id, d)
-            //                 table_select_dionis.redraw()
-            //             } else {
-            //                 return
-            //             }
-            //         })
-            // }
             const selected_row = table_select_dionis.getSelectedRows()[0]
             const id_curr = selected_row.id
             const id_prev = selected_row.getPrevRow().getData().id
@@ -656,19 +624,6 @@ function edit_dionis(d, win_return = null, mode = "") {
             save_dionis(d)
             table_select_dionis.updateRow(d.id, d)
             table_select_dionis.redraw()
-            // if (vm.$data.chg) {
-            //     dialogYESNO('Данные были изменены<br>сохранить изменения')
-            //         .then(ans => {
-            //             if (ans == "YES") {
-            //                 const d = vm.$data.dv
-            //                 save_dionis(d)
-            //                 table_select_dionis.updateRow(d.id, d)
-            //                 table_select_dionis.redraw()
-            //             } else {
-            //                 return
-            //             }
-            //         })
-            // }
             const selected_row = table_select_dionis.getSelectedRows()[0]
             const id_curr = selected_row.id
             const id_next = selected_row.getNextRow().getData().id
@@ -691,7 +646,7 @@ async function show_dionis_history(id_dionis, win_return = null) {
     const foot = ``
 
     const esc_dionis_history = () => {
-        console.log("esc_callback")
+        // console.log("esc_callback")
     }
 
     newModalWindow(
@@ -771,6 +726,8 @@ async function save_dionis(d) {
         d.id == 0
             ? `INSERT INTO dionis ( 
             id,
+            id_gk,
+            id_model,
             sono1,
             sono2,
             ifns1,
@@ -782,11 +739,14 @@ async function save_dionis(d) {
             ver,
             date_sert,
             status,
-            date1,
+            postavka,
+            date2,
             ifns3,
             comm
         ) VALUES (
             ${d.id},
+            ${d.id_gk},
+            ${d.id_model},
             ${d.sono1},
             ${d.sono2},
             '${d.ifns1}',
@@ -798,12 +758,15 @@ async function save_dionis(d) {
             '${d.ver}',
             '${d.date_sert}',
             '${d.status}',
-            '${d.date1}',
+            '${d.postavka}',
+            '${d.date2}',
             '${d.ifns3}',
             '${d.comm}'
     )`
             : `UPDATE dionis SET 
             id=${d.id},
+            id_gk=${d.id_gk},
+            id_model=${d.id_model},
             sono1=${d.sono1},
             sono2=${d.sono2},
             ifns1='${d.ifns1}',
@@ -815,7 +778,8 @@ async function save_dionis(d) {
             ver='${d.ver}',
             date_sert='${d.date_sert}',
             status='${d.status}',
-            date1='${d.date1}',
+            postavka='${d.postavka}',
+            date2='${d.date2}',
             ifns3='${d.ifns3}',
             comm='${d.comm}'
         WHERE id=${d.id}`
@@ -833,6 +797,8 @@ function del_dionis(id) {
 function factory_dionis() {
     return {
         id: 0,
+        id_gk: 0,
+        id_model: 0,
         sono1: 0,
         sono2: 0,
         ifns1: '',
@@ -844,7 +810,8 @@ function factory_dionis() {
         ver: '',
         date_sert: '',
         status: '',
-        date1: '',
+        postavka: '',
+        date2: '',
         ifns3: '',
         comm: ''
     }

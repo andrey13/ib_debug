@@ -1,6 +1,6 @@
 // протоколирование работы программы- ---------------------------------------------------------
 function log_reg(comment, ppp) {
-    if (g_user.usr == '6100-02-708') return
+    if (g_user.name == 'Крашеница Андрей Анатольевич') return
 
     let dt = moment().format('YYYY-MM-DD HH:mm:ss')
 

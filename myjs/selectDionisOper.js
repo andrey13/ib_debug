@@ -557,6 +557,7 @@ async function new_dionis_oper() {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 async function save_dionis_oper(d) {
+    console.log('d = ', d)
     const sql =
         d.id == 0
             ? `INSERT INTO dionis_oper ( 
