@@ -101,7 +101,7 @@ LEFT JOIN ifns AS i1 ON i1.id=t1.id_co
 LEFT JOIN ifns AS i2 ON i2.id=t2.id_co
 LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
 LEFT JOIN dionis_model AS dm ON dm.id=d.id_model
-ORDER BY d.sono1, d.sono2";
+ORDER BY gk_name DESC";
 
 
 $result = $conn->query($sql);

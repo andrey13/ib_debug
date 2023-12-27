@@ -31,7 +31,7 @@ if ($id_dionis == 0) {
     LEFT JOIN torm AS t2 ON t2.id=p2.id_torm
     LEFT JOIN ifns AS i1 ON i1.id=t1.id_co
     LEFT JOIN ifns AS i2 ON i2.id=t2.id_co
-    ORDER BY o.date, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date DESC, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 } else {
     $sql = "SELECT 
         o.*,
@@ -59,7 +59,7 @@ if ($id_dionis == 0) {
     LEFT JOIN ifns AS i1 ON i1.id=t1.id_co
     LEFT JOIN ifns AS i2 ON i2.id=t2.id_co
     WHERE o.id_dionis=$id_dionis
-    ORDER BY o.date, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date DESC, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 }
 
 // echo $sql;        

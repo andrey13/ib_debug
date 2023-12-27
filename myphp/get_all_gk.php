@@ -6,6 +6,6 @@ $sql =
 FROM goskontrakt AS g 
 LEFT JOIN vendor AS v ON v.id=g.id_vendor
 LEFT JOIN user AS u ON u.id=g.id_user_executor
-ORDER BY g.date_gk";
+ORDER BY g.date_gk DESC";
 
 include 'closeConn.php';

@@ -13,6 +13,12 @@ function select_dionis_model(
         const salt = randomStr(10)
         const win_current = 'selectdionismodel' + salt
 
+        console.log('========================================>')
+        console.log('select_dionis_model:')
+        console.log('win_current = ', win_current)
+        console.log('win_return = ', win_return)
+
+
         if (mode == 'select') {
             newModalWindow(
                 modal = win_current,
@@ -27,6 +33,8 @@ function select_dionis_model(
         }
 
         const appHeight = appBodyHeight()
+
+
 
         table_select_dionis_model = tabulator_select_dionis_model(
             div = (mode == 'select') ? win_current + 'Body' : 'appBody',
@@ -44,6 +52,11 @@ function select_dionis_model(
     })
 }
 
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 function tabulator_select_dionis_model(
     div,
@@ -56,9 +69,11 @@ function tabulator_select_dionis_model(
     win_return = null,
     id_dionis_model = 0,
 ) {
+    console.log('========================================>')
+    console.log('tabulator_select_dionis_model:')
     console.log('win_current = ', win_current)
     console.log('win_return = ', win_return)
-    
+
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
         { title: "модель", field: "model", widthGrow: 4, headerFilter: true },
@@ -215,12 +230,15 @@ function edit_dionis_model(d, win_return = null, mode = "") {
             комментарии:<br>
             <textarea rows="3" style="width:100%" v-model="dv.comm"></textarea>
             <br>
+            <div id="modelContent" style="width:100%;"></div>
             <br>
             <button id="btnEnterdionismodel"  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
             <button id="btnCanceldionismodel" class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
-            <button id="btnPrevdionismodel"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущая модель</button>
-            <button id="btnNextdionismodel"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующая модель</button>
         </div>`
+
+        // <button id="btnPrevdionismodel"   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущая модель</button>
+        // <button id="btnNextdionismodel"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующая модель</button>
+
 
         const footdionismodel = ``
 
@@ -234,8 +252,13 @@ function edit_dionis_model(d, win_return = null, mode = "") {
                 vapp.unmount()
             }
 
+        console.log('========================================>')
+        console.log('edit_dionis_model:')
+        console.log('win_current = ', win_current)
+        console.log('win_return = ', win_return)
+
         newModalWindow(
-            win_current,
+            win_current,    // model = win_current
             headerdionismodel,
             bodydionismodel,
             footdionismodel,
@@ -257,13 +280,30 @@ function edit_dionis_model(d, win_return = null, mode = "") {
         })
 
         const vm = vapp.use(naive).mount('#' + win_current)
+
+        console.log('vm.$data.dv.id = ', vm.$data.dv.id)
+
+        tab_model_content = tabulator_model_content(
+            'modelContent',
+            vm.$data.dv.id,
+            0,
+            win_current,
+            win_return
+        )
         //--- View Model-------------------------------------------------------stop
 
         // кнопка сохранения и выхода -----------------------------------------------
         id2e("btnEnterdionismodel").onclick = () => {
             const d = vm.$data.dv
+            // const id_model = d.id
+            // console.log('id = ', id_model)
+
+            const dc = tab_model_content.getData()
             vapp.unmount()
+
             save_dionis_model(d)
+            save_dionis_model_content(d.id, dc)
+
             removeModalWindow(win_current, win_return)
             table_select_dionis_model.updateRow(d.id, d)
             table_select_dionis_model.redraw()
@@ -278,37 +318,66 @@ function edit_dionis_model(d, win_return = null, mode = "") {
         }
 
         // кнопка перехода на предыдущее dionismodel ----------------------------------------
-        id2e("btnPrevdionismodel").onclick = () => {
-            const d = vm.$data.dv
-            save_dionis_model(d)
-            table_select_dionis_model.updateRow(d.id, d)
-            table_select_dionis_model.redraw()
-            const selected_row = table_select_dionis_model.getSelectedRows()[0]
-            const id_curr = selected_row.id
-            const id_prev = selected_row.getPrevRow().getData().id
-            table_select_dionis_model.deselectRow(id_curr)
-            table_select_dionis_model.selectRow(id_prev)
-            table_select_dionis_model.scrollToRow(id_prev, "center", false)
-            const d_prev = table_select_dionis_model.getSelectedData()[0]
-            vm.$data.dv = d_prev
-            vm.$data.chg = false
-        }
+        // id2e("btnPrevdionismodel").onclick = () => {
+        //     const d = vm.$data.dv
+        //     save_dionis_model(d)
+        //     table_select_dionis_model.updateRow(d.id, d)
+        //     table_select_dionis_model.redraw()
+        //     const selected_row = table_select_dionis_model.getSelectedRows()[0]
+        //     const id_curr = selected_row.id
+        //     const id_prev = selected_row.getPrevRow().getData().id
+        //     table_select_dionis_model.deselectRow(id_curr)
+        //     table_select_dionis_model.selectRow(id_prev)
+        //     table_select_dionis_model.scrollToRow(id_prev, "center", false)
+        //     const d_prev = table_select_dionis_model.getSelectedData()[0]
+        //     vm.$data.dv = d_prev
+        //     vm.$data.chg = false
+        // }
         // кнопка перехода на следующее dionismodel -----------------------------------------
-        id2e("btnNextdionismodel").onclick = () => {
-            const d = vm.$data.dv
-            save_dionis_model(d)
-            table_select_dionis_model.updateRow(d.id, d)
-            table_select_dionis_model.redraw()
-            const selected_row = table_select_dionis_model.getSelectedRows()[0]
-            const id_curr = selected_row.id
-            const id_next = selected_row.getNextRow().getData().id
-            table_select_dionis_model.deselectRow(id_curr)
-            table_select_dionis_model.selectRow(id_next)
-            table_select_dionis_model.scrollToRow(id_next, "center", false)
-            const d_next = table_select_dionis_model.getSelectedData()[0]
-            vm.$data.dv = d_next
-            vm.$data.chg = false
+        // id2e("btnNextdionismodel").onclick = () => {
+        //     const d = vm.$data.dv
+        //     save_dionis_model(d)
+        //     table_select_dionis_model.updateRow(d.id, d)
+        //     table_select_dionis_model.redraw()
+        //     const selected_row = table_select_dionis_model.getSelectedRows()[0]
+        //     const id_curr = selected_row.id
+        //     const id_next = selected_row.getNextRow().getData().id
+        //     table_select_dionis_model.deselectRow(id_curr)
+        //     table_select_dionis_model.selectRow(id_next)
+        //     table_select_dionis_model.scrollToRow(id_next, "center", false)
+        //     const d_next = table_select_dionis_model.getSelectedData()[0]
+        //     vm.$data.dv = d_next
+        //     vm.$data.chg = false
+        // }
+    })
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+function save_dionis_model_content(id_model, dc) {
+    console.log('id_model = ', id_model)
+    console.log('dc = ', dc)
+
+
+    dc.forEach(async (d, index) => {
+        console.log('d = ', d)
+
+        const sql_insert = `INSERT INTO dionis_model_content (id_dionis_model, name, sn, comm) VALUES (${id_model}, '${d.name}', '${d.sn}', '${d.comm}')`
+        const sql_update = `UPDATE dionis_model_content SET name='${d.name}', sn='${d.sn}',comm='${d.comm}' WHERE id=${d.id}`
+        const sql_delete = `DELETE FROM dionis_model_content WHERE id=${d.id}`
+
+        if (d.id == 0) {
+            console.log('insert name = ', d.name)
+            runSQL_p(sql_insert)
+        } else {
+            if (d.del == 1) {
+                console.log('delete id = ', d.id)
+                runSQL_p(sql_delete)
+            } else {
+                console.log('update id = ', d.id)
+                runSQL_p(sql_update)
+            }            
         }
+
     })
 }
 
@@ -340,7 +409,7 @@ async function save_dionis_model(d) {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 function del_dionis_model(id) {
-    runSQL_p(`DELETE FROM dioni_smodel WHERE id=${id}`)
+    runSQL_p(`DELETE FROM dionis_model WHERE id=${id}`)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

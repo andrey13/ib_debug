@@ -122,9 +122,9 @@ function tabulator_select_dionis(
         },
         // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
         { title: "SN", field: "sn", widthGrow: 2, headerFilter: true },
-        { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
-        { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
+        // { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
         { title: "тип", field: "type_name", widthGrow: 2, headerFilter: true },
+        // { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
         { title: "Модель", field: "model_name", widthGrow: 2, headerFilter: true },
         { title: "Инв №", field: "inv_n", widthGrow: 2, headerFilter: true },
         { title: "Версия", field: "ver", widthGrow: 2, headerFilter: true },
@@ -234,8 +234,8 @@ function tabulator_select_dionis(
                 sono3 = sono3.toString().trim()
                 sono4 = sono4.toString().trim()
                 if (sono1 == sono3 && sono2 == sono4) {
-                    row.getCell("type").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("model").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("type_name").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("model_name").getElement().style.backgroundColor = '#ccffcc'
                     row.getCell("sn").getElement().style.backgroundColor = '#ccffcc'
                     row.getCell("inv_n").getElement().style.backgroundColor = '#ccffcc'
                     row.getCell("ver").getElement().style.backgroundColor = '#ccffcc'
@@ -431,12 +431,10 @@ function edit_dionis(d, win_return = null, mode = "") {
             <input class="o3-border" type="text" v-model="dv.status"> - статус<br>
             <input class="o3-border" type="text" v-model="dv.inv_n"> - инвентарный номер<br>
             <input class="o3-border" type="text" v-model="dv.sn"> - заводской номер<br>
-            <input class="o3-border" type="text" v-model="dv.type"> - тип<br>
-            <input class="o3-border" type="text" v-model="dv.model"> - модель<br>
             <input class="o3-border" type="text" v-model="dv.ver"> - версия<br>
             <input class="o3-border" type="text" v-model="dv.date2"> - дата установки<br>
             <br>      
-            модел/тип:<br>
+            модель/тип:<br>
             <button id=${sel_model} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{model_type}}</button>
             <br>
             <br>     
@@ -454,6 +452,8 @@ function edit_dionis(d, win_return = null, mode = "") {
             <button id="btnNextdionis"   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующий Dionis</button>
         </div>`
 
+        // <input class="o3-border" type="text" v-model="dv.type"> - тип<br>
+        // <input class="o3-border" type="text" v-model="dv.model"> - модель<br>
 
         // <input class="o3-border" type="text" v-model="dv.postavka"> - поставка<br>
 
