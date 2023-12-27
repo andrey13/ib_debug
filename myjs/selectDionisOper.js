@@ -76,6 +76,8 @@ function tabulator_dionis_opers(
     const id_button_mod = 'mod' + salt
     const id_button_add = 'add' + salt
     const id_button_del = 'del' + salt
+    const id_button_pr1 = 'pr1' + salt
+    const id_button_pr2 = 'pr2' + salt
 
     const msgFooter =
         `<span id="select-stats"></span>` +
@@ -84,6 +86,8 @@ function tabulator_dionis_opers(
         `<button id='${id_button_mod}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Изменить</button>` +
         `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
         `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
+        `<button id='${id_button_pr1}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Печать журнала СКЗИ органа КЗ</button>` +
+        `<button id='${id_button_pr2}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Печать журнала СКЗИ обладателя КИ</button>` +
         `</div>`
 
     const tabulator = new Tabulator("#" + div, {
@@ -210,11 +214,13 @@ function tabulator_dionis_opers(
                 id2e(id_button_mod).disabled = true
                 id2e(id_button_del).disabled = true
                 id2e(id_button_sel).disabled = true
+                id2e(id_button_pr1).disabled = true
                 id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
             } else {
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_sel).disabled = false
+                id2e(id_button_pr1).disabled = false
                 id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
             }
@@ -234,6 +240,12 @@ function tabulator_dionis_opers(
 
 
     })
+
+    id2e(id_button_pr1).onclick = async () => {
+        const id_dionis_oper = tabulator.getSelectedData()[0].id
+        console.log('id_dionis_oper = ', id_dionis_oper)
+        print_report1(id_dionis_oper)
+    }
 
     id2e(id_button_add).onclick = async () => {
         const d = factory_dionis_oper()
@@ -282,8 +294,8 @@ function tabulator_dionis_opers(
 
 /////////////////////////////////////////////////////////////////////////////////////////
 function edit_dionis_oper(
-    d, 
-    win_return = null, 
+    d,
+    win_return = null,
     mode = "",
     id_dionis = 0
 ) {
@@ -634,4 +646,242 @@ function format_point(
 
     // -------------- ТОРМ ТНО -----------------------------
     return sono1 + '/' + sono2 + '/' + point
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////
+async function print_report1(id_dionis_oper) {
+    // параметры шрифта pdf-документа ---------------------------------------------------
+    pdfMake.fonts = {
+        times: {
+            normal: 'times.ttf',
+            bold: 'timesbd.ttf',
+            italics: 'timesi.ttf',
+            bolditalics: 'timesbi.ttf'
+        }
+    }
+
+    // параметры заголовка pdf-документа ------------------------------------------------
+    let doc_head = {
+        pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [10, 5, 5, 5],
+
+        defaultStyle: {
+            font: 'times',
+            fontSize: 8,
+        },
+
+        styles: {
+            tableStyle: {
+                border: '1px solid black', // толщина границы
+                borderWidth: [1, 1, 1, 1] // толщина границы для каждой стороны (верх, право, низ, лево)
+            },
+            header0: {
+                font: 'times',
+                fontSize: 9,
+                italics: true,
+                alignment: 'right',
+            },
+            header: {
+                font: 'times',
+                fontSize: 10,
+                bold: true,
+                alignment: 'center',
+            },
+            table: {
+                font: 'times',
+                bold: false,
+                fontSize: 6,
+                margin: [0, 0, 0, 0]
+            },
+            tableHeader: {
+                font: 'times',
+                bold: false,
+                fontSize: 6,
+                alignment: 'center',
+            },
+            tableCell: {
+                fontSize: 6,
+                // alignment: 'center',
+                heights: 100 
+              },
+            tableV: {
+                fontSize: 6,
+                alignment: 'center',
+                heights: 100 
+             },
+            tableHV: {
+                fontSize: 6,
+                alignment: 'center',
+                verticalAlign: 'middle',
+                heights: 100 
+            },
+            tableV: {
+                fontSize: 6,
+                verticalAlign: 'middle',
+                heights: 100 
+            }
+
+        },
+    }
+
+    let content0 = [
+        { text: 'Приложение 1', style: ['header0'] },
+        { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
+        { text: 'Приказом Федерального агенства', style: ['header0'] },
+        { text: 'правительственной связи и информации', style: ['header0'] },
+        { text: 'при Президенте Российской Федерации', style: ['header0'] },
+        { text: 'от 13 июня 2001 г. №152', style: ['header0'] },
+
+        { text: `Журнал поэкземплярного учета СКЗИ, эксплуатационной`, style: ['header'] },
+        { text: `и технической документации к ним, ключевых документов`, style: ['header'] },
+        { text: `(для органа криптографической защиты)`, style: ['header'] },
+    ]
+
+    let content1 = await report1_body(id_dionis_oper)
+
+    let content = content0.concat(content1)
+
+    let doc = Object.assign(doc_head, { content: content })
+
+    pdfMake.tableLayouts = {
+        szLayout: {
+            hLineWidth: function (i, node) {
+                return 0.5
+                if (i === 0 || i === node.table.body.length) {
+                    return 0
+                }
+                return (i === node.table.headerRows) ? 2 : 1
+            },
+            vLineWidth: function (i) {
+                return 0.5
+                return 0
+            },
+            hLineColor: function (i) {
+                return 'black'
+                return i === 1 ? 'black' : '#aaa'
+            },
+            paddingLeft: function (i) {
+                return 3
+                return i === 0 ? 0 : 8
+            },
+            paddingRight: function (i, node) {
+                return 3
+                return (i === node.table.widths.length - 1) ? 0 : 8
+            }
+        }
+    }
+
+    pdfMake.createPdf(doc).open()
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////
+    async function report1_body(id_dionis_oper) {
+        const hh = 30
+
+        let table_head = [
+            { text: '\n', style: ['header'] },
+            {
+                style: 'table',
+                table: {
+                    //       1  2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
+                    widths: [8, 90, 90, 30, 50, 40, 60, 40, 40, 40, 40, 40, 40, 40, 40, 32],
+                    heights: [6, 40, 6, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh],
+                    headerRows: 3,
+                    // keepWithHeaderRows: 1,
+                    body: [
+                        [
+                            { text: '№ п/п', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Наименование СКЗИ, эксплуатационной и технической документации к ним, ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Серийные номера СКЗИ, эксплуатационной и технической документации к ним, номера серий ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Номера экземпляров (криптографические номера) ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Отметка о получении', style: 'tableHeader', colSpan: 2 },
+                            {},
+                            { text: 'Отметка о рассылке (передаче)', style: 'tableHeader', colSpan: 3 },
+                            {},
+                            {},
+                            { text: 'Отметка о возврате', style: 'tableHeader', colSpan: 2 },
+                            {},
+                            { text: 'Дата ввода в действие', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Дата вывода из действия', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Отметка об уничтожении СКЗИ, ключевых документов', style: 'tableHeader', colSpan: 2 },
+                            {},
+                            { text: 'Примечание', style: 'tableHeader', rowSpan: 2 },
+                        ],
+                        [
+                            {}, {}, {}, {},
+                            { text: 'От кого получены или Ф.И.О. сотрудника органа криптографической защиты, изготовившего ключевые документы', style: 'tableHeader' },
+                            { text: 'Дата и номер сопроводительного письма или дата изготовления ключевых документов и расписка в изготовлении ', style: 'tableHeader' },
+                            { text: 'Кому разосланы (переданы)', style: 'tableHeader' },
+                            { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                            { text: 'Дата и номер подтверждения или расписка в получении', style: 'tableHeader' },
+                            { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                            { text: 'Дата и номер подтверждения', style: 'tableHeader' },
+                            {}, {},
+                            { text: 'Дата уничтожения', style: 'tableHeader' },
+                            { text: 'Номер акта или расписка об уничтожении', style: 'tableHeader' },
+                            {},
+                        ],
+                        [
+                            { text: '1', style: 'tableHeader'},
+                            { text: '2', style: 'tableHeader'},
+                            { text: '3', style: 'tableHeader'},
+                            { text: '4', style: 'tableHeader'},
+                            { text: '5', style: 'tableHeader'},
+                            { text: '6', style: 'tableHeader'},
+                            { text: '7', style: 'tableHeader'},
+                            { text: '8', style: 'tableHeader'},
+                            { text: '9', style: 'tableHeader'},
+                            { text: '10', style: 'tableHeader'},
+                            { text: '11', style: 'tableHeader'},
+                            { text: '12', style: 'tableHeader'},
+                            { text: '13', style: 'tableHeader'},
+                            { text: '14', style: 'tableHeader'},
+                            { text: '15', style: 'tableHeader'},
+                            { text: '16', style: 'tableHeader'},
+                        ]
+
+                    ]
+                },
+                layout: 'szLayout'
+            },
+        ]
+
+        let datas = await id_oper_2_model_content(id_dionis_oper)
+
+        let table_content = []
+        let i = 0
+    
+        datas.forEach((d) => {
+            let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
+            table_content[i] = [
+                '', 
+                { text: d.name, style: 'tableCell' }, 
+                { text: sn, style: 'tableV' }, 
+                { text: '1', style: 'tableHV' },
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+            ]
+            i += 1
+        })
+
+
+
+        table_head[1].table.body = table_head[1].table.body.concat(table_content)
+
+        console.log('table_head = ', table_head)
+
+        return table_head
+    }
 }

@@ -1,3 +1,10 @@
+async function id_oper_2_model_content(id_oper) {
+    let response = await fetch(`myphp/id_oper_2_model_content.php?o=${id_oper}`)
+    let data = await response.json()
+    return data
+}
+
+
 async function recalc_mts(id_mts) {
     let response = await fetch(`myphp/recalc_mts.php?m=${id_mts}`)
     let data = await response.json()
