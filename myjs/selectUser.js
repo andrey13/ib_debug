@@ -10,23 +10,23 @@ let s_pwd = ""
 // модальное окно выбора пользователя ===================================================
 //=======================================================================================
 function selectUser(
-    sono,
-    esk,
+    sono = '',
+    esk = '',
     id_depart = 0,
     selectable = true,
-    header = '',
+    headerWin = '',
     width = '600px',
-    marginLeft = '50%',
+    marginLeft = '5%',
     marginTop = '5%',
     win_return = null,
     id_user = 0) {
 
     return new Promise(function (resolve, reject) {
-        console.log('id_user =', id_user)
+        console.log('headerWin =', headerWin)
 
         // создание модального окна ----------------------------------------------------------
         const formSelectUser = `<div id="selectUser1" class="w3-container"></div>`
-        newModalWindow('selectUserModal', header, formSelectUser, '', width, marginLeft, marginTop, win_return)
+        newModalWindow('selectUserModal', headerWin, formSelectUser, '', width, marginLeft, marginTop, win_return)
 
         // const msgFooterSelecttUser = `<span id="select-stats"></span>
         //                             <button id='onoffSel' class='w3-btn w3-white o3-border w3-hover-teal'>Показать помеченные записи</button> 

@@ -22,7 +22,11 @@ if ($id_dionis == 0) {
         i1.sono AS ifns_sono1,
         t1.sono AS torm_sono1,
         i2.sono AS ifns_sono2,
-        t2.sono AS torm_sono2
+        t2.sono AS torm_sono2,
+        t.name AS oper_type,
+        u1.name AS user_ufns,
+        u2.name AS user_tno,
+        u3.name AS user_fku
     FROM dionis_oper AS o
     LEFT JOIN dionis AS d ON d.id=o.id_dionis
     LEFT JOIN connect_point AS p1 ON p1.id=o.id_connect_point1
@@ -31,6 +35,10 @@ if ($id_dionis == 0) {
     LEFT JOIN torm AS t2 ON t2.id=p2.id_torm
     LEFT JOIN ifns AS i1 ON i1.id=t1.id_co
     LEFT JOIN ifns AS i2 ON i2.id=t2.id_co
+    LEFT JOIN types AS t ON t.id=o.id_oper_type
+    LEFT JOIN user AS u1 ON u1.id=o.id_user_ufns
+    LEFT JOIN user AS u2 ON u2.id=o.id_user_tno
+    LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     ORDER BY o.date DESC, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 } else {
     $sql = "SELECT 
@@ -49,7 +57,11 @@ if ($id_dionis == 0) {
         i1.sono AS ifns_sono1,
         t1.sono AS torm_sono1,
         i2.sono AS ifns_sono2,
-        t2.sono AS torm_sono2
+        t2.sono AS torm_sono2,
+        t.name AS oper_type,
+        u1.name AS user_ufns,
+        u2.name AS user_tno,
+        u3.name AS user_fku
     FROM dionis_oper AS o
     LEFT JOIN dionis AS d ON d.id=o.id_dionis
     LEFT JOIN connect_point AS p1 ON p1.id=o.id_connect_point1
@@ -58,6 +70,10 @@ if ($id_dionis == 0) {
     LEFT JOIN torm AS t2 ON t2.id=p2.id_torm
     LEFT JOIN ifns AS i1 ON i1.id=t1.id_co
     LEFT JOIN ifns AS i2 ON i2.id=t2.id_co
+    LEFT JOIN types AS t ON t.id=o.id_oper_type
+    LEFT JOIN user AS u1 ON u1.id=o.id_user_ufns
+    LEFT JOIN user AS u2 ON u2.id=o.id_user_tno
+    LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     WHERE o.id_dionis=$id_dionis
     ORDER BY o.date DESC, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 }

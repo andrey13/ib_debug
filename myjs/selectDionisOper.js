@@ -122,7 +122,7 @@ function tabulator_dionis_opers(
                 },
             },
             // { title: 'p1', field: 'id_connect_point1', width: 60, headerFilter: true },
-            // { title: 'p2', field: 'id_connect_point2', width: 60, headerFilter: true },            
+            // { title: 'p2', field: 'id_connect_point2', width: 60, headerFilter: true },    
             {
                 title: 'Dinois',
                 columns: [
@@ -133,6 +133,7 @@ function tabulator_dionis_opers(
                     { title: 'версия', field: 'ver', width: 100, headerFilter: true },
                 ]
             },
+            { title: 'операция', field: 'oper_type', width: 100, headerFilter: true },        
             {
                 title: 'источник',
                 columns: [
@@ -188,10 +189,12 @@ function tabulator_dionis_opers(
             // поставка оборудования -----------------------------------------------
             if (d.stock1 == 3) {
                 row.getCell("ip1").getElement().style.backgroundColor = '#ccccff'
+                row.getCell("oper_type").getElement().style.backgroundColor = '#ccccff'
             }
 
             // передача оборудования -----------------------------------------------
             if (d.stock1 == 1 && d.stock2 == 1) {
+                row.getCell("oper_type").getElement().style.backgroundColor = '#ffccff'
                 row.getCell("ip1").getElement().style.backgroundColor = '#ffccff'
                 row.getCell("ip2").getElement().style.backgroundColor = '#ffccff'
                 row.getCell("ifns_sono2").getElement().style.backgroundColor = '#ffccff'
@@ -200,11 +203,13 @@ function tabulator_dionis_opers(
 
             // подключение к точке доступа -----------------------------------------
             if (d.stock2 == 0) {
+                row.getCell("oper_type").getElement().style.backgroundColor = '#ccffcc'
                 row.getCell("ip2").getElement().style.backgroundColor = '#ccffcc'
             }
 
             // отключение от точки доступа -----------------------------------------
             if (d.stock1 == 0) {
+                row.getCell("oper_type").getElement().style.backgroundColor = '#ffcccc'
                 row.getCell("ip1").getElement().style.backgroundColor = '#ffcccc'
             }
         },
@@ -302,12 +307,19 @@ function edit_dionis_oper(
     return new Promise(async function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'edit' + salt
+
         if (mode == 'new' && id_dionis != 0) {
             const d_dionis = await id_2_data(id_dionis, 'dionis')
             d.id_dionis = id_dionis
             d.sn = d_dionis.sn
             console.log('d_dionis = ', d_dionis)
         }
+
+        console.log('d(dionis_oper) =', d)
+        //const oper_types = (await id_taxonomy_2_types(7)).map(i => i.name)
+        const oper_types = await id_taxonomy_2_types(7)
+        console.log('oper_types = ', oper_types)
+
 
         const id_button_enter = 'ent' + salt
         const id_button_cancel = 'cancel' + salt
@@ -317,6 +329,10 @@ function edit_dionis_oper(
         const sel_dionis = 'select_dionis' + salt
         const sel_point1 = 'select_point1' + salt
         const sel_point2 = 'select_point2' + salt
+
+        const sel_user_ufns = 'select_user_ufns' + salt
+        const sel_user_tno  = 'select_user_tno' + salt
+        const sel_user_fku  = 'select_user_fku' + salt
 
         const header = `<h4>id: ${d.id} операция Dionis</h4>`
 
@@ -340,9 +356,33 @@ function edit_dionis_oper(
             {{ (dv.temp == "0") ? "на баланс" : "на временное хранение" }}
             <br>
             <br>
+            <div>
+                <n-radio-group v-model:value="dv.id_oper_type" name="radiogroup">
+                    <n-radio
+                        v-for="otype in operTypes"
+                        :key="otype.id"
+                        :value="otype.id"
+                        :label="otype.name"
+                    />
+                </n-radio-group>
+            </div>
+            <br>
+            <br>
             <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> :
             <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> --->
             <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button>
+            <br>
+            <br>
+            исполнитель УФНС:<br>
+            <button id=${sel_user_ufns} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_ufns}}</button>
+            <br>
+            <br>           
+            исполнитель ТНО:<br>
+            <button id=${sel_user_tno} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_tno}}</button>
+            <br>
+            <br>           
+            исполнитель ФКУ:<br>
+            <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_fku}}</button>
             <br>
             <br>           
             Описание:<br>
@@ -360,6 +400,7 @@ function edit_dionis_oper(
 
 
         const foot = ``
+        const selType0 = "передача"
 
         const esc = mode == "new"
             ? () => {
@@ -383,12 +424,16 @@ function edit_dionis_oper(
             esc
         )
 
+        const { ref } = Vue
+        
         //--- View Model-------------------------------------------------------start
         const vapp = Vue.createApp({
             data() {
                 return {
                     dv: d,
                     chg: false,
+                    selType: ref(d.id_oper_type),
+                    operTypes: oper_types,
                     style_temp: ({ focused, checked }) => {
                         const style = {}
                         style.background = (checked) ? "red" : "green"
@@ -416,6 +461,22 @@ function edit_dionis_oper(
                         // : this.dv.ifns_sono2 + '/' + this.dv.torm_sono2 + '/' + this.dv.ip2
                         : format_point(this.dv.ifns_sono2, this.dv.torm_sono2, this.dv.ip2, this.dv.stock2)
                 },
+                user_ufns() {
+                    return !!!this.dv.user_ufns
+                        ? "<выбрать сотрудника УФНС>"
+                        : this.dv.user_ufns
+                },
+                user_tno() {
+                    return !!!this.dv.user_tno
+                        ? "<выбрать сотрудника ТНО>"
+                        : this.dv.user_tno
+                },
+                user_fku() {
+                    return !!!this.dv.user_fku
+                        ? "<выбрать сотрудника ФКУ>"
+                        : this.dv.user_fku
+                },
+
             },
 
         })
@@ -425,6 +486,63 @@ function edit_dionis_oper(
 
         // id_2_set_focus(win_current)
 
+        // кнопка выбора сотрудника УФНС -----------------------------------------------
+        id2e(sel_user_ufns).onclick = async () => {
+            const selected_user = await selectUser(
+                sono='',
+                esk='',
+                id_depart = 0,
+                selectable = 1,
+                headerWin = 'выбор сотрудника УФНС',
+                win_return = win_current,
+                id_user = vm.$data.dv.id_user_ufns
+            )
+
+            vm.$data.dv.id_user_ufns = selected_user[0].id
+            vm.$data.dv.user_ufns = selected_user[0].name
+
+            id2e(sel_user_ufns).innerHTML = vm.$data.dv.user_ufns
+            id_2_set_focus(win_current)
+        }
+
+        // кнопка выбора сотрудника ТНО -----------------------------------------------
+        id2e(sel_user_tno).onclick = async () => {
+            const selected_user = await selectUser(
+                sono='',
+                esk='',
+                id_depart = 0,
+                selectable = 1,
+                headerWin = 'выбор сотрудника ТНО',
+                win_return = win_current,
+                id_user = vm.$data.dv.id_user_tno
+            )
+
+            vm.$data.dv.id_user_tno = selected_user[0].id
+            vm.$data.dv.user_tno = selected_user[0].name
+
+            id2e(sel_user_ufns).innerHTML = vm.$data.dv.user_tno
+            id_2_set_focus(win_current)
+        }
+
+        // кнопка выбора сотрудника ФКУ -----------------------------------------------
+        id2e(sel_user_fku).onclick = async () => {
+            const selected_user = await selectUser(
+                sono='',
+                esk='',
+                id_depart = 0,
+                selectable = 1,
+                headerWin = 'выбор сотрудника ФКУ',
+                win_return = win_current,
+                id_user = vm.$data.dv.id_user_fku
+            )
+
+            vm.$data.dv.id_user_fku = selected_user[0].id
+            vm.$data.dv.user_fku = selected_user[0].name
+
+            id2e(sel_user_ufns).innerHTML = vm.$data.dv.user_fku
+            id_2_set_focus(win_current)
+        }
+        
         id2e(id_button_enter).onclick = () => {
             const d = vm.$data.dv
             vapp.unmount()
@@ -575,8 +693,12 @@ async function save_dionis_oper(d) {
             ? `INSERT INTO dionis_oper ( 
                 id,
                 id_dionis,
+                id_oper_type,
                 id_connect_point1,
                 id_connect_point2,
+                id_user_ufns,
+                id_user_tno,
+                id_user_fku,
                 date,
                 dscr,
                 comm,
@@ -584,8 +706,12 @@ async function save_dionis_oper(d) {
             ) VALUES (
                 ${d.id},
                 ${d.id_dionis},
+                ${d.id_oper_type},
                 ${d.id_connect_point1},
                 ${d.id_connect_point1},
+                ${d.id_user_ufns},
+                ${d.id_user_tno},
+                ${d.id_user_fku},
                '${d.date}',
                '${d.dscr}',
                '${d.comm}',
@@ -594,8 +720,12 @@ async function save_dionis_oper(d) {
             : `UPDATE dionis_oper SET 
                 id=${d.id},
                 id_dionis=${d.id_dionis},
+                id_oper_type=${d.id_oper_type},
                 id_connect_point1=${d.id_connect_point1},
                 id_connect_point2=${d.id_connect_point2},
+                id_user_ufns=${d.id_user_ufns},
+                id_user_tno=${d.id_user_tno},
+                id_user_fku=${d.id_user_fku},
                 date='${d.date}',
                 dscr='${d.dscr}',
                 comm='${d.comm}',
@@ -615,8 +745,12 @@ function factory_dionis_oper(id_dionis = 0) {
     return {
         id: 0,
         id_dionis: id_dionis,
+        id_oper_type: 0,
         id_connect_point1: 0,
         id_connect_point2: 0,
+        id_user_ufns: 0,
+        id_user_tno: 0,
+        id_user_fku: 0,
         date: '',
         dscr: '',
         comm: '',

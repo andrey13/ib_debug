@@ -1,3 +1,12 @@
+// загрузка типов таксономии -------------------------------------------------
+async function id_taxonomy_2_types(id_taxonomy) {
+    let response = await fetch(`myphp/loadDataTypes.php?t=${id_taxonomy}`);
+    let data = await response.json();
+    return data;
+}
+
+
+
 async function id_oper_2_model_content(id_oper) {
     let response = await fetch(`myphp/id_oper_2_model_content.php?o=${id_oper}`)
     let data = await response.json()

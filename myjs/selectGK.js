@@ -223,7 +223,7 @@ function tabulator_select_gk(
 
 /////////////////////////////////////////////////////////////////////////////////////////
 function edit_gk(d, win_return = null, mode = "") {
-    return new Promise(function (resolve, reject) {
+    return new Promise(async function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'editgk' + salt
 
@@ -366,7 +366,7 @@ function edit_gk(d, win_return = null, mode = "") {
             console.log('sel_executor')
 
             const selected_user = await selectUser(
-                sono='6100',
+                sono='',
                 esk='',
                 id_depart = 0,
                 selectable = 1,
