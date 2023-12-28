@@ -542,7 +542,7 @@ function edit_dionis_oper(
             id2e(sel_user_ufns).innerHTML = vm.$data.dv.user_fku
             id_2_set_focus(win_current)
         }
-        
+
         id2e(id_button_enter).onclick = () => {
             const d = vm.$data.dv
             vapp.unmount()
@@ -907,7 +907,6 @@ async function print_report1(id_dionis_oper) {
     }
 
     pdfMake.createPdf(doc).open()
-
 
 
     /////////////////////////////////////////////////////////////////////////////////////////
