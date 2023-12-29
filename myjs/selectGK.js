@@ -56,9 +56,6 @@ function tabulator_select_gk(
     win_return = null,
     id_gk = 0,
 ) {
-    console.log('win_current = ', win_current)
-    console.log('win_return = ', win_return)
-    
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
         { title: "кратко", field: "name", widthGrow: 1, headerFilter: true },
@@ -299,7 +296,6 @@ function edit_gk(d, win_return = null, mode = "") {
                 vapp.unmount()
             }
             : () => {
-                console.log("esc_callback")
                 vapp.unmount()
             }
 
@@ -343,16 +339,12 @@ function edit_gk(d, win_return = null, mode = "") {
 
         // кнопка выбора поставщика -----------------------------------------------
         id2e(sel_vendor).onclick = async () => {
-            console.log('sel_vendor')
-
             const selected_vendor = await select_vendor(
                 selectable = 1,
                 mode = 'select',
                 win_return = win_current,
                 id_vendor = vm.$data.dv.id_vendor
             )
-
-            console.log('selected_vendor = ', selected_vendor)
 
             vm.$data.dv.id_vendor = selected_vendor.id
             vm.$data.dv.vendor_name = selected_vendor.name
@@ -363,25 +355,21 @@ function edit_gk(d, win_return = null, mode = "") {
 
         // кнопка выбора исполнителя -----------------------------------------------
         id2e(sel_executor).onclick = async () => {
-            console.log('sel_executor')
-
             const selected_user = await selectUser(
-                sono='',
-                esk='',
+                sono = '',
+                esk = '',
                 id_depart = 0,
                 selectable = 1,
-                mode = 'select',
+                headerWin = 'выбор исполнителя УФНС',
+                width = '600px',
+                marginLeft = '5%',
+                marginTop = '5%',
                 win_return = win_current,
                 id_user = vm.$data.dv.id_user_executor
             )
 
-            console.log('selected_executor = ', selected_user)
-
             vm.$data.dv.id_user_executor = selected_user[0].id
             vm.$data.dv.executor_name = selected_user[0].name
-
-            console.log('selected_user.id = ', selected_user.id)
-            console.log('selected_user.name = ', selected_user.name)
 
             id2e(sel_executor).innerHTML = vm.$data.dv.executor_name
             id_2_set_focus(win_current)
@@ -464,7 +452,6 @@ async function new_gk() {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 async function save_gk(d) {
-    console.log('d = ', d)
     const sql =
         d.id == 0
             ? `INSERT INTO goskontrakt (id,name,date_gk,numb_gk,name_gk,date_fns,numb_fns,date_vendor,numb_vendor,date_in,date_out1,date_out2,date_ufns,numb_ufns,id_user_executor,id_vendor,comm) VALUES (

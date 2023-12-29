@@ -7,7 +7,7 @@ function select_vendor(
     mode = 'select',
     win_return = null,
     id_vendor = 0
-) {
+) {   
     return new Promise(async function (resolve, reject) {
         // const result = await recalc_mts(0)
         const salt = randomStr(10)
@@ -56,9 +56,6 @@ function tabulator_select_vendor(
     win_return = null,
     id_vendor = 0,
 ) {
-    console.log('win_current = ', win_current)
-    console.log('win_return = ', win_return)
-    
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
         { title: "название", field: "name", widthGrow: 2, headerFilter: true },
@@ -226,7 +223,6 @@ function edit_vendor(d, win_return = null, mode = "") {
                 vapp.unmount()
             }
             : () => {
-                console.log("esc_callback")
                 vapp.unmount()
             }
 
@@ -331,7 +327,6 @@ async function new_vendor() {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 async function save_vendor(d) {
-    console.log('d = ', d)
     const sql =
         d.id == 0
             ? `INSERT INTO vendor (id,name,comm) VALUES (${d.id},'${d.name}','${d.comm}')`

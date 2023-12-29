@@ -364,7 +364,7 @@ function edit_dionis_oper(
                         :value="otype.id"
                         :label="otype.name"
                     />
-                </n-radio-group>
+                </n-radio-group>{{dv.id_oper_type}}
             </div>
             <br>
             <br>
@@ -373,16 +373,18 @@ function edit_dionis_oper(
             <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button>
             <br>
             <br>
-            исполнитель УФНС:<br>
-            <button id=${sel_user_ufns} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_ufns}}</button>
-            <br>
-            <br>           
-            исполнитель ТНО:<br>
-            <button id=${sel_user_tno} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_tno}}</button>
-            <br>
-            <br>           
-            исполнитель ФКУ:<br>
-            <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_fku}}</button>
+            <div v-show="shUFNS">      
+                исполнитель УФНС:<br>
+                <button id=${sel_user_ufns} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_ufns}}</button>
+            </div>
+            <div v-show="shTNO">      
+                исполнитель ТНО:<br>
+                <button id=${sel_user_tno} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_tno}}</button>
+            </div>
+            <div v-show="shFKU">      
+                исполнитель ФКУ:<br>
+                <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_fku}}</button>
+            </div>
             <br>
             <br>           
             Описание:<br>
@@ -476,6 +478,15 @@ function edit_dionis_oper(
                         ? "<выбрать сотрудника ФКУ>"
                         : this.dv.user_fku
                 },
+                shUFNS() {
+                    return this.dv.id_oper_type == 36
+                },
+                shTNO() {
+                    return this.dv.id_oper_type == 37
+                },
+                shFKU() {
+                    return this.dv.id_oper_type == 39
+                },
 
             },
 
@@ -489,11 +500,14 @@ function edit_dionis_oper(
         // кнопка выбора сотрудника УФНС -----------------------------------------------
         id2e(sel_user_ufns).onclick = async () => {
             const selected_user = await selectUser(
-                sono='',
-                esk='',
+                sono = '',
+                esk = '',
                 id_depart = 0,
                 selectable = 1,
                 headerWin = 'выбор сотрудника УФНС',
+                width = '400px',
+                marginLeft = '50%',
+                marginTop = '1%',
                 win_return = win_current,
                 id_user = vm.$data.dv.id_user_ufns
             )
@@ -513,6 +527,9 @@ function edit_dionis_oper(
                 id_depart = 0,
                 selectable = 1,
                 headerWin = 'выбор сотрудника ТНО',
+                width = '400px',
+                marginLeft = '50%',
+                marginTop = '1%',
                 win_return = win_current,
                 id_user = vm.$data.dv.id_user_tno
             )
@@ -532,6 +549,9 @@ function edit_dionis_oper(
                 id_depart = 0,
                 selectable = 1,
                 headerWin = 'выбор сотрудника ФКУ',
+                width = '400px',
+                marginLeft = '50%',
+                marginTop = '1%',
                 win_return = win_current,
                 id_user = vm.$data.dv.id_user_fku
             )

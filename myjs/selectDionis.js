@@ -269,7 +269,7 @@ function tabulator_select_dionis(
         cellDblClick: async function (e, cell) {
             if ((mode == "select")) {
                 removeModalWindow(win_current, win_return)
-                resolve(cell.getRow().getData())
+                resolve([cell.getRow().getData()])
             } else {
                 const res = await edit_dionis(
                     tabulator.getSelectedData()[0],
