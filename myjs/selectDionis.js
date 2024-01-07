@@ -19,23 +19,23 @@ function select_dionis(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = 'Dionis',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current, // modal
+                'Dionis', // html_header
+                '', // html_body
+                '', // html_footer
+                '90%', // width
+                '5%', // marginLeft
+                '3%', // marginTop
+                win_return // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
         table_select_dionis = tabulator_select_dionis(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
             sono,
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? appHeight * 0.9 : appHeight, // tabHeight
             resolve,
             reject,
             id_otdel,
@@ -234,17 +234,18 @@ function tabulator_select_dionis(
                 sono3 = sono3.toString().trim()
                 sono4 = sono4.toString().trim()
                 if (sono1 == sono3 && sono2 == sono4) {
-                    row.getCell("type_name").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("model_name").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("sn").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("inv_n").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("ver").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("date_sert").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("status").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("postavka").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("gk_name").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("date2").getElement().style.backgroundColor = '#ccffcc'
-                    row.getCell("comm").getElement().style.backgroundColor = '#ccffcc'
+                    row.getCell("id").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("type_name").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("model_name").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("sn").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("inv_n").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("ver").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("date_sert").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("status").getElement().style.backgroundColor = '#ccffcc'
+                    // // row.getCell("postavka").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("gk_name").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("date2").getElement().style.backgroundColor = '#ccffcc'
+                    // row.getCell("comm").getElement().style.backgroundColor = '#ccffcc'
                 }
             }
         },
@@ -293,23 +294,23 @@ function tabulator_select_dionis(
 
         const res = await edit_dionis(
             d,
-            (win_return = win_current),
-            (mode = "new")
+            win_current, // win_return
+            "new" // mode
         )
     }
 
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_dionis(
             tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
+            win_current, // win_return
+            "mod" // mode
         )
     }
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить Dionis"),
-            (win_return = win_current)
+            "Удалить Dionis", // text
+            win_current // win_return
         )
 
         if (ans == 'YES') {
@@ -326,14 +327,14 @@ function tabulator_select_dionis(
     id2e(id_button_his).onclick = () => {
         // console.log('id_dionis1 = ', tabulator.getSelectedData()[0].id)
         select_dionis_oper(
-            sono = '6100',
-            id_otdel = 0,
-            sklad = 0,
-            selectable = 1,
-            mode = 'select',
-            win_return = null,
-            id_oper = 0,
-            id_dionis = tabulator.getSelectedData()[0].id
+            '6100', // sono
+            0, // id_otdel
+            0, // sklad
+            1, // selectable
+            'select', // mode
+            null, // win_return
+            0, // id_oper
+            tabulator.getSelectedData()[0].id // id_dionis
         )
         // show_dionis_history(
         //     tabulator.getSelectedData()[0].id,
@@ -484,9 +485,9 @@ function edit_dionis(d, win_return = null, mode = "") {
             headerdionis,
             bodydionis,
             footdionis,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
+            "60%", // width
+            "15%", // marginLeft
+            "5%", // marginTop
             win_return,
             esc_dionis
         )
@@ -544,10 +545,10 @@ function edit_dionis(d, win_return = null, mode = "") {
             // console.log('sel_gk')
 
             const selected_model = await select_dionis_model(
-                selectable = 1,
-                mode = 'select',
-                win_return = win_current,
-                id_model = vm.$data.dv.id_model
+                1, // selectable
+                'select', // mode
+                win_current, // win_return
+                vm.$data.dv.id_model // id_model
             )
 
             vm.$data.dv.id_model = selected_model.id
@@ -563,10 +564,10 @@ function edit_dionis(d, win_return = null, mode = "") {
             // console.log('sel_gk')
 
             const selected_gk = await select_gk(
-                selectable = 1,
-                mode = 'select',
-                win_return = win_current,
-                id_gk = vm.$data.dv.id_gk
+                1, // selectable
+                'select', // mode
+                win_current, // win_return
+                vm.$data.dv.id_gk // id_gk
             )
 
             // console.log('selected_gk = ', selected_gk)
@@ -650,9 +651,15 @@ async function show_dionis_history(id_dionis, win_return = null) {
     }
 
     newModalWindow(
-        win_current, header, body, foot,
-        width = "59%", marginLeft = "40%", marginTop = "1%",
-        win_return, esc_dionis_history
+        win_current, 
+        header, 
+        body, 
+        foot,
+        "59%", // width
+        "40%", // marginLeft
+        "1%", // marginTop
+        win_return, 
+        esc_dionis_history
     )
 
     const table_histoty = new Tabulator('#' + win_current + 'Body', {

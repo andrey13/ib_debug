@@ -29,7 +29,7 @@ function selectUser(
         // создание модального окна ----------------------------------------------------------
         const formSelectUser = `<div id="selectUser1" class="w3-container"></div>`
         newModalWindow(
-            modal = win_current, 
+            win_current, // modal
             headerWin, 
             formSelectUser, 
             '', 

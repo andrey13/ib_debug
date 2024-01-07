@@ -15,22 +15,22 @@ function select_gk(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = 'ГК',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current, // modal
+                'ГК',        // html_header
+                '',          // html_body
+                '',          // html_footer
+                '90%',       // width
+                '5%',        // marginLeft
+                '3%',        // marginTop
+                win_return   // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
         table_select_gk = tabulator_select_gk(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
+            (mode == 'select') ? appHeight * 0.9 : appHeight,      // tabHeight
             resolve,
             reject,
             selectable,
@@ -161,8 +161,8 @@ function tabulator_select_gk(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_gk(
-                    tabulator.getSelectedData()[0],
-                    (win_return = win_current)
+                    tabulator.getSelectedData()[0], // d
+                    win_current                     // win_return
                 )
             }
         },
@@ -181,24 +181,24 @@ function tabulator_select_gk(
         addTabRow(tabulator, d, (top = true))
 
         const res = await edit_gk(
-            d,
-            (win_return = win_current),
-            (mode = "new")
+            d,           // d
+            win_current, // win_return
+            "new"        // mode
         )
     }
 
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_gk(
-            tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
+            tabulator.getSelectedData()[0], // d
+            win_current,                    // win_return
+            "mod"                           // mode
         )
     }
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить ГК"),
-            (win_return = win_current)
+            "Удалить ГК",  // text
+            win_current    // win_return
         )
 
         if (ans == 'YES') {
@@ -304,11 +304,11 @@ function edit_gk(d, win_return = null, mode = "") {
             headergk,
             bodygk,
             footgk,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_gk
+            "60%",      // width
+            "15%",      // marginLeft
+            "5%",       // marginTop
+            win_return, // win_return
+            esc_gk      // esc_callback
         )
 
         //--- View Model-------------------------------------------------------start
@@ -340,10 +340,10 @@ function edit_gk(d, win_return = null, mode = "") {
         // кнопка выбора поставщика -----------------------------------------------
         id2e(sel_vendor).onclick = async () => {
             const selected_vendor = await select_vendor(
-                selectable = 1,
-                mode = 'select',
-                win_return = win_current,
-                id_vendor = vm.$data.dv.id_vendor
+                1,                    // selectable
+                'select',             // mode
+                win_current,          // win_return
+                vm.$data.dv.id_vendor // id_vendor
             )
 
             vm.$data.dv.id_vendor = selected_vendor.id
@@ -356,16 +356,16 @@ function edit_gk(d, win_return = null, mode = "") {
         // кнопка выбора исполнителя -----------------------------------------------
         id2e(sel_executor).onclick = async () => {
             const selected_user = await selectUser(
-                sono = '',
-                esk = '',
-                id_depart = 0,
-                selectable = 1,
-                headerWin = 'выбор исполнителя УФНС',
-                width = '600px',
-                marginLeft = '5%',
-                marginTop = '5%',
-                win_return = win_current,
-                id_user = vm.$data.dv.id_user_executor
+                '',                          // sono
+                '',                          // esk
+                0,                           //id_depart
+                1,                           // selectable
+                'выбор исполнителя УФНС',    // headerWin
+                '600px',                     // width
+                '5%',                        // marginLeft
+                '5%',                        // marginTop
+                win_current,                 // win_return
+                vm.$data.dv.id_user_executor // id_user
             )
 
             vm.$data.dv.id_user_executor = selected_user[0].id

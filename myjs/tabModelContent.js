@@ -14,10 +14,10 @@ function tabulator_model_content(
         // { title: "del", field: "del", width: 40, headerFilter: true },
     ]
 
-    console.log('========================================>')
-    console.log('tabulator_model_content:')
-    console.log('win_current = ', win_current)
-    console.log('win_return = ', win_return)
+    // console.log('========================================>')
+    // console.log('tabulator_model_content:')
+    // console.log('win_current = ', win_current)
+    // console.log('win_return = ', win_return)
 
     const salt = randomStr(10)
 

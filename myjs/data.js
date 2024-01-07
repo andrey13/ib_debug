@@ -1,3 +1,69 @@
+async function id_oper_2_date(id_dionis_oper) {
+    let sql =
+    `SELECT 
+    do.date,
+    do.id_dionis,
+    d.id_gk,
+    g.date_fns,
+    g.numb_fns,
+    g.date_ufns,
+    g.numb_ufns,
+    v.name as vendor,
+    do.id_user_tno,
+    u1.name as user_tno,
+    u2.name as user_fku,
+    do.id_connect_point1,
+    do.id_connect_point2,
+    cp1.id_torm,
+    cp2.id_torm,
+    t1.name as tno1, 
+    t2.name as tno2,
+    t1.id_co,
+    t2.id_co,
+    i1.name as ifns1,
+    i2.name as ifns2,
+    do.date as oper_date
+    FROM dionis_oper as do 
+    left join dionis as d on d.id=do.id_dionis 
+    left join goskontrakt as g on g.id=d.id_gk 
+    left join vendor v on v.id=g.id_vendor 
+    left join user as u1 on u1.id=do.id_user_tno 
+    left join user as u2 on u2.id=do.id_user_fku
+    left join connect_point as cp1 on cp1.id=do.id_connect_point1
+    left join connect_point as cp2 on cp2.id=do.id_connect_point2 
+    left join torm as t1 on t1.id=cp1.id_torm 
+    left join torm as t2 on t2.id=cp2.id_torm
+    left join ifns as i1 on i1.id=t1.id_co
+    left join ifns as i2 on i2.id=t2.id_co
+    WHERE do.id = ${id_dionis_oper}`
+
+    let res = await runSQL_p(sql)
+    let data = await JSON.parse(res)[0]
+    return data
+}
+
+
+
+async function dionis_oper_2_dionis_oper(
+    id_dionis_oper,
+    id_oper_type1,
+    id_oper_type2
+) {
+    let sql = 
+   `SELECT *
+    FROM dionis_oper AS do 
+    WHERE do.id_dionis = (SELECT do1.id_dionis FROM dionis_oper AS do1 WHERE do1.id=${id_dionis_oper}) 
+    AND do.date < (SELECT do2.date FROM dionis_oper AS do2 WHERE do2.id=${id_dionis_oper})
+    AND do.id_oper_type = ${id_oper_type2}
+    ORDER BY do.date DESC LIMIT 1`
+
+    let res = await runSQL_p(sql)
+    let data = await JSON.parse(res)[0]
+
+    return data
+}
+
+
 // загрузка типов таксономии -------------------------------------------------
 async function id_taxonomy_2_types(id_taxonomy) {
     let response = await fetch(`myphp/loadDataTypes.php?t=${id_taxonomy}`);

@@ -1,10 +1,24 @@
 //=======================================================================================
 // модальное окно выбора компьютера
 //=======================================================================================
-function selectComp(sono, esk, id_depart, selectable) {
+function selectComp(
+    sono, 
+    esk, 
+    id_depart, 
+    selectable
+) {
     return new Promise(function (resolve, reject) {
         let formSelectComp  = `<div id="selectComp" class="w3-container"></div>`;
-        newModalWindow('selectComp', '', formSelectComp, '', '900px', '20%', '5%');
+        
+        newModalWindow(
+            'selectComp',   // modal
+            '',             // html_header
+            formSelectComp, // html_body
+            '',             // html_footer
+            '900px',        // width
+            '20%',          // marginLeft
+            '5%'            // marginTop
+        )
 
         // let msgFooterSelecttUser = `<span id="select-stats"></span>
         //                             <button id='onoffSel' class='w3-button w3-white w3-border w3-hover-teal'>Показать помеченные записи</button> 

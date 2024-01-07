@@ -15,22 +15,22 @@ function select_point(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = 'Расположения Dionis',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current,           // modal
+                'Расположения Dionis', // html_header
+                '',                    // html_body
+                '',                    // html_footer
+                '90%',                 // width
+                '5%',                  // marginLeft
+                '3%',                  // marginTop
+                win_return             // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
         table_select_point = tabulator_select_point(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
+            (mode == 'select') ? appHeight * 0.9 : appHeight,      // tabHeight
             resolve,
             reject,
             selectable,
@@ -148,8 +148,8 @@ function tabulator_select_point(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_point(
-                    tabulator.getSelectedData()[0],
-                    (win_return = win_current)
+                    tabulator.getSelectedData()[0], // d
+                    win_current                     // win_return
                 )
             }
         },
@@ -263,11 +263,11 @@ function edit_point(d, win_return = null, mode = "") {
             headerpoint,
             bodypoint,
             footpoint,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_point
+            "60%",      // width
+            "15%",      // marginLeft
+            "5%",       // marginTop
+            win_return, // win_return
+            esc_point   // esc_callback
         )
 
         //--- View Model-------------------------------------------------------start
@@ -482,7 +482,7 @@ function edit_point(d, win_return = null, mode = "") {
     })
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 async function show_point_history(id_point, win_return = null) {
     const data_point = await id_2_data(id_point, 'point')
     const win_current = 'historypoint' + randomStr(10)
@@ -495,9 +495,15 @@ async function show_point_history(id_point, win_return = null) {
     }
 
     newModalWindow( 
-        win_current, header, body, foot,
-        width = "59%", marginLeft = "40%", marginTop = "1%",
-        win_return, esc_point_history
+        win_current, 
+        header, 
+        body, 
+        foot,
+        "59%",            // width
+        "40%",            // marginLeft
+        "1%",             // marginTop
+        win_return,       // win_return
+        esc_point_history // esc_callback
     )
     
     const table_histoty = new Tabulator('#' + win_current + 'Body', {

@@ -13,23 +13,23 @@ function select_oper(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = '',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current, // modal
+                '',          // html_header
+                '',          // html_body
+                '',          // html_footer
+                '90%',       // width
+                '5%',        // marginLeft
+                '3%',        // marginTop
+                win_return   // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
         table_opers = tabulator_opers(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
             sono,
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? appHeight * 0.9 : appHeight, // tabHeight
             resolve,
             reject,
             id_otdel,
@@ -139,9 +139,9 @@ function tabulator_opers(
                 const d = await id_2_data(id_mts, 'mts')
                 console.log('d = ', d)
                 const res = await edit_mts_vocab(
-                    d,
-                    win_return = win_current,
-                    mode = "mod"
+                    d,           // d
+                    win_current, // win_return
+                    "mod"        // mode
                 )
             }
         }        

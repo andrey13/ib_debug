@@ -1,3 +1,4 @@
+//=============================================================================
 function select_dionis_oper(
     sono = '6100',
     id_otdel = 0,
@@ -8,32 +9,32 @@ function select_dionis_oper(
     id_oper = 0,
     id_dionis = 0
 ) {
-    console.log('id_dionis2 = ', id_dionis)
+    // console.log('id_dionis2 = ', id_dionis)
     return new Promise(function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'selectOper' + salt
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = 'операции Dionis',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current, // modal
+                'операции Dionis', // html_header
+                '', // html_body
+                '', // html_footer
+                '90%', // width
+                '5%', // marginLeft
+                '3%', // marginTop
+                win_return // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
-        console.log('id_dionis3 = ', id_dionis)
+        // console.log('id_dionis3 = ', id_dionis)
 
         table_dionis_opers = tabulator_dionis_opers(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
             sono,
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? appHeight * 0.9 : appHeight, // tabHeight
             resolve,
             reject,
             id_otdel,
@@ -53,7 +54,7 @@ function select_dionis_oper(
         if (mode == "select") id_2_set_focus(win_current)
     })
 }
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 function tabulator_dionis_opers(
     div,
     sono,
@@ -69,7 +70,7 @@ function tabulator_dionis_opers(
     id_oper = 0,
     id_dionis = 0
 ) {
-    console.log('id_dionis4 = ', id_dionis)
+    // console.log('id_dionis4 = ', id_dionis)
     const salt = randomStr(10)
 
     const id_button_sel = 'sel' + salt
@@ -189,28 +190,39 @@ function tabulator_dionis_opers(
             // поставка оборудования -----------------------------------------------
             if (d.stock1 == 3) {
                 row.getCell("ip1").getElement().style.backgroundColor = '#ccccff'
+                row.getCell("ip1").getElement().style.color = '#000000'
                 row.getCell("oper_type").getElement().style.backgroundColor = '#ccccff'
+                row.getCell("oper_type").getElement().style.color = '#000000'
             }
 
             // передача оборудования -----------------------------------------------
             if (d.stock1 == 1 && d.stock2 == 1) {
                 row.getCell("oper_type").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("oper_type").getElement().style.color = '#000000'
                 row.getCell("ip1").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("ip1").getElement().style.color = '#000000'
                 row.getCell("ip2").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("ip2").getElement().style.color = '#000000'
                 row.getCell("ifns_sono2").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("ifns_sono2").getElement().style.color = '#000000'
                 row.getCell("torm_sono2").getElement().style.backgroundColor = '#ffccff'
+                row.getCell("torm_sono2").getElement().style.color = '#000000'
             }
 
             // подключение к точке доступа -----------------------------------------
             if (d.stock2 == 0) {
                 row.getCell("oper_type").getElement().style.backgroundColor = '#ccffcc'
+                row.getCell("oper_type").getElement().style.color = '#000000'
                 row.getCell("ip2").getElement().style.backgroundColor = '#ccffcc'
+                row.getCell("ip2").getElement().style.color = '#000000'
             }
 
             // отключение от точки доступа -----------------------------------------
             if (d.stock1 == 0) {
                 row.getCell("oper_type").getElement().style.backgroundColor = '#ffcccc'
+                row.getCell("oper_type").getElement().style.color = '#000000'
                 row.getCell("ip1").getElement().style.backgroundColor = '#ffcccc'
+                row.getCell("ip1").getElement().style.color = '#000000'
             }
         },
 
@@ -220,36 +232,48 @@ function tabulator_dionis_opers(
                 id2e(id_button_del).disabled = true
                 id2e(id_button_sel).disabled = true
                 id2e(id_button_pr1).disabled = true
+                id2e(id_button_pr2).disabled = true
                 id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
             } else {
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_sel).disabled = false
-                id2e(id_button_pr1).disabled = false
+                id2e(id_button_pr1).disabled = data[0].oper_type != "передача"
+                id2e(id_button_pr2).disabled = data[0].oper_type != "подключение"
                 id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
             }
         },
 
         cellDblClick: async function (e, cell) {
-            if ((mode == "select")) {
-                removeModalWindow(win_current, win_return)
-                resolve(cell.getRow().getData())
-            } else {
-                const res = await edit_dionis_oper(
-                    tabulator.getSelectedData()[0],
-                    (win_return = win_current)
-                )
-            }
-        },
+            // if ((mode == "select")) {
+            //     removeModalWindow(win_current, win_return)
+            //     resolve(cell.getRow().getData())
+            // } else {
+            //     const res = await edit_dionis_oper(
+            //         tabulator.getSelectedData()[0],
+            //         win_current // win_return
+            //     )
+            // }
+            const res = await edit_dionis_oper(
+                tabulator.getSelectedData()[0],
+                win_current // win_return
+            )
+    },
 
 
     })
 
     id2e(id_button_pr1).onclick = async () => {
         const id_dionis_oper = tabulator.getSelectedData()[0].id
-        console.log('id_dionis_oper = ', id_dionis_oper)
+        // console.log('id_dionis_oper = ', id_dionis_oper)
         print_report1(id_dionis_oper)
+    }
+
+    id2e(id_button_pr2).onclick = async () => {
+        const id_dionis_oper = tabulator.getSelectedData()[0].id
+        // console.log('id_dionis_oper = ', id_dionis_oper)
+        print_report2(id_dionis_oper)
     }
 
     id2e(id_button_add).onclick = async () => {
@@ -261,8 +285,8 @@ function tabulator_dionis_opers(
 
         const res = await edit_dionis_oper(
             d,
-            (win_return = win_current),
-            (mode = "new"),
+            win_current, // win_return
+            "new", // mode
             id_dionis
         )
     }
@@ -271,15 +295,15 @@ function tabulator_dionis_opers(
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_dionis_oper(
             tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
+            win_current, // win_return
+            "mod" // mode
         )
     }
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить операцию"),
-            (win_return = win_current)
+            "Удалить операцию", // text
+            win_current // win_return
         )
 
         if (ans == 'YES') {
@@ -297,7 +321,7 @@ function tabulator_dionis_opers(
     return tabulator
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 function edit_dionis_oper(
     d,
     win_return = null,
@@ -312,13 +336,13 @@ function edit_dionis_oper(
             const d_dionis = await id_2_data(id_dionis, 'dionis')
             d.id_dionis = id_dionis
             d.sn = d_dionis.sn
-            console.log('d_dionis = ', d_dionis)
+            // console.log('d_dionis = ', d_dionis)
         }
 
-        console.log('d(dionis_oper) =', d)
+        // console.log('d(dionis_oper) =', d)
         //const oper_types = (await id_taxonomy_2_types(7)).map(i => i.name)
         const oper_types = await id_taxonomy_2_types(7)
-        console.log('oper_types = ', oper_types)
+        // console.log('oper_types = ', oper_types)
 
 
         const id_button_enter = 'ent' + salt
@@ -364,7 +388,7 @@ function edit_dionis_oper(
                         :value="otype.id"
                         :label="otype.name"
                     />
-                </n-radio-group>{{dv.id_oper_type}}
+                </n-radio-group>
             </div>
             <br>
             <br>
@@ -378,11 +402,12 @@ function edit_dionis_oper(
                 <button id=${sel_user_ufns} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_ufns}}</button>
             </div>
             <div v-show="shTNO">      
-                исполнитель ТНО:<br>
+                сотрудник ТНО, пользователь СКЗИ:<br>
                 <button id=${sel_user_tno} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_tno}}</button>
             </div>
+            <br>
             <div v-show="shFKU">      
-                исполнитель ФКУ:<br>
+                сотрудник ФКУ произведший установку СКЗИ:<br>
                 <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_fku}}</button>
             </div>
             <br>
@@ -404,13 +429,14 @@ function edit_dionis_oper(
         const foot = ``
         const selType0 = "передача"
 
-        const esc = mode == "new"
+        const esc_cb = mode == "new"
             ? () => {
+                // если при создании операции нажать ESC - опреация удаляется
                 remove_selected_dionis_oper()
                 vapp.unmount()
             }
             : () => {
-                console.log("esc_callback")
+                // console.log("esc_callback")
                 vapp.unmount()
             }
 
@@ -419,11 +445,11 @@ function edit_dionis_oper(
             header,
             body,
             foot,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
-            win_return,
-            esc
+            "60%", // width
+            "15%", // marginLeft
+            "5%", // marginTop
+            win_return, // win_return
+            esc_cb // esc_callback
         )
 
         const { ref } = Vue
@@ -482,7 +508,7 @@ function edit_dionis_oper(
                     return this.dv.id_oper_type == 36
                 },
                 shTNO() {
-                    return this.dv.id_oper_type == 37
+                    return this.dv.id_oper_type == 37 || this.dv.id_oper_type == 39
                 },
                 shFKU() {
                     return this.dv.id_oper_type == 39
@@ -500,16 +526,16 @@ function edit_dionis_oper(
         // кнопка выбора сотрудника УФНС -----------------------------------------------
         id2e(sel_user_ufns).onclick = async () => {
             const selected_user = await selectUser(
-                sono = '',
-                esk = '',
-                id_depart = 0,
-                selectable = 1,
-                headerWin = 'выбор сотрудника УФНС',
-                width = '400px',
-                marginLeft = '50%',
-                marginTop = '1%',
-                win_return = win_current,
-                id_user = vm.$data.dv.id_user_ufns
+                '', // sono
+                '', // esk
+                0, // id_depart
+                1, // selectable
+                'выбор сотрудника УФНС', // headerWin
+                '400px', // width
+                '50%', // marginLeft
+                '1%', // marginTop
+                win_current, // win_return
+                vm.$data.dv.id_user_ufns // id_user
             )
 
             vm.$data.dv.id_user_ufns = selected_user[0].id
@@ -522,16 +548,16 @@ function edit_dionis_oper(
         // кнопка выбора сотрудника ТНО -----------------------------------------------
         id2e(sel_user_tno).onclick = async () => {
             const selected_user = await selectUser(
-                sono='',
-                esk='',
-                id_depart = 0,
-                selectable = 1,
-                headerWin = 'выбор сотрудника ТНО',
-                width = '400px',
-                marginLeft = '50%',
-                marginTop = '1%',
-                win_return = win_current,
-                id_user = vm.$data.dv.id_user_tno
+                '', // sono
+                '', // esk
+                0, // id_depart
+                1, // selectable
+                'выбор сотрудника ТНО', // headerWin
+                '400px', // width
+                '50%', // marginLeft
+                '1%', // marginTop
+                win_current, // win_return
+                vm.$data.dv.id_user_tno // id_user
             )
 
             vm.$data.dv.id_user_tno = selected_user[0].id
@@ -544,16 +570,16 @@ function edit_dionis_oper(
         // кнопка выбора сотрудника ФКУ -----------------------------------------------
         id2e(sel_user_fku).onclick = async () => {
             const selected_user = await selectUser(
-                sono='',
-                esk='',
-                id_depart = 0,
-                selectable = 1,
-                headerWin = 'выбор сотрудника ФКУ',
-                width = '400px',
-                marginLeft = '50%',
-                marginTop = '1%',
-                win_return = win_current,
-                id_user = vm.$data.dv.id_user_fku
+                '', // sono
+                '', // esk
+                0, // id_depart
+                1, // selectable
+                'выбор сотрудника ФКУ', // headerWin
+                '400px', // width
+                '50%', // marginLeft
+                '1%', // marginTop
+                win_current, // win_return
+                vm.$data.dv.id_user_fku // id_user
             )
 
             vm.$data.dv.id_user_fku = selected_user[0].id
@@ -563,10 +589,12 @@ function edit_dionis_oper(
             id_2_set_focus(win_current)
         }
 
+        // кнопка применения изменений --------------------------------------------------
         id2e(id_button_enter).onclick = () => {
             const d = vm.$data.dv
             vapp.unmount()
             save_dionis_oper(d)
+            // console.log(`win_current, win_return = ${win_current}, ${win_return}`)
             removeModalWindow(win_current, win_return)
             table_dionis_opers.updateRow(d.id, d)
             table_dionis_opers.redraw()
@@ -577,10 +605,12 @@ function edit_dionis_oper(
         id2e(id_button_cancel).onclick = () => {
             vapp.unmount()
             if (mode == "new") remove_selected_dionis_oper()
+            // console.log(`win_current, win_return = ${win_current}, ${win_return}`)
             removeModalWindow(win_current, win_return)
             resolve("CANCEL")
         }
 
+        // кнопка перехода на предыдущую операцию -----------------------------------------
         id2e(id_button_prev).onclick = () => {
             const d = vm.$data.dv
             save_dionis_oper(d)
@@ -597,7 +627,7 @@ function edit_dionis_oper(
             vm.$data.chg = false
         }
 
-        // кнопка перехода на следующее МТС -----------------------------------------
+        // кнопка перехода на следующую операцию -----------------------------------------
         id2e(id_button_next).onclick = () => {
             const d = vm.$data.dv
             save_dionis_oper(d)
@@ -619,17 +649,17 @@ function edit_dionis_oper(
             const id_depart = isRole("tex") ? g_user.id_depart : 0
 
             const selected_dionis = await select_dionis(
-                sono = "6100",
-                id_otdel = id_depart,
-                sklad = 1,
-                id_type_oper = 0,
-                selectable = 1,
-                mode = 'select',
-                win_return = win_current,
-                id_dionis = vm.$data.dv.id_dionis
+                "6100", // sono
+                id_depart, // id_otdel
+                1, // sklad
+                0, // id_type_oper
+                1, // selectable
+                'select', // mode
+                win_current, // win_return
+                vm.$data.dv.id_dionis // id_dionis
             )
 
-            console.log('selected_dionis = ', selected_dionis)
+            // console.log('selected_dionis = ', selected_dionis)
 
             vm.$data.dv.id_dionis = selected_dionis.id
             vm.$data.dv.sn = selected_dionis.sn
@@ -642,17 +672,17 @@ function edit_dionis_oper(
 
         // кнопка выбора источника -----------------------------------------------
         id2e(sel_point1).onclick = async () => {
-            console.log('sel_point1')
+            // console.log('sel_point1')
             const id_depart = isRole("tex") ? g_user.id_depart : 0
 
             const selected_point = await select_point(
-                selectable = 1,
-                mode = 'select',
-                win_return = win_current,
-                id_point = vm.$data.dv.id_connect_point1
+                1, // selectable
+                'select', // mode
+                win_current, // win_return
+                vm.$data.dv.id_connect_point1 // id_point
             )
 
-            console.log('selected_point = ', selected_point)
+            // console.log('selected_point = ', selected_point)
 
             vm.$data.dv.id_connect_point1 = selected_point.id
             vm.$data.dv.ip1 = selected_point.ip
@@ -666,17 +696,17 @@ function edit_dionis_oper(
 
         // кнопка выбора приемника -----------------------------------------------
         id2e(sel_point2).onclick = async () => {
-            console.log('sel_point2')
+            // console.log('sel_point2')
             const id_depart = isRole("tex") ? g_user.id_depart : 0
 
             const selected_point = await select_point(
-                selectable = 1,
-                mode = 'select',
-                win_return = win_current,
-                id_point = vm.$data.dv.id_connect_point2
+                1, // selectable
+                'select', // mode
+                win_current, // win_return
+                vm.$data.dv.id_connect_point2 // id_point
             )
 
-            console.log('selected_point = ', selected_point)
+            // console.log('selected_point = ', selected_point)
 
             vm.$data.dv.id_connect_point2 = selected_point.id
             vm.$data.dv.ip2 = selected_point.ip
@@ -690,7 +720,7 @@ function edit_dionis_oper(
     })
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 function remove_selected_dionis_oper() {
     let id_oper = table_dionis_opers.getSelectedData()[0].id
     del_dionis_oper(id_oper)
@@ -699,15 +729,15 @@ function remove_selected_dionis_oper() {
     table_dionis_opers.selectRow(id_oper)
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 async function new_dionis_oper() {
     const id = await runSQL_p("INSERT INTO dionis_oper () VALUES ()")
     return id
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 async function save_dionis_oper(d) {
-    console.log('d = ', d)
+    // console.log('d = ', d)
     const sql =
         d.id == 0
             ? `INSERT INTO dionis_oper ( 
@@ -755,12 +785,12 @@ async function save_dionis_oper(d) {
     return runSQL_p(sql)
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 function del_dionis_oper(id) {
     runSQL_p(`DELETE FROM dionis_oper WHERE id=${id}`)
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 function factory_dionis_oper(id_dionis = 0) {
     return {
         id: 0,
@@ -778,7 +808,7 @@ function factory_dionis_oper(id_dionis = 0) {
     }
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 function format_point(
     sono1 = '',
     sono2 = '',
@@ -802,7 +832,7 @@ function format_point(
     return sono1 + '/' + sono2 + '/' + point
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
+//=============================================================================
 async function print_report1(id_dionis_oper) {
     // параметры шрифта pdf-документа ---------------------------------------------------
     pdfMake.fonts = {
@@ -928,8 +958,6 @@ async function print_report1(id_dionis_oper) {
 
     pdfMake.createPdf(doc).open()
 
-
-    /////////////////////////////////////////////////////////////////////////////////////////
     async function report1_body(id_dionis_oper) {
         const hh = 30
 
@@ -1001,23 +1029,60 @@ async function print_report1(id_dionis_oper) {
             },
         ]
 
-        let datas = await id_oper_2_model_content(id_dionis_oper)
+        let model_content_d = await id_oper_2_model_content(id_dionis_oper)
+        
+        // let sql =
+        // `SELECT 
+        // do.date,
+        // do.id_dionis,
+        // d.id_gk,
+        // g.date_fns,
+        // g.numb_fns,
+        // g.date_ufns,
+        // g.numb_ufns,
+        // v.name as vendor,
+        // do.id_user_tno,
+        // u.name as user,
+        // do.id_connect_point2,
+        // cp.id_torm,
+        // t.name as tno, 
+        // do.date as oper_date
+        // FROM dionis_oper as do 
+        // left join dionis as d on d.id=do.id_dionis 
+        // left join goskontrakt as g on g.id=d.id_gk 
+        // left join vendor v on v.id=g.id_vendor 
+        // left join user as u on u.id=do.id_user_tno 
+        // left join connect_point as cp on cp.id=do.id_connect_point2 
+        // left join torm as t on t.id=cp.id_torm 
+        // WHERE do.id = ${id_dionis_oper}`
+
+        // let res = await runSQL_p(sql)
+        // let data = await JSON.parse(res)[0]
+
+        let data   = await id_oper_2_date(id_dionis_oper)
+        let d36    = await dionis_oper_2_dionis_oper(id_dionis_oper, 37, 36)
+        let data36 = await id_oper_2_date(d36.id)
+
+
+
+        // console.log('data = ', data)
+
 
         let table_content = []
         let i = 0
     
-        datas.forEach((d) => {
+        model_content_d.forEach((d) => {
             let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
             table_content[i] = [
                 '', 
                 { text: d.name, style: 'tableCell' }, 
                 { text: sn, style: 'tableV' }, 
                 { text: '1', style: 'tableHV' },
-                '', 
-                '', 
-                '', 
-                '', 
-                '', 
+                { text: data.vendor, style: 'tableCell' },
+                { text: date2date(data.date_fns) + '\n' + data.numb_fns, style: 'tableCell' },
+                { text: data.ifns2, style: 'tableCell' }, 
+                { text: date2date(data.date_ufns) + '\n' + data.numb_ufns, style: 'tableCell' }, 
+                { text: date2date(data.date) + '\n' + fio2fio0(data.user_tno), style: 'tableCell' }, 
                 '', 
                 '', 
                 '', 
@@ -1033,7 +1098,251 @@ async function print_report1(id_dionis_oper) {
 
         table_head[1].table.body = table_head[1].table.body.concat(table_content)
 
-        console.log('table_head = ', table_head)
+        // console.log('table_head = ', table_head)
+
+        return table_head
+    }
+}
+
+//=============================================================================
+async function print_report2(id_dionis_oper) {
+    // параметры шрифта pdf-документа ---------------------------------------------------
+    pdfMake.fonts = {
+        times: {
+            normal: 'times.ttf',
+            bold: 'timesbd.ttf',
+            italics: 'timesi.ttf',
+            bolditalics: 'timesbi.ttf'
+        }
+    }
+
+    // параметры заголовка pdf-документа ------------------------------------------------
+    let doc_head = {
+        pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [10, 5, 5, 5],
+
+        defaultStyle: {
+            font: 'times',
+            fontSize: 8,
+        },
+
+        styles: {
+            tableStyle: {
+                border: '1px solid black', // толщина границы
+                borderWidth: [1, 1, 1, 1] // толщина границы для каждой стороны (верх, право, низ, лево)
+            },
+            header0: {
+                font: 'times',
+                fontSize: 9,
+                italics: true,
+                alignment: 'right',
+            },
+            header: {
+                font: 'times',
+                fontSize: 10,
+                bold: true,
+                alignment: 'center',
+            },
+            table: {
+                font: 'times',
+                bold: false,
+                fontSize: 6,
+                margin: [0, 0, 0, 0]
+            },
+            tableHeader: {
+                font: 'times',
+                bold: false,
+                fontSize: 6,
+                alignment: 'center',
+            },
+            tableCell: {
+                fontSize: 6,
+                // alignment: 'center',
+                heights: 100 
+              },
+            tableV: {
+                fontSize: 6,
+                alignment: 'center',
+                heights: 100 
+             },
+            tableHV: {
+                fontSize: 6,
+                alignment: 'center',
+                verticalAlign: 'middle',
+                heights: 100 
+            },
+            tableV: {
+                fontSize: 6,
+                verticalAlign: 'middle',
+                heights: 100 
+            }
+
+        },
+    }
+
+    let content0 = [
+        { text: 'Приложение 1', style: ['header0'] },
+        { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
+        { text: 'Приказом Федерального агенства', style: ['header0'] },
+        { text: 'правительственной связи и информации', style: ['header0'] },
+        { text: 'при Президенте Российской Федерации', style: ['header0'] },
+        { text: 'от 13 июня 2001 г. №152', style: ['header0'] },
+
+        { text: `Журнал поэкземплярного учета СКЗИ, эксплуатационной`, style: ['header'] },
+        { text: `и технической документации к ним, ключевых документов`, style: ['header'] },
+        { text: `(для обладателя криптографической информации)`, style: ['header'] },
+    ]
+
+    let content1 = await report2_body(id_dionis_oper)
+
+    let content = content0.concat(content1)
+
+    let doc = Object.assign(doc_head, { content: content })
+
+    pdfMake.tableLayouts = {
+        szLayout: {
+            hLineWidth: function (i, node) {
+                return 0.5
+                if (i === 0 || i === node.table.body.length) {
+                    return 0
+                }
+                return (i === node.table.headerRows) ? 2 : 1
+            },
+            vLineWidth: function (i) {
+                return 0.5
+                return 0
+            },
+            hLineColor: function (i) {
+                return 'black'
+                return i === 1 ? 'black' : '#aaa'
+            },
+            paddingLeft: function (i) {
+                return 3
+                return i === 0 ? 0 : 8
+            },
+            paddingRight: function (i, node) {
+                return 3
+                return (i === node.table.widths.length - 1) ? 0 : 8
+            }
+        }
+    }
+
+    pdfMake.createPdf(doc).open()
+
+    async function report2_body(id_dionis_oper) {
+        const hh = 30
+
+        let table_head = [
+            { text: '\n', style: ['header'] },
+            {
+                style: 'table',
+                table: {
+                    //       1  2   3   4   5   6   7   8   9   10  11  12  13  14  15
+                    widths: [8, 120, 90, 30, 50, 40, 60, 40, 40, 40, 40, 40, 40, 40, 40],
+                    heights: [6, 40, 6, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh, hh],
+                    headerRows: 3,
+                    // keepWithHeaderRows: 1,
+                    body: [
+                        [
+                            { text: '№ п/п', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Наименование СКЗИ, эксплуатационной и технической документации к ним, ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Серийные номера СКЗИ, эксплуатационной и технической документации к ним, номера серий ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Номера экземпляров (криптографические номера) ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                            { text: 'Отметка о получении', style: 'tableHeader', colSpan: 2 },
+                            {},
+                            { text: 'Отметка о выдаче', style: 'tableHeader', colSpan: 2 },
+                            {},
+                            { text: 'Отметка о подключении (установке) СКЗИ', style: 'tableHeader', colSpan: 3 },
+                            {},
+                            {},
+                            { text: 'Отметка об зъятии СКЗИ из аппаратных средств, уничтожении ключевых документов', style: 'tableHeader', colSpan: 3 },
+                            {},
+                            {},
+                            { text: 'Примечание', style: 'tableHeader', rowSpan: 2 },
+                            // {},
+                        ],
+                        [
+                            {}, 
+                            {}, 
+                            {}, 
+                            {},
+                            { text: 'От кого получены', style: 'tableHeader' },
+                            { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                            { text: 'ФИО пользователя СКЗИ', style: 'tableHeader' },
+                            { text: 'Дата и расписка в получении', style: 'tableHeader' },
+                            { text: 'ФИО сотрудников органа криптокрафической защиты, пользователя СКЗИ, произведших подключение (установку)', style: 'tableHeader' },
+                            { text: 'Дата подключения (установки) и подписи лиц, произведших подключение (установку)', style: 'tableHeader' },
+                            { text: 'Номера аппаратных средств, в которые установлены или к которым подключены СКЗИ', style: 'tableHeader' },
+                            { text: 'Дата изъятия (уничтожения)', style: 'tableHeader' },
+                            { text: 'ФИО сотрудников органа криптокрафической защиты, пользователя СКЗИ, производивших изъятие (уничтожение)', style: 'tableHeader' },
+                            { text: 'Номер акта или расписка об инчтожении', style: 'tableHeader' },
+                            {},
+                            // {},
+                        ],
+                        [
+                            { text: '1', style: 'tableHeader'},
+                            { text: '2', style: 'tableHeader'},
+                            { text: '3', style: 'tableHeader'},
+                            { text: '4', style: 'tableHeader'},
+                            { text: '5', style: 'tableHeader'},
+                            { text: '6', style: 'tableHeader'},
+                            { text: '7', style: 'tableHeader'},
+                            { text: '8', style: 'tableHeader'},
+                            { text: '9', style: 'tableHeader'},
+                            { text: '10', style: 'tableHeader'},
+                            { text: '11', style: 'tableHeader'},
+                            { text: '12', style: 'tableHeader'},
+                            { text: '13', style: 'tableHeader'},
+                            { text: '14', style: 'tableHeader'},
+                            { text: '15', style: 'tableHeader'},
+                            // {},
+                        ]
+
+                    ]
+                },
+                layout: 'szLayout'
+            },
+        ]
+
+        let model_content_d = await id_oper_2_model_content(id_dionis_oper)      
+        let data39          = await id_oper_2_date(id_dionis_oper)
+        let d36             = await dionis_oper_2_dionis_oper(id_dionis_oper, 39, 36)
+        let data36          = await id_oper_2_date(d36.id)
+
+        let table_content = []
+        let i = 0
+    
+        model_content_d.forEach((d) => {
+            let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
+            let user_fku = d.sn == '{{sn}}' ? data39.user_fku : ''
+            let date_fku = d.sn == '{{sn}}' ? date2date(data39.date) : ''
+            table_content[i] = [
+                '', 
+                { text: d.name, style: 'tableCell' }, 
+                { text: sn, style: 'tableV' }, 
+                { text: '1', style: 'tableHV' },
+                { text: data36.ifns1, style: 'tableCell' },
+                { text: date2date(data36.date_ufns) + '\n' + data36.numb_ufns, style: 'tableCell' },
+                { text: data39.user_tno, style: 'tableCell' }, 
+                { text: date2date(data39.date), style: 'tableCell' }, 
+                { text: user_fku, style: 'tableCell' }, 
+                { text: date_fku, style: 'tableCell' }, 
+                '', 
+                '', 
+                '', 
+                '', 
+                '', 
+                // '', 
+            ]
+            i += 1
+        })
+
+
+
+        table_head[1].table.body = table_head[1].table.body.concat(table_content)
+
+        // console.log('table_head = ', table_head)
 
         return table_head
     }

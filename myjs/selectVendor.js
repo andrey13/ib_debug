@@ -15,22 +15,22 @@ function select_vendor(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = 'ГК',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current,  // modal
+                'Поставщики', // html_header
+                '',           // html_body
+                '',           // html_footer
+                '90%',        // width
+                '5%',         // marginLeft
+                '3%',         // marginTop
+                win_return    // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
         table_select_vendor = tabulator_select_vendor(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
+            (mode == 'select') ? appHeight * 0.9 : appHeight,      // tabHeight
             resolve,
             reject,
             selectable,
@@ -135,8 +135,8 @@ function tabulator_select_vendor(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_vendor(
-                    tabulator.getSelectedData()[0],
-                    (win_return = win_current)
+                    tabulator.getSelectedData()[0], // d
+                    win_current                     // win_return
                 )
             }
         },
@@ -155,24 +155,24 @@ function tabulator_select_vendor(
         addTabRow(tabulator, d, (top = true))
 
         const res = await edit_vendor(
-            d,
-            (win_return = win_current),
-            (mode = "new")
+            d,            // d
+            win_current , // win_return
+            "new"         // mode
         )
     }
 
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_vendor(
-            tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
+            tabulator.getSelectedData()[0], // d
+            win_current,                    // win_return
+            "mod"                           // mode
         )
     }
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить поставщика"),
-            (win_return = win_current)
+            "Удалить поставщика", // text
+            win_current           // win_return
         )
 
         if (ans == 'YES') {
@@ -231,11 +231,11 @@ function edit_vendor(d, win_return = null, mode = "") {
             headervendor,
             bodyvendor,
             footvendor,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_vendor
+            "60%",      // width
+            "15%",      // marginLeft
+            "5%",       // marginTop
+            win_return, // win_return
+            esc_vendor  // esc_callback
         )
 
         //--- View Model-------------------------------------------------------start

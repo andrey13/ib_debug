@@ -4,7 +4,17 @@
 function selectReson(sono, id_depart) {
     return new Promise(function (resolve, reject) {
         const formReson = `<div id="selectReson" class="w3-container"></div>`
-        newModalWindow("selectReson", "", formReson, "", "600px", "20%", "5%")
+        
+        newModalWindow(
+            "selectReson", 
+            "", 
+            formReson, 
+            "", 
+            "600px", 
+            "20%", 
+            "5%"
+        )
+
         appHeight = appBodyHeight() * 0.7
 
         tabulator_select_reson(

@@ -16,11 +16,11 @@
             header,
             body,
             foot,
-            (width = "90%"),
-            (marginLeft = "5%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_mts_history
+            "90%",          // width
+            "5%",           // marginLeft
+            "5%",           //marginTop
+            win_return,     // win_return
+            esc_mts_history // esc_callback
         )
 
         id_2_set_focus(win_current)

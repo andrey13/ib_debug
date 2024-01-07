@@ -21,13 +21,13 @@ function selectTypes(
             const formTypes = `<div class="w3-container"></div>`
 
             newModalWindow(
-                modal = win_current,
-                html_header = title,
-                html_body = formTypes,
-                html_footer = '',
-                width = width,
-                marginLeft = marginLeft,
-                marginTop = marginTop,
+                win_current, // modal
+                title,       // html_header
+                formTypes,   // html_body
+                '',          // html_footer
+                width,
+                marginLeft,
+                marginTop,
                 win_return
             )
         }
@@ -35,7 +35,7 @@ function selectTypes(
         appHeight = appBodyHeight() * 0.7
 
         tabulator_Select_Types(
-            div = 'selectTypesBody',
+            'selectTypesBody', // div
             id_taxonomy,
             ok,
             appHeight,
@@ -137,8 +137,8 @@ function tabulator_Select_Types(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_Type(
-                    tableTypes.getSelectedData()[0],
-                    win_return = win_current
+                    tableTypes.getSelectedData()[0], // d
+                    win_current                      // win_return
                 )
             }
 

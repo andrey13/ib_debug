@@ -19,23 +19,23 @@ function select_mts(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = '',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current, // modal
+                '',          // html_header
+                '',          // html_body
+                '',          // html_footer
+                '90%',      // width
+                '5%',       // marginLeft
+                '3%',       // marginTop
+                win_return  // win_return
             )
         }
 
         const appHeight = appBodyHeight()
 
         table_select_mts = tabulator_select_mts(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
             sono,
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? appHeight * 0.9 : appHeight,      // tabHeight
             resolve,
             reject,
             id_otdel,
@@ -261,8 +261,8 @@ function tabulator_select_mts(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_mts_vocab(
-                    tabulator.getSelectedData()[0],
-                    (win_return = win_current)
+                    tabulator.getSelectedData()[0], // d
+                    win_current                     // win_return
                 )
             }
         },
@@ -281,9 +281,9 @@ function tabulator_select_mts(
         addTabRow(tabulator, d, (top = true))
 
         const res = await edit_mts_vocab(
-            d,
-            (win_return = win_current),
-            (mode = "new")
+            d,           // d
+            win_current, // win_return
+            "new"        // mode
         )
 
         console.log("res = ", res)
@@ -291,16 +291,16 @@ function tabulator_select_mts(
 
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_mts_vocab(
-            tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
+            tabulator.getSelectedData()[0], // d
+            win_current,                    // win_return
+            "mod"                           // mode
         )
     }
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить МТС"),
-            (win_return = win_current)
+            "Удалить МТС", // text
+            win_current    // win_return
         )
 
         if (ans == 'YES') {
@@ -316,8 +316,8 @@ function tabulator_select_mts(
 
     id2e(id_button_his).onclick = () => {
         show_mts_history(
-            tabulator.getSelectedData()[0].id,
-            (win_return = win_current)
+            tabulator.getSelectedData()[0].id, // d
+            win_current                        // win_return
         )
     }
 
@@ -382,22 +382,30 @@ function tabulator_select_mts(
 /////////////////////////////////////////////////////////////////////////////////////////
 function create_absent_zayavki(win_return = null) {
     
-    const win_current = "createAbsentZayavki" ///////////////////////////////////////////
-    
+    const win_current = "createAbsentZayavki" ///////////////////////////////////////////   
     const header = `<h4>Создание недостающих заявок</h4>`
     
     const body = `
     <div class="w3-container" v-html="body">
     </div>`
+
     const foot = ``
+
     const esc_create_absent_zayavki = () => { 
         console.log("esc_callback") 
         // vapp.unmount()
     }
+
     newModalWindow( 
-        win_current, header, body, foot,
-        width = "75%", marginLeft = "20%", marginTop = "1%",
-        win_return, esc_create_absent_zayavki
+        win_current, 
+        header, 
+        body, 
+        foot,
+        "75%",                    // width
+        "20%",                    // marginLeft
+        "1%",                     // marginTop
+        win_return,               // win_return
+        esc_create_absent_zayavki // esc_callback
     )
     // viewModel -------------------------------------------------------------------->
     const vapp = Vue.createApp({
@@ -408,6 +416,7 @@ function create_absent_zayavki(win_return = null) {
             }
         },
     })
+
     const vm = vapp.use(naive).mount("#createAbsentZayavki")
     // viewModel --------------------------------------------------------------------<
     let SN_prev = ''
@@ -438,9 +447,15 @@ async function show_mts_history(id_mts, win_return = null) {
     }
 
     newModalWindow( 
-        win_current, header, body, foot,
-        width = "59%", marginLeft = "40%", marginTop = "1%",
-        win_return, esc_mts_history
+        win_current, 
+        header, 
+        body, 
+        foot,
+        "59%",          // width
+        "40%",          // marginLeft
+        "1%",           // marginTop
+        win_return,     // win_return
+        esc_mts_history // esc_callback
     )
     
     const table_histoty = new Tabulator('#' + win_current + 'Body', {
@@ -724,12 +739,12 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
                 "",
                 id_depart,
                 1,
-                (header = "Выбор ответственного лица"),
-                (width = "40%"),
-                (marginLeft = "30%"),
-                (marginTop = "5%"),
-                win_current,
-                vm.$data.dv.id_user
+                "Выбор ответственного лица", // header
+                "40%",                       // width
+                "30%",                       // marginLeft
+                "5%",                        // marginTop
+                win_current,                 // win_return
+                vm.$data.dv.id_user          // id_user
             )
             selectedUsers.forEach(async (u) => {
                 vm.$data.dv.id_user = u.id
@@ -754,16 +769,16 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
         // кнопка выбора отдела -----------------------------------------------------
         id2e("selectMtsDepart").onclick = async () => {
             const dep = await selectVocab(
-                (table = "depart"),
-                (sort = "id_otdel"),
-                (ok = -1),
-                (tite = "отдел"),
-                (allow = ""),
-                (width = "60%"),
-                (marginLeft = "20%"),
-                (marginTop = "5%"),
-                win_current,
-                sono = g_user.sono
+                "depart",          // table
+                "id_otdel",        // sort
+                -1,                // ok
+                "отдел",           // tite
+                "",                // allow
+                "60%",             // width
+                "20%",             // marginLeft
+                "5%",              // marginTop
+                win_current,       // win_return
+                sono = g_user.sono // sono
             )
             console.log('dep = ', dep)
             vm.$data.dv.id_depart = dep.id

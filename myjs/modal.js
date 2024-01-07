@@ -1,4 +1,10 @@
 // активация модального окна ============================================================
+/***
+ * @param modal - элемент div, в котором создавать модальное окно
+ * @param win_return - элемент div, которому передать фокус после закрытия модального окна
+ * @param esc_collback - действие, которое назначено на нажание клавиши ESC, после выполнения этого действия, все назначенные действия на ESC - очищаются
+ * @returns none
+ */
 function newModalWindow(
     modal, 
     html_header, 
@@ -8,17 +14,19 @@ function newModalWindow(
     marginLeft, 
     marginTop, 
     win_return = null,
-    esc_callback = () => { console.log('esc_callback') }
+    esc_callback = null
 ) {
 
     //return new Promise(function (resolve, reject) {
     // создание элементов модального окна -----------------------------------------------      
     // const modalMain = modal + "Main"
+
     const modalMain = modal
     const modalContent = modal + "Content"
     const modalHeader = modal + "Header"
     const modalBody = modal + "Body"
     const modalFooter = modal + "Footer"
+
     const modal_html = `
            <div         id="${modalMain}"    class="modal" style="display:none;" tabindex="0">
                <div     id="${modalContent}" class="modal-content">
@@ -45,7 +53,7 @@ function newModalWindow(
     div_modal.onkeyup = function (e) {
         if (e.key == 'Escape') {
             // console.log('esc_callback = ', esc_callback)
-            esc_callback()
+            if (!!esc_callback) esc_callback()
             div_modal.style.display = "none";
             div_modal.onkeyup = function (e) { };
             div_modal.remove();
@@ -61,6 +69,11 @@ function newModalWindow(
 }
 
 // удаление модального окна ==========================================================
+/***
+ * удаление модального окна
+ * @param modal - элемент div, в котором находится модальное окно
+ * @param win_return - элемент div, которому передать фокус после закрытия модального окна
+ */
 function removeModalWindow(modal, win_return = null) {
     // const modalMain = modal + "Main"
     const modalMain = modal
@@ -78,7 +91,7 @@ function removeModalWindow(modal, win_return = null) {
     // }
 }
 
-// удаление модального окна ==========================================================
+// установить фокус на элемент с id =====================================================
 function id_2_set_focus(id) {
     // console.log('id_2_set_focus ====================')
     // console.log('id = ', id)

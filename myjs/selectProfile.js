@@ -4,12 +4,26 @@
 function selectProfile(selectable) {
     return new Promise(function (resolve, reject) {
         let formselectProfile  = `<div id="selectProfile" class="w3-container"></div>`;
-        newModalWindow('selectProfile', '', formselectProfile, '', '900px', '5%', '5%');
+        newModalWindow(
+            'selectProfile', 
+            '', 
+            formselectProfile, 
+            '', 
+            '900px', 
+            '5%', 
+            '5%'
+        )
 
 
         //let appHeight = $(".modal-content").height() - $(".modal-header").height();
         appHeight = appBodyHeight() * 0.7;
-        createTabulatorSelectProfile("#selectProfileBody", appHeight, resolve, reject, selectable);
+        createTabulatorSelectProfile(
+            "#selectProfileBody", 
+            appHeight, 
+            resolve, 
+            reject, 
+            selectable
+        )
     });
 }
 

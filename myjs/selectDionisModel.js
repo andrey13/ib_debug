@@ -21,14 +21,14 @@ function select_dionis_model(
 
         if (mode == 'select') {
             newModalWindow(
-                modal = win_current,
-                html_header = 'ГК',
-                html_body = '',
-                html_footer = '',
-                width = '90%',
-                marginLeft = '5%',
-                marginTop = '3%',
-                win_return
+                win_current,     // modal
+                'Модели Dionis', // html_header
+                '',              // html_body
+                '',              // html_footer
+                '90%',           // width
+                '5%',            // marginLeft
+                '3%',            // marginTop
+                win_return       // win_return
             )
         }
 
@@ -37,8 +37,8 @@ function select_dionis_model(
 
 
         table_select_dionis_model = tabulator_select_dionis_model(
-            div = (mode == 'select') ? win_current + 'Body' : 'appBody',
-            tabHeight = (mode == 'select') ? appHeight * 0.9 : appHeight,
+            (mode == 'select') ? win_current + 'Body' : 'appBody', // div
+            (mode == 'select') ? appHeight * 0.9 : appHeight, // tabHeight
             resolve,
             reject,
             selectable,
@@ -154,8 +154,8 @@ function tabulator_select_dionis_model(
                 resolve(cell.getRow().getData())
             } else {
                 const res = await edit_dionis_model(
-                    tabulator.getSelectedData()[0],
-                    (win_return = win_current)
+                    tabulator.getSelectedData()[0], // d
+                    win_current                     // win_return
                 )
             }
         },
@@ -174,24 +174,24 @@ function tabulator_select_dionis_model(
         addTabRow(tabulator, d, (top = true))
 
         const res = await edit_dionis_model(
-            d,
-            (win_return = win_current),
-            (mode = "new")
+            d,           // d
+            win_current, // win_return
+            "new"        // mode
         )
     }
 
     id2e(id_button_mod).onclick = async () => {
         const res = await edit_dionis_model(
-            tabulator.getSelectedData()[0],
-            (win_return = win_current),
-            (mode = "mod")
+            tabulator.getSelectedData()[0], // d
+            win_current,                    // win_return
+            "mod"                           // mode
         )
     }
 
     id2e(id_button_del).onclick = async () => {
         const ans = await dialogYESNO(
-            (text = "Удалить модель"),
-            (win_return = win_current)
+            "Удалить модель", // text
+            win_current       // win_return
         )
 
         if (ans == 'YES') {
@@ -258,15 +258,15 @@ function edit_dionis_model(d, win_return = null, mode = "") {
         console.log('win_return = ', win_return)
 
         newModalWindow(
-            win_current,    // model = win_current
+            win_current,     // model
             headerdionismodel,
             bodydionismodel,
             footdionismodel,
-            (width = "60%"),
-            (marginLeft = "15%"),
-            (marginTop = "5%"),
-            win_return,
-            esc_dionis_model
+            "60%",           // width
+            "15%",           // marginLeft
+            "5%",            // marginTop
+            win_return,      // win_return
+            esc_dionis_model // esc_callback
         )
 
         //--- View Model-------------------------------------------------------start
