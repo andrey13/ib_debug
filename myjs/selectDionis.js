@@ -158,6 +158,21 @@ function tabulator_select_dionis(
     const id_checkb_sht = 'sht' + salt
     const id_checkb_opr = 'opr' + salt
 
+    const id_checkb_ust = 'ust' + salt // установлен
+    const id_checkb_rez = 'rez' + salt // резерв
+    const id_checkb_nei = 'nei' + salt // неисправен
+    const id_checkb_spi = 'spi' + salt // на списании
+
+    const str_ust = 'Установлен'
+    const str_rez = 'Резерв'
+    const str_nei = 'Неисправен'
+    const str_spi = 'На списании'
+
+    let flag_ust = true
+    let flag_rez = true
+    let flag_nei = false
+    let flag_spi = false
+
     const msgFooter =
         `<span id="select-stats"></span>` +
         `<div style="width: 100%; text-align: left;">` +
@@ -168,6 +183,11 @@ function tabulator_select_dionis(
         `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
         `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' unchecked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
+
+        `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;резерв&nbsp;<input type='checkbox' id='${id_checkb_rez}' checked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;неисправен&nbsp;<input type='checkbox' id='${id_checkb_nei}' unchecked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;на списании&nbsp;<input type='checkbox' id='${id_checkb_spi}' unchecked style="vertical-align: middle;">` +
         `</div>`
 
     // `&nbsp;&nbsp;&nbsp;группировать по SN&nbsp;<input type='checkbox' id='${id_checkb_grp}' unchecked style="vertical-align: middle;">` +
@@ -235,17 +255,6 @@ function tabulator_select_dionis(
                 sono4 = sono4.toString().trim()
                 if (sono1 == sono3 && sono2 == sono4) {
                     row.getCell("id").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("type_name").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("model_name").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("sn").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("inv_n").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("ver").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("date_sert").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("status").getElement().style.backgroundColor = '#ccffcc'
-                    // // row.getCell("postavka").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("gk_name").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("date2").getElement().style.backgroundColor = '#ccffcc'
-                    // row.getCell("comm").getElement().style.backgroundColor = '#ccffcc'
                 }
             }
         },
@@ -360,6 +369,26 @@ function tabulator_select_dionis(
     //     }
     // }    
 
+    id2e(id_checkb_ust).onclick = () => {
+        flag_ust = id2e(id_checkb_ust).checked 
+        set_Filter()
+    }
+
+    id2e(id_checkb_rez).onclick = () => {
+        flag_rez = id2e(id_checkb_rez).checked 
+        set_Filter()
+    }
+
+    id2e(id_checkb_nei).onclick = () => {
+        flag_nei = id2e(id_checkb_nei).checked 
+        set_Filter()
+    }
+
+    id2e(id_checkb_spi).onclick = () => {
+        flag_spi = id2e(id_checkb_spi).checked 
+        set_Filter()
+    }
+
     id2e(id_checkb_opr).onclick = () => {
         if (id2e(id_checkb_opr).checked) {
             tabulator.showColumn('temp')
@@ -404,10 +433,27 @@ function tabulator_select_dionis(
     tabulator.hideColumn('t1name')
     tabulator.hideColumn('t2name')
 
-    tabulator.redraw()
+    set_Filter()
+
+    tabulator.redraw()   
 
     return tabulator
+
+    function set_Filter() {
+        const str_Filter = (
+            (flag_ust ? str_ust + ' ' : '') + 
+            (flag_rez ? str_rez + ' ' : '') +
+            (flag_nei ? str_nei + ' ' : '') +
+            (flag_spi ? str_spi : '')
+        ).trim()
+
+        console.log(`str_Filter = |${str_Filter}|`)
+        tabulator.setFilter('status', 'keywords', str_Filter)
+    }
+    
+
 }
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
