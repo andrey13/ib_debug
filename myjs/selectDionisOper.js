@@ -331,6 +331,7 @@ function edit_dionis_oper(
     return new Promise(async function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'edit' + salt
+        let d_save = Object.assign({}, d)
 
         if (mode == 'new' && id_dionis != 0) {
             const d_dionis = await id_2_data(id_dionis, 'dionis')
@@ -361,68 +362,69 @@ function edit_dionis_oper(
         const header = `<h4>id: ${d.id} операция Dionis</h4>`
 
         const body = `
-        <div style="margin: 0; padding: 1%;">
-            {{dv.id_dionis}} : {{dv.id_connect_point1}} ---> {{dv.id_connect_point2}}
-            <br>
-            <br>
-            <input class="o3-border" type="date" id="d_date" v-model="dv.date">
-            <label for="d_date">  Дата операции</label>
-            <br>
-            <br>
-            <div>
-                <n-switch :rail-style="style_temp"
-                    size="small"                          
-                    checked-value="1"
-                    unchecked-value="0"
-                    v-model:value="dv.temp"
-                />                                   
+        <div style="margin: 0; padding: 10px; height: 600px; background-color: #eeeeee; position: relative;">
+
+            <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:20%;">
+                <label for="d_date">Дата операции:</label><br>
+                <input class="o3-border" type="date" id="d_date" v-model="dv.date">
+                <br>
+                <br>
+                Вид операции:
+                <br>
+                <br>
+                <div>
+                    <n-radio-group style="display: flex; flex-direction: column;" v-model:value="dv.id_oper_type" name="radiogroup" size="medium">
+                        <n-radio
+                            v-for="otype in operTypes"
+                            :key="otype.id"
+                            :value="otype.id"
+                            :label="otype.name"
+                            @change="handleRadioGroup"
+                        />
+                        <span style="font-size: 12px;">{{ otype.name }}</span>
+                    </n-radio-group>
+                </div>
             </div>
-            {{ (dv.temp == "0") ? "на баланс" : "на временное хранение" }}
-            <br>
-            <br>
-            <div>
-                <n-radio-group v-model:value="dv.id_oper_type" name="radiogroup">
-                    <n-radio
-                        v-for="otype in operTypes"
-                        :key="otype.id"
-                        :value="otype.id"
-                        :label="otype.name"
-                    />
-                </n-radio-group>
+
+            <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:80%;">
+                <span>Dionis: <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> </span> 
+                <span v-show="shP1"> Откуда: <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> </span>
+                <span v-show="shP2"> Куда: <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button></span>
+                <br>
+                <br>
+                <div v-show="shUFNS">      
+                    исполнитель УФНС:<br>
+                    <button id=${sel_user_ufns} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{user_ufns}}</button>
+                </div>
+                <div v-show="shTNO">      
+                    сотрудник ТНО, пользователь СКЗИ:<br>
+                    <button id=${sel_user_tno} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{user_tno}}</button>
+                </div>
+                <br>
+                <div v-show="shFKU">      
+                    сотрудник ФКУ произведший установку СКЗИ:<br>
+                    <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{user_fku}}</button>
+                    <br>                    
+                    дата обращения на СТП:<br>
+                    <input class="o3-border" type="date" v-model="dv.config_stp_date"><br>
+                    номер обращения на СТП:<br>
+                    <input class="o3-border o3-button-300" type="text" v-model="dv.config_stp_numb">
+                </div>
+                <br>
+                <br>           
+                Описание:<br>
+                <textarea rows="3" style="width:100%" v-model="dv.dscr"></textarea>
+                <br>           
+                Комментарии:<br>
+                <textarea rows="3" style="width:100%" v-model="dv.comm"></textarea>
+                <br>
+                <br>
+                <button id=${id_button_enter}  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
+                <button id=${id_button_cancel} class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
+                <button id=${id_button_prev}   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущая операция</button>
+                <button id=${id_button_next}   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующая операция</button>
             </div>
-            <br>
-            <br>
-            <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> :
-            <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> --->
-            <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button>
-            <br>
-            <br>
-            <div v-show="shUFNS">      
-                исполнитель УФНС:<br>
-                <button id=${sel_user_ufns} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_ufns}}</button>
-            </div>
-            <div v-show="shTNO">      
-                сотрудник ТНО, пользователь СКЗИ:<br>
-                <button id=${sel_user_tno} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_tno}}</button>
-            </div>
-            <br>
-            <div v-show="shFKU">      
-                сотрудник ФКУ произведший установку СКЗИ:<br>
-                <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{user_fku}}</button>
-            </div>
-            <br>
-            <br>           
-            Описание:<br>
-            <textarea rows="3" style="width:100%" v-model="dv.dscr"></textarea>
-            <br>           
-            Комментарии:<br>
-            <textarea rows="3" style="width:100%" v-model="dv.comm"></textarea>
-            <br>
-            <br>
-            <button id=${id_button_enter}  class="w3-btn w3-padding-small o3-border w3-hover-teal">сохранить</button>
-            <button id=${id_button_cancel} class="w3-btn w3-padding-small o3-border w3-hover-red">отменить</button>
-            <button id=${id_button_prev}   class="w3-btn w3-padding-small o3-border w3-hover-teal">предыдущая операция</button>
-            <button id=${id_button_next}   class="w3-btn w3-padding-small o3-border w3-hover-teal">следующая операция</button>
+
         </div>`
 
 
@@ -436,8 +438,8 @@ function edit_dionis_oper(
                 vapp.unmount()
             }
             : () => {
-                // console.log("esc_callback")
                 vapp.unmount()
+                table_dionis_opers.updateData([d_save])
             }
 
         newModalWindow(
@@ -467,10 +469,15 @@ function edit_dionis_oper(
                         style.background = (checked) ? "red" : "green"
                         style.boxShadow = (focused) ? "0 0 0 0px #d0305040" : "0 0 0 0px #2080f040"
                         return style
-                    }
+                    },
 
                 }
             },
+            methods: {
+                handleRadioGroup() {
+                    this.dv.oper_type = oper_types.find(item => item.id == this.dv.id_oper_type).name
+                }
+        },
             computed: {
                 comp_sn() {
                     return !!!this.dv.sn
@@ -508,12 +515,17 @@ function edit_dionis_oper(
                     return this.dv.id_oper_type == 36
                 },
                 shTNO() {
-                    return this.dv.id_oper_type == 37 || this.dv.id_oper_type == 39
+                    return ['37', '38', '39', '41', '45', '46', '47', '48'].includes(this.dv.id_oper_type)
                 },
                 shFKU() {
-                    return this.dv.id_oper_type == 39
+                    return ['39', '42', '43', '44', '45', '40', '46'].includes(this.dv.id_oper_type)
                 },
-
+                shP1() {
+                    return ['36', '37', '38', '39', '41'].includes(this.dv.id_oper_type)
+                },
+                shP2() {
+                    return ['36', '37', '38', '39', '41'].includes(this.dv.id_oper_type)
+                }
             },
 
         })
@@ -589,32 +601,33 @@ function edit_dionis_oper(
             id_2_set_focus(win_current)
         }
 
-        // кнопка применения изменений --------------------------------------------------
-        id2e(id_button_enter).onclick = () => {
-            const d = vm.$data.dv
-            vapp.unmount()
-            save_dionis_oper(d)
-            // console.log(`win_current, win_return = ${win_current}, ${win_return}`)
-            removeModalWindow(win_current, win_return)
-            table_dionis_opers.updateRow(d.id, d)
-            table_dionis_opers.redraw()
-            resolve("OK")
-        }
-
         // кнопка отмены изменений --------------------------------------------------
         id2e(id_button_cancel).onclick = () => {
             vapp.unmount()
             if (mode == "new") remove_selected_dionis_oper()
-            // console.log(`win_current, win_return = ${win_current}, ${win_return}`)
             removeModalWindow(win_current, win_return)
+            console.log('d_save = ', d_save)
+            table_dionis_opers.updateData([d_save])
             resolve("CANCEL")
+        }
+
+        // кнопка применения изменений --------------------------------------------------
+        id2e(id_button_enter).onclick = () => {
+            const d = vm.$data.dv
+            d.temp = d.id_oper_type == 38 ? 1 : 0
+            vapp.unmount()
+            save_dionis_oper(d)
+            removeModalWindow(win_current, win_return)
+            table_dionis_opers.updateData([d])
+            resolve("OK")
         }
 
         // кнопка перехода на предыдущую операцию -----------------------------------------
         id2e(id_button_prev).onclick = () => {
             const d = vm.$data.dv
+            d.temp = d.id_oper_type == 38 ? 1 : 0
             save_dionis_oper(d)
-            table_dionis_opers.updateRow(d.id, d)
+            table_dionis_opers.updateData([d])
             table_dionis_opers.redraw()
             const selected_row = table_dionis_opers.getSelectedRows()[0]
             const id_curr = selected_row.id
@@ -623,6 +636,7 @@ function edit_dionis_oper(
             table_dionis_opers.selectRow(id_prev)
             table_dionis_opers.scrollToRow(id_prev, "center", false)
             const d_prev = table_dionis_opers.getSelectedData()[0]
+            d_save = Object.assign({}, d_prev)
             vm.$data.dv = d_prev
             vm.$data.chg = false
         }
@@ -630,16 +644,20 @@ function edit_dionis_oper(
         // кнопка перехода на следующую операцию -----------------------------------------
         id2e(id_button_next).onclick = () => {
             const d = vm.$data.dv
+            d.temp = d.id_oper_type == 38 ? 1 : 0
             save_dionis_oper(d)
-            table_dionis_opers.updateRow(d.id, d)
+            table_dionis_opers.updateData([d])
             table_dionis_opers.redraw()
+
             const selected_row = table_dionis_opers.getSelectedRows()[0]
             const id_curr = selected_row.id
             const id_next = selected_row.getNextRow().getData().id
             table_dionis_opers.deselectRow(id_curr)
             table_dionis_opers.selectRow(id_next)
             table_dionis_opers.scrollToRow(id_next, "center", false)
+
             const d_next = table_dionis_opers.getSelectedData()[0]
+            d_save = Object.assign({}, d_next)
             vm.$data.dv = d_next
             vm.$data.chg = false
         }
@@ -737,7 +755,7 @@ async function new_dionis_oper() {
 
 //=============================================================================
 async function save_dionis_oper(d) {
-    // console.log('d = ', d)
+    
     const sql =
         d.id == 0
             ? `INSERT INTO dionis_oper ( 
@@ -752,7 +770,13 @@ async function save_dionis_oper(d) {
                 date,
                 dscr,
                 comm,
-                temp
+                temp,
+                key_serial,
+                key_numb,
+                os_version,
+                config_request,
+                config_stp_date,
+                config_stp_numb
             ) VALUES (
                 ${d.id},
                 ${d.id_dionis},
@@ -765,7 +789,13 @@ async function save_dionis_oper(d) {
                '${d.date}',
                '${d.dscr}',
                '${d.comm}',
-                ${d.temp}
+               '${d.temp}',
+               '${d.key_serial}',
+               '${d.key_numb}',
+               '${d.os_version}',
+               '${d.config_request}',
+               '${d.config_stp_date}',
+               '${d.config_stp_numb}'
             )`
             : `UPDATE dionis_oper SET 
                 id=${d.id},
@@ -779,7 +809,13 @@ async function save_dionis_oper(d) {
                 date='${d.date}',
                 dscr='${d.dscr}',
                 comm='${d.comm}',
-                temp=${d.temp}
+                temp=${d.temp},
+                key_serial='${d.key_serial}',
+                key_numb='${d.key_numb}',
+                os_version='${d.os_version}',
+                config_request='${d.config_request}',
+                config_stp_date='${d.config_stp_date}',
+                config_stp_numb='${d.config_stp_numb}'
             WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -804,7 +840,13 @@ function factory_dionis_oper(id_dionis = 0) {
         date: '',
         dscr: '',
         comm: '',
-        temp: 0
+        temp: 0,
+        key_serial: '',
+        key_numb: '',
+        os_version: '',
+        config_request: '',
+        config_stp_date: '',
+        config_stp_numb: ''
     }
 }
 
