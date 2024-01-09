@@ -132,6 +132,7 @@ function tabulator_dionis_opers(
                     { title: 'модель', field: 'model', width: 150, headerFilter: true },
                     { title: 'тип', field: 'type', width: 100, headerFilter: true },
                     { title: 'версия', field: 'ver', width: 100, headerFilter: true },
+                    { title: 'поставка', field: 'gk_name', width: 90, headerFilter: true },
                 ]
             },
             { title: 'операция', field: 'oper_type', width: 100, headerFilter: true },        
@@ -387,9 +388,9 @@ function edit_dionis_oper(
             </div>
 
             <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:80%;">
-                <span>Dionis: <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> </span> 
-                <span v-show="shP1"> Откуда: <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> </span>
-                <span v-show="shP2"> Куда: <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button></span>
+                <span>Dionis: <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> </span><br>
+                <span v-show="shP1"> Откуда: <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> <input class="o3-border o3-button-300" type="text" v-model="dv.point1_str"></span><br>
+                <span v-show="shP2"> Куда:&nbsp;&nbsp; <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button> <input class="o3-border o3-button-300" type="text" v-model="dv.point2_str"></span>
                 <br>
                 <br>
                 <div v-show="shUFNS">      
@@ -487,13 +488,11 @@ function edit_dionis_oper(
                 comp_ip1() {
                     return !!!this.dv.ip1
                         ? "<выбрать источник>"
-                        // : this.dv.ifns_sono1 + '/' + this.dv.torm_sono1 + '/' + this.dv.ip1
                         : format_point(this.dv.ifns_sono1, this.dv.torm_sono1, this.dv.ip1, this.dv.stock1)
                 },
                 comp_ip2() {
                     return !!!this.dv.ip2
                         ? "<выбрать приемник>"
-                        // : this.dv.ifns_sono2 + '/' + this.dv.torm_sono2 + '/' + this.dv.ip2
                         : format_point(this.dv.ifns_sono2, this.dv.torm_sono2, this.dv.ip2, this.dv.stock2)
                 },
                 user_ufns() {
@@ -613,6 +612,7 @@ function edit_dionis_oper(
 
         // кнопка применения изменений --------------------------------------------------
         id2e(id_button_enter).onclick = () => {
+            console.log('SAVE')
             const d = vm.$data.dv
             d.temp = d.id_oper_type == 38 ? 1 : 0
             vapp.unmount()
@@ -690,49 +690,49 @@ function edit_dionis_oper(
 
         // кнопка выбора источника -----------------------------------------------
         id2e(sel_point1).onclick = async () => {
-            // console.log('sel_point1')
             const id_depart = isRole("tex") ? g_user.id_depart : 0
 
             const selected_point = await select_point(
-                1, // selectable
-                'select', // mode
-                win_current, // win_return
+                1,                            // selectable
+                'select',                     // mode
+                win_current,                  // win_return
                 vm.$data.dv.id_connect_point1 // id_point
             )
 
-            // console.log('selected_point = ', selected_point)
+            const ifns = await sono_2_data(selected_point.ifns_sono)
 
             vm.$data.dv.id_connect_point1 = selected_point.id
-            vm.$data.dv.ip1 = selected_point.ip
-            vm.$data.dv.ifns_sono1 = selected_point.ifns_sono
-            vm.$data.dv.torm_sono1 = selected_point.torm_sono
-            vm.$data.dv.stock1 = selected_point.stock
+            vm.$data.dv.ip1               = selected_point.ip
+            vm.$data.dv.ifns_sono1        = selected_point.ifns_sono
+            vm.$data.dv.torm_sono1        = selected_point.torm_sono
+            vm.$data.dv.stock1            = selected_point.stock
+            vm.$data.dv.point1_str        = ifns.name
 
-            id2e(sel_point1).innerHTML = vm.$data.dv.ip1
+            // id2e(sel_point1).innerHTML = vm.$data.dv.ip1
             id_2_set_focus(win_current)
         }
 
         // кнопка выбора приемника -----------------------------------------------
         id2e(sel_point2).onclick = async () => {
-            // console.log('sel_point2')
             const id_depart = isRole("tex") ? g_user.id_depart : 0
 
             const selected_point = await select_point(
-                1, // selectable
-                'select', // mode
-                win_current, // win_return
+                1,                            // selectable
+                'select',                     // mode
+                win_current,                  // win_return
                 vm.$data.dv.id_connect_point2 // id_point
             )
 
-            // console.log('selected_point = ', selected_point)
+            const ifns = await sono_2_data(selected_point.ifns_sono)
 
             vm.$data.dv.id_connect_point2 = selected_point.id
-            vm.$data.dv.ip2 = selected_point.ip
-            vm.$data.dv.ifns_sono2 = selected_point.ifns_sono
-            vm.$data.dv.torm_sono2 = selected_point.torm_sono
-            vm.$data.dv.stock2 = selected_point.stock
+            vm.$data.dv.ip2               = selected_point.ip
+            vm.$data.dv.ifns_sono2        = selected_point.ifns_sono
+            vm.$data.dv.torm_sono2        = selected_point.torm_sono
+            vm.$data.dv.stock2            = selected_point.stock
+            vm.$data.dv.point2_str        = ifns.name
 
-            id2e(sel_point2).innerHTML = vm.$data.dv.ip2
+            // id2e(sel_point2).innerHTML = vm.$data.dv.ip2
             id_2_set_focus(win_current)
         }
     })
@@ -776,7 +776,10 @@ async function save_dionis_oper(d) {
                 os_version,
                 config_request,
                 config_stp_date,
-                config_stp_numb
+                config_stp_numb,
+                point1_str,
+                point2_str
+
             ) VALUES (
                 ${d.id},
                 ${d.id_dionis},
@@ -795,8 +798,10 @@ async function save_dionis_oper(d) {
                '${d.os_version}',
                '${d.config_request}',
                '${d.config_stp_date}',
-               '${d.config_stp_numb}'
-            )`
+               '${d.config_stp_numb}',
+               '${d.point1_str}',
+               '${d.point2_str}'
+           )`
             : `UPDATE dionis_oper SET 
                 id=${d.id},
                 id_dionis=${d.id_dionis},
@@ -815,7 +820,9 @@ async function save_dionis_oper(d) {
                 os_version='${d.os_version}',
                 config_request='${d.config_request}',
                 config_stp_date='${d.config_stp_date}',
-                config_stp_numb='${d.config_stp_numb}'
+                config_stp_numb='${d.config_stp_numb}',
+                point1_str='${d.point1_str}',
+                point2_str='${d.point2_str}'
             WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -846,7 +853,9 @@ function factory_dionis_oper(id_dionis = 0) {
         os_version: '',
         config_request: '',
         config_stp_date: '',
-        config_stp_numb: ''
+        config_stp_numb: '',
+        point1_str: '',
+        point2_str: ''
     }
 }
 
@@ -857,7 +866,7 @@ function format_point(
     point = '',
     stock = 0
 ) {
-    // console.log(`sono1, sono2, point, stock = ${sono1}, ${sono2}, ${point}, ${stock}`)
+    console.log(`sono1, sono2, point, stock = ${sono1}, ${sono2}, ${point}, ${stock}`)
 
     // -------------- ДНР ----------------------------------
     if (stock == 2) return point
@@ -1107,7 +1116,7 @@ async function print_report1(id_dionis_oper) {
 
 
 
-        // console.log('data = ', data)
+        console.log('data = ', data)
 
 
         let table_content = []
@@ -1122,7 +1131,8 @@ async function print_report1(id_dionis_oper) {
                 { text: '1', style: 'tableHV' },
                 { text: data.vendor, style: 'tableCell' },
                 { text: date2date(data.date_fns) + '\n' + data.numb_fns, style: 'tableCell' },
-                { text: data.ifns2, style: 'tableCell' }, 
+                // { text: data.ifns2, style: 'tableCell' }, 
+                { text: data.point2_str, style: 'tableCell' }, 
                 { text: date2date(data.date_ufns) + '\n' + data.numb_ufns, style: 'tableCell' }, 
                 { text: date2date(data.date) + '\n' + fio2fio0(data.user_tno), style: 'tableCell' }, 
                 '', 

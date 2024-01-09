@@ -12,8 +12,8 @@ $id_type_oper = $_GET['t'];
     
 if ($id_otdel == '0' and $id_type_oper == '0') $sfx = "";
 if ($id_otdel != '0' and $id_type_oper == '0') $sfx = "WHERE m.id_otdel=$id_otdel";
-if ($id_otdel == '0' and $id_type_oper != '0') $sfx = "WHERE m.id_type_oper=$id_type_oper";
-if ($id_otdel != '0' and $id_type_oper != '0') $sfx = "WHERE m.id_type_otdel=$id_otdel AND id_oper=$id_type_oper";
+if ($id_otdel == '0' and $id_type_oper != '0') $sfx = "WHERE m.id_type_oper=$id_type_oper OR m.id_type_oper IS NULL";
+if ($id_otdel != '0' and $id_type_oper != '0') $sfx = "WHERE m.id_type_otdel=$id_otdel AND (id_oper=$id_type_oper OR m.id_type_oper IS NULL)";
 
 $sql = "SELECT 
         m.id,

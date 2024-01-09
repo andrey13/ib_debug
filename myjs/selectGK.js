@@ -217,7 +217,6 @@ function tabulator_select_gk(
     return tabulator
 }
 
-
 /////////////////////////////////////////////////////////////////////////////////////////
 function edit_gk(d, win_return = null, mode = "") {
     return new Promise(async function (resolve, reject) {
@@ -306,7 +305,7 @@ function edit_gk(d, win_return = null, mode = "") {
             footgk,
             "60%",      // width
             "15%",      // marginLeft
-            "5%",       // marginTop
+            "1%",       // marginTop
             win_return, // win_return
             esc_gk      // esc_callback
         )

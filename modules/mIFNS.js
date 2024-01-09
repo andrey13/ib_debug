@@ -33,6 +33,7 @@ function createTabulatorIFNS(id_div, appH) {
         selectableRangeMode: "click",
         columns: [
             { title: "id", field: "id", widthGrow: 1, print: false },
+            { title: "A", field: "actual",  headerFilter: true, widthGrow: 1, print: false },
             { title: "СОНО", field: "sono", headerFilter: true, widthGrow: 2, topCalc: "count" },
             { title: "ЕКП",  field: "ekp",  headerFilter: true, widthGrow: 2 },
             { title: "наименование", field: "name", headerFilter: true, widthGrow: 8 },
@@ -268,19 +269,26 @@ function editIFNS(c) {
 
     let form = `<div id="div_Edit" class="w3-container">
                     <form>
-                        <b>ID:</b> ${r.id} 
+                        <label for="sono">СОНО:</label><br>
+                        <input id="sono" style="width:100%" value="${r.sono}" disabled><br><br>
 
-                        <label for="sono"><b>СОНО</b></label><br>
-                        <input id="sono" style="width:100%" value="${r.sono}" disabled><br>
+                        <label for="ekp">ЕКП:</label><br>
+                        <input id="ekp" style="width:100%" value="${r.ekp}" disabled><br><br>
 
-                        <label for="ekp"><b>ЕКП</b></label><br>
-                        <input id="ekp" style="width:100%" value="${r.ekp}" disabled><br>
+                        <label for="name">Нименование ИФНС:</label><br>
+                        <input id="name" style="width:100%" value="${r.name}" disabled><br><br>
 
-                        <label for="name"><b>Нименование ИФНС</b></label><br>
-                        <input id="name" style="width:100%" value="${r.name}" disabled><br>
+                        <label for="schtat">Штатная численность:</label><br>
+                        <input id="schtat" type="number" value="${r.schtat}" disabled><br><br>
 
-                        <label for="schtat"><b>Штатная численность</b></label><br>
-                        <input id="schtat" type="number" style="width:100%" value="${r.schtat}" disabled><br>
+                        дата начала действия:<br>
+                        <input class="o3-border" type="date" id="date_start" value="${r.date_start}" disabled><br><br>
+            
+                        дата конца действия:<br>
+                        <input class="o3-border" type="date" id="date_stop" value="${r.date_stop}" disabled><br><br>
+
+                        <label for="actual">Активно:</label><br>
+                        <input id="actual" type="number" value="${r.actual}" disabled><br><br>
 
                     </form>
                     <br>
@@ -291,13 +299,16 @@ function editIFNS(c) {
 
     $("#mainModalBody").html(form);
 
-    let ENTER = document.getElementById("ENTER");
-    let CANCEL = document.getElementById("CANCEL");
+    // let ENTER = document.getElementById("ENTER");
+    // let CANCEL = document.getElementById("CANCEL");
 
     if ((allow.E != "0") && (g_user.sono == r.sono)) {
-        $("#ENTER").prop( 'disabled', false);
-        $("#name").prop(  'disabled', false);
-        $("#schtat").prop('disabled', false);
+        $("#ENTER").prop('disabled', false)
+        $("#name").prop('disabled', false)
+        $("#schtat").prop('disabled', false)
+        $("#date_start").prop('disabled', false)
+        $("#date_stop").prop('disabled', false)
+        $("#actual").prop('disabled', false)
     }
     if ((allow.E != "0") && (g_user.sono == "6100")) {
         $("#ENTER").prop( 'disabled', false);
@@ -305,24 +316,49 @@ function editIFNS(c) {
         $("#ekp").prop(  'disabled', false);
         $("#name").prop(  'disabled', false);
         $("#schtat").prop('disabled', false);
+        $("#date_start").prop('disabled', false)
+        $("#date_stop").prop('disabled', false)
+        $("#actual").prop('disabled', false)
     }
 
-    ENTER.onclick = function () {
-        let id = r.id;
-        let sono = $("#sono").val();
-        let ekp = $("#ekp").val();
-        let name = $("#name").val();
-        let schtat = $("#schtat").val();
+    id2e("ENTER").onclick = function () {
+        let id = r.id
+        let sono = $("#sono").val()
+        let ekp = $("#ekp").val()
+        let name = $("#name").val()
+        let schtat = $("#schtat").val()
+        let date_start = $("#date_start").val()
+        let date_stop = $("#date_stop").val()
+        let actual = $("#actual").val()
 
-        c.getRow().update({ "sono": sono, "ekp": ekp, "name": name, "schtat": schtat });
+        c.getRow().update({ 
+            "sono": sono, 
+            "ekp": ekp, 
+            "name": name, 
+            "schtat": schtat ,
+            "date_start": date_start,
+            "date_stop": date_stop,
+            "actual": actual 
+        })
         c.getRow().reformat();
 
-        runSQL_p(`UPDATE ifns SET sono='${sono}', ekp='${ekp}', name='${name}', schtat='${schtat}' WHERE id=${id}`);
+        runSQL_p(
+            `UPDATE ifns SET 
+            sono='${sono}', 
+            ekp='${ekp}', 
+            name='${name}', 
+            schtat='${schtat}', 
+            date_start='${date_start}', 
+            date_stop='${date_stop}',
+            actual=${actual} 
+            WHERE id=${id}`
+        )
+
         deactivateModalWindow("mainModal");
         log_reg('изменение параметров ИФНС: ' + name + ', штат=' + schtat); 
     }
 
-    CANCEL.onclick = function () {
+    id2e("CANCEL").onclick = function () {
         deactivateModalWindow("mainModal");
     }
 

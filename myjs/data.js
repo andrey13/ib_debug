@@ -1,3 +1,17 @@
+async function sono_2_data(sono) {
+    let sql = `SELECT * FROM ifns WHERE sono='${sono}'`
+    let res = await runSQL_p(sql)
+    let data = await JSON.parse(res)[0]
+    return data
+}
+
+async function sono_torm_2_data(sono_torm) {
+    let sql = `SELECT * FROM torm WHERE sono_torm=${sono_torm}`
+    let res = await runSQL_p(sql)
+    let data = await JSON.parse(res)[0]
+    return data
+}
+
 async function id_oper_2_date(id_dionis_oper) {
     let sql =
     `SELECT 
@@ -14,6 +28,8 @@ async function id_oper_2_date(id_dionis_oper) {
     u2.name as user_fku,
     do.id_connect_point1,
     do.id_connect_point2,
+    do.point1_str,
+    do.point2_str,
     cp1.id_torm,
     cp2.id_torm,
     t1.name as tno1, 
