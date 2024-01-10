@@ -57,7 +57,7 @@ function tabulator_select_gk(
     id_gk = 0,
 ) {
     const cols = [
-        { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
+        { title: "id", field: "id", width: 50, headerFilter: true, topCalc: "count" },
         { title: "кратко", field: "name", widthGrow: 1, headerFilter: true },
         {
             title: "дата",
@@ -71,8 +71,42 @@ function tabulator_select_gk(
             },
         },
         { title: "№", field: "numb_gk", widthGrow: 2, headerFilter: true },
-        { title: "название", field: "name_gk", widthGrow: 2, headerFilter: true },
-        { title: "поставщик", field: "vendor_name", widthGrow: 2, headerFilter: true },
+        // { title: "название", field: "name_gk", widthGrow: 2, headerFilter: true },
+        { title: "поставщик", field: "vendor_name", widthGrow: 1, headerFilter: true },
+        {   title: 'письмо ФНС',
+            columns: [
+                {   title: "дата", field: "date_fns", width: 80, headerFilter: true, formatter: "datetime",
+                    formatterParams: {
+                        inputFormat: "YYYY-MM-DD",
+                        outputFormat: "DD.MM.YYYY",
+                    },
+                },
+                { title: '№', field: 'numb_fns', width: 100, headerFilter: true },
+            ]
+        },
+        {   title: 'письмо Поставщика',
+            columns: [
+                {   title: "дата", field: "date_vendor", width: 80, headerFilter: true, formatter: "datetime",
+                    formatterParams: {
+                        inputFormat: "YYYY-MM-DD",
+                        outputFormat: "DD.MM.YYYY",
+                    },
+                },
+                { title: '№', field: 'numb_vendor', width: 100, headerFilter: true },
+            ]
+        },
+        {   title: 'письмо УФНС',
+            columns: [
+                {   title: "дата", field: "date_ufns", width: 80, headerFilter: true, formatter: "datetime",
+                    formatterParams: {
+                        inputFormat: "YYYY-MM-DD",
+                        outputFormat: "DD.MM.YYYY",
+                    },
+                },
+                { title: '№', field: 'numb_ufns', width: 100, headerFilter: true },
+            ]
+        },
+
         {
             title: "прибытие",
             field: "date_in",

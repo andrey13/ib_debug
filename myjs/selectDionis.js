@@ -90,7 +90,7 @@ function tabulator_select_dionis(
         // { title: "id_p2", field: "id_connect_point2", width: 70, headerFilter: true },
         { title: "temp", field: "temp", width: 70, headerFilter: true },
         {//группа владелец
-            title: "владелец (операции)",
+            title: "владелец",
             columns: [
                 {
                     title: "СОНО", field: "ifns_sono1", widthGrow: 1, headerFilter: true,
@@ -113,7 +113,7 @@ function tabulator_select_dionis(
             ],
         },
         {//группа нахождение
-            title: "нахождение (операции)",
+            title: "нахождение",
             columns: [
                 { title: "СОНО", field: "ifns_sono2", widthGrow: 1, headerFilter: true },
                 { title: "ТНО", field: "t2name", widthGrow: 3, headerFilter: true },
@@ -156,6 +156,7 @@ function tabulator_select_dionis(
     const id_button_his = 'his' + salt
     const id_checkb_sht = 'sht' + salt
     const id_checkb_opr = 'opr' + salt
+    const id_checkb_xls = 'xls' + salt
 
     const id_checkb_ust = 'ust' + salt // установлен
     const id_checkb_rez = 'rez' + salt // резерв
@@ -180,7 +181,8 @@ function tabulator_select_dionis(
         `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
         `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
         `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-        `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' unchecked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' checked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;резерв&nbsp;<input type='checkbox' id='${id_checkb_rez}' checked style="vertical-align: middle;">` +
@@ -353,6 +355,22 @@ function tabulator_select_dionis(
         set_Filter()
     }
 
+    id2e(id_checkb_xls).onclick = () => {
+        if (id2e(id_checkb_xls).checked) {
+            tabulator.showColumn('sono1')
+            tabulator.showColumn('sono2')
+            tabulator.showColumn('ifns1')
+            tabulator.showColumn('ifns2')
+            tabulator.redraw()
+        } else {
+            tabulator.hideColumn('sono1')
+            tabulator.hideColumn('sono2')
+            tabulator.hideColumn('ifns1')
+            tabulator.hideColumn('ifns2')
+            tabulator.redraw()
+        }
+    }
+
     id2e(id_checkb_opr).onclick = () => {
         if (id2e(id_checkb_opr).checked) {
             tabulator.showColumn('temp')
@@ -391,11 +409,16 @@ function tabulator_select_dionis(
         }
     }
 
-    tabulator.hideColumn('temp')
-    tabulator.hideColumn('ifns_sono1')
-    tabulator.hideColumn('ifns_sono2')
-    tabulator.hideColumn('t1name')
-    tabulator.hideColumn('t2name')
+    tabulator.hideColumn('sono1')
+    tabulator.hideColumn('sono2')
+    tabulator.hideColumn('ifns1')
+    tabulator.hideColumn('ifns2')
+
+    tabulator.showColumn('temp')
+    tabulator.showColumn('ifns_sono1')
+    tabulator.showColumn('ifns_sono2')
+    tabulator.showColumn('t1name')
+    tabulator.showColumn('t2name')
 
     set_Filter()
 

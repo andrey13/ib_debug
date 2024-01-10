@@ -41,7 +41,7 @@ if ($id_dionis == 0) {
     LEFT JOIN user AS u2 ON u2.id=o.id_user_tno
     LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
-    ORDER BY o.date DESC, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date , ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 } else {
     $sql = "SELECT 
         o.*,
@@ -63,7 +63,8 @@ if ($id_dionis == 0) {
         t.name AS oper_type,
         u1.name AS user_ufns,
         u2.name AS user_tno,
-        u3.name AS user_fku
+        u3.name AS user_fku,
+        g.name AS gk_name
     FROM dionis_oper AS o
     LEFT JOIN dionis AS d ON d.id=o.id_dionis
     LEFT JOIN connect_point AS p1 ON p1.id=o.id_connect_point1
@@ -76,8 +77,9 @@ if ($id_dionis == 0) {
     LEFT JOIN user AS u1 ON u1.id=o.id_user_ufns
     LEFT JOIN user AS u2 ON u2.id=o.id_user_tno
     LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
+    LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
     WHERE o.id_dionis=$id_dionis
-    ORDER BY o.date DESC, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date , ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 }
 
 // echo $sql;        
