@@ -96,8 +96,6 @@ function tabulator_select_dionis(
                     title: "СОНО", field: "ifns_sono1", widthGrow: 1, headerFilter: true,
                     formatter: function (cell, formatterParams) {
                         var d = cell.getRow().getData()
-                        // if (d.temp == 1) return d.ifns_sono1
-                        // return d.ifns_sono2
                         return (d.temp == 1) ? d.ifns_sono1 : d.ifns_sono2
                     }
                 },
@@ -105,8 +103,6 @@ function tabulator_select_dionis(
                     title: "ТНО", field: "t1name", widthGrow: 3, headerFilter: true,
                     formatter: function (cell, formatterParams) {
                         var d = cell.getRow().getData()
-                        // if (d.temp == 1) return d.t1name
-                        // return d.t2name
                         return (d.temp == 1) ? d.t1name : d.t2name
                     }
                 },
@@ -122,12 +118,12 @@ function tabulator_select_dionis(
         // { title: "предыд.нахождение", field: "ifns3", widthGrow: 2, headerFilter: true },
         { title: "SN", field: "sn", widthGrow: 2, headerFilter: true },
         // { title: "тип", field: "type", widthGrow: 2, headerFilter: true },
-        { title: "тип", field: "type_name", widthGrow: 2, headerFilter: true },
+        { title: "тип", field: "type_name", width: 80, headerFilter: true },
         // { title: "Модель", field: "model", widthGrow: 2, headerFilter: true },
         { title: "Модель", field: "model_name", widthGrow: 2, headerFilter: true },
         { title: "Инв №", field: "inv_n", widthGrow: 2, headerFilter: true },
         { title: "Версия", field: "ver", widthGrow: 2, headerFilter: true },
-        { title: "Сертификат", field: "date_sert", widthGrow: 2, headerFilter: true },
+        // { title: "Сертификат", field: "date_sert", widthGrow: 2, headerFilter: true },
         { title: "Статус", field: "status", widthGrow: 2, headerFilter: true },
         // { title: "Поставка", field: "postavka", width: 80, headerFilter: true },
         { title: "Поставка", field: "gk_name", width: 80, headerFilter: true },
@@ -270,10 +266,21 @@ function tabulator_select_dionis(
                 removeModalWindow(win_current, win_return)
                 resolve([cell.getRow().getData()])
             } else {
-                const res = await edit_dionis(
-                    tabulator.getSelectedData()[0], // d
-                    win_current                     // win_return
+                select_dionis_oper(
+                    '6100',      // sono
+                    0,           // id_otdel
+                    0,           // sklad
+                    1,           // selectable
+                    'select',    // mode
+                    null,        // win_return
+                    0,           // id_oper
+                    tabulator.getSelectedData()[0].id // id_dionis
                 )
+        
+                // const res = await edit_dionis(
+                //     tabulator.getSelectedData()[0], // d
+                //     win_current                     // win_return
+                // )
             }
         },
 
@@ -394,7 +401,7 @@ function tabulator_select_dionis(
             tabulator.hideColumn('type')
             tabulator.hideColumn('model')
             tabulator.hideColumn('ver')
-            tabulator.hideColumn('date_sert')
+            // tabulator.hideColumn('date_sert')
             tabulator.hideColumn('date2')
             tabulator.hideColumn('comm')
             tabulator.redraw()
@@ -402,7 +409,7 @@ function tabulator_select_dionis(
             tabulator.showColumn('type')
             tabulator.showColumn('model')
             tabulator.showColumn('ver')
-            tabulator.showColumn('date_sert')
+            // tabulator.showColumn('date_sert')
             tabulator.showColumn('date2')
             tabulator.showColumn('comm')
             tabulator.redraw()

@@ -403,7 +403,7 @@ function edit_dionis_oper(
                 </div>
                 <br>
                 <div v-show="shFKU">      
-                    сотрудник ФКУ произведший установку СКЗИ:<br>
+                    сотрудник органа КЗ произведший установку СКЗИ:<br>
                     <button id=${sel_user_fku} class="w3-btn w3-padding-small o3-button-300 w3-hover-teal">{{user_fku}}</button>
                     <br>                    
                     дата обращения на СТП:<br>
