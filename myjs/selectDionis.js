@@ -88,7 +88,8 @@ function tabulator_select_dionis(
         // { title: "id_oper", field: "id_oper", width: 70, headerFilter: true },
         // { title: "id_p1", field: "id_connect_point1", width: 70, headerFilter: true },
         // { title: "id_p2", field: "id_connect_point2", width: 70, headerFilter: true },
-        { title: "temp", field: "temp", width: 70, headerFilter: true },
+        { title: "временно", field: "temp", width: 70, headerFilter: true },
+        { title: "операций", field: "n_opers", width: 70, headerFilter: true },
         {//группа владелец
             title: "владелец",
             columns: [

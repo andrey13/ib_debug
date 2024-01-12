@@ -110,7 +110,16 @@ function tabulator_dionis_opers(
         footerElement: msgFooter,
 
         columns: [
-            { title: 'id', field: 'id', width: 60, headerFilter: true, topCalc: "count" },
+            // { title: 'id', field: 'id', width: 60, headerFilter: true },
+            { title: '№', field: 'nn', width: 40, headerFilter: true, topCalc: "count",
+              editor: "number",
+                editorParams: {
+                    mask: "9999",
+                    min: 0,
+                    max: 999,
+                    verticalNavigation: "table",
+                }
+            },
             {
                 title: "дата",
                 field: "date",
@@ -178,6 +187,12 @@ function tabulator_dionis_opers(
             { title: 'описание', field: 'dscr', widthGrow: 2, headerFilter: true },
             { title: 'комментарий', field: 'comm', widthGrow: 2, headerFilter: true },
         ],
+
+        cellEdited: function (cell) {
+            let d = cell.getRow().getData()
+            runSQL_p(`UPDATE dionis_oper SET nn=${d.nn} WHERE id=${d.id}`)
+            id_2_set_focus(win_current)
+        },
 
         dataLoaded: function () {
             if (id_oper == 0) return
@@ -366,6 +381,8 @@ function edit_dionis_oper(
         <div style="margin: 0; padding: 10px; height: 600px; background-color: #eeeeee; position: relative;">
 
             <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:20%;">
+                номер операции<br>
+                <input class="o3-border" type="text" v-model="dv.nn"><br><br>
                 <label for="d_date">Дата операции:</label><br>
                 <input class="o3-border" type="date" id="d_date" v-model="dv.date">
                 <br>
@@ -778,7 +795,8 @@ async function save_dionis_oper(d) {
                 config_stp_date,
                 config_stp_numb,
                 point1_str,
-                point2_str
+                point2_str,
+                nn
 
             ) VALUES (
                 ${d.id},
@@ -800,7 +818,8 @@ async function save_dionis_oper(d) {
                '${d.config_stp_date}',
                '${d.config_stp_numb}',
                '${d.point1_str}',
-               '${d.point2_str}'
+               '${d.point2_str}',
+                ${d.nn}
            )`
             : `UPDATE dionis_oper SET 
                 id=${d.id},
@@ -822,7 +841,8 @@ async function save_dionis_oper(d) {
                 config_stp_date='${d.config_stp_date}',
                 config_stp_numb='${d.config_stp_numb}',
                 point1_str='${d.point1_str}',
-                point2_str='${d.point2_str}'
+                point2_str='${d.point2_str}',
+                nn=${d.nn}
             WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -855,7 +875,8 @@ function factory_dionis_oper(id_dionis = 0) {
         config_stp_date: '',
         config_stp_numb: '',
         point1_str: '',
-        point2_str: ''
+        point2_str: '',
+        nn: 0
     }
 }
 

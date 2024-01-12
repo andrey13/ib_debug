@@ -79,7 +79,7 @@ if ($id_dionis == 0) {
     LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
     WHERE o.id_dionis=$id_dionis
-    ORDER BY o.date , ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.nn, o.date, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 }
 
 // echo $sql;        

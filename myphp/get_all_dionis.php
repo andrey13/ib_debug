@@ -77,7 +77,8 @@ $sql = "SELECT
     t2.sono AS torm_sono2,
     g.name AS gk_name,
     dm.model AS model_name,
-    dm.type AS type_name
+    dm.type AS type_name,
+    (select count(do.id) from dionis_oper as do where do.id_dionis=d.id) as n_opers 
 FROM dionis d
 LEFT JOIN (
     SELECT o1.*
