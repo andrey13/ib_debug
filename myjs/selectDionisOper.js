@@ -184,6 +184,24 @@ function tabulator_dionis_opers(
                 ]
             },
             { title: 'временно', field: 'temp', width: 90, headerFilter: true },
+            { title: 'УФНС', field: 'user_ufns', width: 90, headerFilter: true,  
+                formatter: function (cell, formatterParams) { 
+                    const d = cell.getData()
+                    return fio2fio0(d.user_ufns) 
+                }
+            },
+            { title: 'ТНО', field: 'user_tno', width: 90, headerFilter: true,  
+                formatter: function (cell, formatterParams) { 
+                    const d = cell.getData()
+                    return fio2fio0(d.user_tno)
+                }
+            },
+            { title: 'ФКУ', field: 'user_fku', width: 90, headerFilter: true,  
+                formatter: function (cell, formatterParams) { 
+                    const d = cell.getData()
+                    return fio2fio0(d.user_fku) 
+                }
+            },
             { title: 'описание', field: 'dscr', widthGrow: 2, headerFilter: true },
             { title: 'комментарий', field: 'comm', widthGrow: 2, headerFilter: true },
         ],
@@ -239,6 +257,11 @@ function tabulator_dionis_opers(
                 row.getCell("oper_type").getElement().style.color = '#000000'
                 row.getCell("ip1").getElement().style.backgroundColor = '#ffcccc'
                 row.getCell("ip1").getElement().style.color = '#000000'
+            }
+            // неисправность -------------------------------------------------------
+            if (d.id_oper_type == 46) {
+                row.getCell("oper_type").getElement().style.backgroundColor = '#ff0000'
+                row.getCell("oper_type").getElement().style.color = '#ffff00'
             }
         },
 
@@ -406,8 +429,10 @@ function edit_dionis_oper(
 
             <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:80%;">
                 <span>Dionis: <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> </span><br>
-                <span v-show="shP1"> Откуда: <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> <input class="o3-border o3-button-300" type="text" v-model="dv.point1_str"></span><br>
-                <span v-show="shP2"> Куда:&nbsp;&nbsp; <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button> <input class="o3-border o3-button-300" type="text" v-model="dv.point2_str"></span>
+                <span v-show="shP1"> Откуда: <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> 
+                &nbsp;&nbsp;название ТНО на дату операции: <input class="o3-border o3-button-300" type="text" v-model="dv.point1_str"></span><br>
+                <span v-show="shP2"> Куда:&nbsp;&nbsp; <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button> 
+                &nbsp;&nbsp;название ТНО на дату операции: <input class="o3-border o3-button-300" type="text" v-model="dv.point2_str"></span>
                 <br>
                 <br>
                 <div v-show="shUFNS">      
@@ -524,7 +549,7 @@ function edit_dionis_oper(
                 },
                 user_fku() {
                     return !!!this.dv.user_fku
-                        ? "<выбрать сотрудника ФКУ>"
+                        ? "<выбрать сотрудника органа КЗ>"
                         : this.dv.user_fku
                 },
                 shUFNS() {
@@ -558,7 +583,7 @@ function edit_dionis_oper(
                 '', // esk
                 0, // id_depart
                 1, // selectable
-                'выбор сотрудника УФНС', // headerWin
+                'выбор сотрудника УФНС<br>ЕСК=2 активная у/з,  ЕСК=0,1 отключенная у/з', // headerWin
                 '400px', // width
                 '50%', // marginLeft
                 '1%', // marginTop
@@ -580,10 +605,10 @@ function edit_dionis_oper(
                 '', // esk
                 0, // id_depart
                 1, // selectable
-                'выбор сотрудника ТНО', // headerWin
+                'выбор сотрудника ТНО<br>ЕСК=2 активная у/з,  ЕСК=0,1 отключенная у/з', // headerWin
                 '400px', // width
                 '50%', // marginLeft
-                '1%', // marginTop
+                '2%', // marginTop
                 win_current, // win_return
                 vm.$data.dv.id_user_tno // id_user
             )
@@ -602,7 +627,7 @@ function edit_dionis_oper(
                 '', // esk
                 0, // id_depart
                 1, // selectable
-                'выбор сотрудника ФКУ', // headerWin
+                'выбор сотрудника органа КЗ<br>ЕСК=2 активная у/з,  ЕСК=0,1 отключенная у/з', // headerWin
                 '400px', // width
                 '50%', // marginLeft
                 '1%', // marginTop
@@ -772,6 +797,55 @@ async function new_dionis_oper() {
 
 //=============================================================================
 async function save_dionis_oper(d) {
+
+    switch(d.id_oper_type) {
+        case '36':    // поставка
+            d.id_user_tno  = 0
+            d.id_user_fku  = 0
+            break
+        case '37':    // передача
+            d.id_user_ufns = 0
+            d.id_user_fku  = 0
+            break
+        case '38':    // передача (временно)
+            d.id_user_ufns = 0
+            d.id_user_fku  = 0
+            break
+        case '39':    // подключение
+            d.id_user_ufns = 0
+            break
+        case '40':    // обновление ОС
+            d.id_user_ufns = 0
+            d.id_user_tno  = 0
+            break
+        case '41':    // отключение
+            d.id_user_ufns = 0
+            d.id_user_fku  = 0
+            break
+        case '42':    // загрузка ключей
+            d.id_user_ufns = 0
+            d.id_user_tno  = 0
+            break
+        case '43':    // активация ключей
+            d.id_user_ufns = 0
+            d.id_user_tno  = 0
+            break
+        case '44':    // удаление ключей
+            d.id_user_ufns = 0
+            d.id_user_tno  = 0
+            break
+        case '45':    // конфигурирование
+            break
+        case '46':    // неисправность
+            break
+        case '47':    // уничтожение
+            break
+        case '48':    // списание
+            break
+        default:
+            break
+    }
+
     
     const sql =
         d.id == 0
