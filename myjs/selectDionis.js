@@ -167,8 +167,8 @@ function tabulator_select_dionis(
 
     let flag_ust = true
     let flag_rez = true
-    let flag_nei = false
-    let flag_spi = false
+    let flag_nei = true
+    let flag_spi = true
 
     const msgFooter =
         `<span id="select-stats"></span>` +
@@ -183,8 +183,8 @@ function tabulator_select_dionis(
         `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;резерв&nbsp;<input type='checkbox' id='${id_checkb_rez}' checked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;неисправен&nbsp;<input type='checkbox' id='${id_checkb_nei}' unchecked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;на списании&nbsp;<input type='checkbox' id='${id_checkb_spi}' unchecked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;неисправен&nbsp;<input type='checkbox' id='${id_checkb_nei}' checked style="vertical-align: middle;">` +
+        `&nbsp;&nbsp;&nbsp;на списании&nbsp;<input type='checkbox' id='${id_checkb_spi}' checked style="vertical-align: middle;">` +
         `</div>`
 
     const tabulator = new Tabulator("#" + div, {
