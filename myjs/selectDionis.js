@@ -95,17 +95,17 @@ function tabulator_select_dionis(
             columns: [
                 {
                     title: "СОНО", field: "ifns_sono1", widthGrow: 1, headerFilter: true,
-                    formatter: function (cell, formatterParams) {
-                        var d = cell.getRow().getData()
-                        return (d.temp == 1) ? d.ifns_sono1 : d.ifns_sono2
-                    }
+                    // formatter: function (cell, formatterParams) {
+                    //     var d = cell.getRow().getData()
+                    //     return (d.temp == 1) ? d.ifns_sono1 : d.ifns_sono2
+                    // }
                 },
                 {
                     title: "ТНО", field: "t1name", widthGrow: 3, headerFilter: true,
-                    formatter: function (cell, formatterParams) {
-                        var d = cell.getRow().getData()
-                        return (d.temp == 1) ? d.t1name : d.t2name
-                    }
+                    // formatter: function (cell, formatterParams) {
+                    //     var d = cell.getRow().getData()
+                    //     return (d.temp == 1) ? d.t1name : d.t2name
+                    // }
                 },
             ],
         },

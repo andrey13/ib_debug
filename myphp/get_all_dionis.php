@@ -59,6 +59,10 @@ $id_type_oper = $_GET['t'];
 // LEFT JOIN ifns AS i2 ON i2.id=t2.id_co
 // ORDER BY d.sono1, d.sono2";
 
+//i1.sono AS ifns_sono1,
+// t1.name as t1name,
+
+
 $sql = "SELECT 
     d.*, 
     o.id as id_oper, 
@@ -69,10 +73,18 @@ $sql = "SELECT
     p2.ip AS ip2,
     p1.stock AS stock1,
     p2.stock AS stock2,
-    t1.name as t1name,
     t2.name as t2name,
-    i1.sono AS ifns_sono1,
-    t1.sono AS torm_sono1,
+    CASE
+        WHEN o.temp = 1
+            THEN i1.sono
+        ELSE i2.sono
+    END AS ifns_sono1,
+    CASE
+        WHEN o.temp = 1
+            THEN t1.name
+        ELSE t2.name
+    END AS t1name,
+      t1.sono AS torm_sono1,
     i2.sono AS ifns_sono2,
     t2.sono AS torm_sono2,
     g.name AS gk_name,
