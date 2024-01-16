@@ -120,15 +120,26 @@ function tabulator_dionis_opers(
                     verticalNavigation: "table",
                 }
             },
+            // {
+            //     title: "дата",
+            //     field: "date",
+            //     width: 75,
+            //     headerFilter: true,
+            //     formatter: "datetime",
+            //     formatterParams: {
+            //         inputFormat: "YYYY-MM-DD",
+            //         outputFormat: "DD.MM.YYYY",
+            //     },
+            // },
             {
-                title: "дата",
-                field: "date",
-                width: 75,
+                title: "дата-время",
+                field: "date_time",
+                width: 120,
                 headerFilter: true,
                 formatter: "datetime",
                 formatterParams: {
-                    inputFormat: "YYYY-MM-DD",
-                    outputFormat: "DD.MM.YYYY",
+                    inputFormat: "YYYY-MM-DD HH:ss",
+                    outputFormat: "DD.MM.YYYY HH:ss",
                 },
             },
             // { title: 'p1', field: 'id_connect_point1', width: 60, headerFilter: true },
@@ -407,7 +418,7 @@ function edit_dionis_oper(
                 номер операции<br>
                 <input class="o3-border" type="text" v-model="dv.nn"><br><br>
                 <label for="d_date">Дата операции:</label><br>
-                <input class="o3-border" type="date" id="d_date" v-model="dv.date">
+                <input class="o3-border" type="datetime-local" id="d_date" v-model="dv.date_time">
                 <br>
                 <br>
                 Вид операции:
@@ -859,6 +870,7 @@ async function save_dionis_oper(d) {
                 id_user_tno,
                 id_user_fku,
                 date,
+                date_time,
                 dscr,
                 comm,
                 temp,
@@ -882,6 +894,7 @@ async function save_dionis_oper(d) {
                 ${d.id_user_tno},
                 ${d.id_user_fku},
                '${d.date}',
+               '${d.date_time}',
                '${d.dscr}',
                '${d.comm}',
                '${d.temp}',
@@ -905,6 +918,7 @@ async function save_dionis_oper(d) {
                 id_user_tno=${d.id_user_tno},
                 id_user_fku=${d.id_user_fku},
                 date='${d.date}',
+                date_time='${d.date_time}',
                 dscr='${d.dscr}',
                 comm='${d.comm}',
                 temp=${d.temp},
@@ -939,6 +953,7 @@ function factory_dionis_oper(id_dionis = 0) {
         id_user_tno: 0,
         id_user_fku: 0,
         date: '',
+        date_time: '',
         dscr: '',
         comm: '',
         temp: 0,
