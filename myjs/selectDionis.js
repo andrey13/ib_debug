@@ -275,7 +275,8 @@ function tabulator_select_dionis(
                     'select',    // mode
                     null,        // win_return
                     0,           // id_oper
-                    tabulator.getSelectedData()[0].id // id_dionis
+                    tabulator.getSelectedData()[0].id, // id_dionis
+                    0
                 )
         
                 // const res = await edit_dionis(
@@ -339,7 +340,8 @@ function tabulator_select_dionis(
             'select',    // mode
             null,        // win_return
             0,           // id_oper
-            tabulator.getSelectedData()[0].id // id_dionis
+            tabulator.getSelectedData()[0].id, // id_dionis
+            0
         )
     }
 

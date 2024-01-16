@@ -7,7 +7,8 @@ function select_dionis_oper(
     mode = 'select',
     win_return = null,
     id_oper = 0,
-    id_dionis = 0
+    id_dionis = 0,
+    id_torm = 0
 ) {
     // console.log('id_dionis2 = ', id_dionis)
     return new Promise(function (resolve, reject) {
@@ -44,7 +45,8 @@ function select_dionis_oper(
             win_current,
             win_return,
             id_oper,
-            id_dionis
+            id_dionis,
+            id_torm
         )
 
         // table_opers.setSort([
@@ -68,7 +70,8 @@ function tabulator_dionis_opers(
     win_current = null,
     win_return = null,
     id_oper = 0,
-    id_dionis = 0
+    id_dionis = 0,
+    id_torm = 0
 ) {
     // console.log('id_dionis4 = ', id_dionis)
     const salt = randomStr(10)
@@ -93,7 +96,7 @@ function tabulator_dionis_opers(
 
     const tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_dioins_opers.php",
-        ajaxParams: { d: id_dionis },
+        ajaxParams: { d: id_dionis, t: id_torm },
         ajaxConfig: "GET",
         ajaxContentType: "json",
         height: tabHeight,
@@ -111,15 +114,15 @@ function tabulator_dionis_opers(
 
         columns: [
             // { title: 'id', field: 'id', width: 60, headerFilter: true },
-            { title: '№', field: 'nn', width: 40, headerFilter: true, topCalc: "count",
-              editor: "number",
-                editorParams: {
-                    mask: "9999",
-                    min: 0,
-                    max: 999,
-                    verticalNavigation: "table",
-                }
-            },
+            // { title: '№', field: 'nn', width: 40, headerFilter: true, topCalc: "count",
+            //   editor: "number",
+            //     editorParams: {
+            //         mask: "9999",
+            //         min: 0,
+            //         max: 999,
+            //         verticalNavigation: "table",
+            //     }
+            // },
             // {
             //     title: "дата",
             //     field: "date",
@@ -155,12 +158,12 @@ function tabulator_dionis_opers(
                     { title: 'поставка', field: 'gk_name', width: 90, headerFilter: true },
                 ]
             },
-            { title: 'операция', field: 'oper_type', width: 100, headerFilter: true },        
+            { title: 'операция', field: 'oper_type', width: 140, headerFilter: true },        
             {
                 title: 'источник',
                 columns: [
-                    { title: 'ТНО', field: 'ifns_sono1', width: 60, headerFilter: true },
-                    { title: 'ТОРМ', field: 'torm_sono1', width: 62, headerFilter: true },
+                    { title: '', field: 'ifns_sono1', width: 60, headerFilter: true },
+                    { title: 'СОНО', field: 'torm_sono1', width: 62, headerFilter: true },
                     // { 
                     //     title: 'ТОРМ', 
                     //     field: 'torm_sono1', 
@@ -178,8 +181,8 @@ function tabulator_dionis_opers(
             {
                 title: 'приемник',
                 columns: [
-                    { title: 'ТНО', field: 'ifns_sono2', width: 60, headerFilter: true },
-                    { title: 'ТОРМ', field: 'torm_sono2', width: 62, headerFilter: true },
+                    { title: '', field: 'ifns_sono2', width: 60, headerFilter: true },
+                    { title: 'СОНО', field: 'torm_sono2', width: 62, headerFilter: true },
                     // { 
                     //     title: 'ТОРМ', 
                     //     field: 'torm_sono2', 
@@ -194,7 +197,7 @@ function tabulator_dionis_opers(
                     { title: '', field: 'ip2', widthGrow: 2, headerFilter: true },
                 ]
             },
-            { title: 'временно', field: 'temp', width: 90, headerFilter: true },
+            // { title: 'временно', field: 'temp', width: 90, headerFilter: true },
             { title: 'УФНС', field: 'user_ufns', width: 90, headerFilter: true,  
                 formatter: function (cell, formatterParams) { 
                     const d = cell.getData()
@@ -213,7 +216,7 @@ function tabulator_dionis_opers(
                     return fio2fio0(d.user_fku) 
                 }
             },
-            { title: 'описание', field: 'dscr', widthGrow: 2, headerFilter: true },
+            // { title: 'описание', field: 'dscr', widthGrow: 2, headerFilter: true },
             { title: 'комментарий', field: 'comm', widthGrow: 2, headerFilter: true },
         ],
 
@@ -411,12 +414,14 @@ function edit_dionis_oper(
 
         const header = `<h4>id: ${d.id} операция Dionis</h4>`
 
+        // номер операции<br>
+        // <input class="o3-border" type="text" v-model="dv.nn"><br><br>
+
+
         const body = `
         <div style="margin: 0; padding: 10px; height: 600px; background-color: #eeeeee; position: relative;">
 
             <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:20%;">
-                номер операции<br>
-                <input class="o3-border" type="text" v-model="dv.nn"><br><br>
                 <label for="d_date">Дата операции:</label><br>
                 <input class="o3-border" type="datetime-local" id="d_date" v-model="dv.date_time">
                 <br>
