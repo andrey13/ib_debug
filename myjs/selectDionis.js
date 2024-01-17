@@ -282,11 +282,6 @@ function tabulator_select_dionis(
                     0,         // id_torm
                     title      // title
                 )
-        
-                // const res = await edit_dionis(
-                //     tabulator.getSelectedData()[0], // d
-                //     win_current                     // win_return
-                // )
             }
         },
 
@@ -449,7 +444,22 @@ function tabulator_select_dionis(
         ).trim()
 
         console.log(`str_Filter = |${str_Filter}|`)
-        tabulator.setFilter('status', 'keywords', str_Filter)
+        // tabulator.setFilter('status', 'keywords', str_Filter)
+
+        if (g_user.sono == '6100') {
+            tabulator.setFilter([
+                {field: 'status', type: 'in', value: str_Filter.split(' ')},
+            ])
+        } else {
+            tabulator.setFilter([
+                {field: 'status', type: 'in', value: str_Filter.split(' ')},
+                [
+                    {field: 'ifns_sono1', type: '=', value: g_user.sono},
+                    {field: 'ifns_sono2', type: '=', value: g_user.sono},
+                ]
+            ])
+    
+        }
     }
     
 

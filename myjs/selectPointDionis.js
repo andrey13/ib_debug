@@ -79,10 +79,10 @@ function tabulator_select_point_dionis(
         `</div>`
 
     const tabulator = new Tabulator("#" + div, {
-        ajaxURL: "myphp/loadData.php",
+        ajaxURL: "myphp/sono_2_torms.php",
         ajaxConfig: "GET",
         ajaxContentType: "json",
-        ajaxParams: { t: 'torm', o: 'sono,sono_torm' },
+        ajaxParams: { s: g_user.sono },
         height: tabHeight,
         layout: "fitColumns",
         tooltipsHeader: true,

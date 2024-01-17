@@ -117,26 +117,6 @@ function tabulator_dionis_opers(
 
         columns: [
             // { title: 'id', field: 'id', width: 60, headerFilter: true },
-            // { title: '№', field: 'nn', width: 40, headerFilter: true, topCalc: "count",
-            //   editor: "number",
-            //     editorParams: {
-            //         mask: "9999",
-            //         min: 0,
-            //         max: 999,
-            //         verticalNavigation: "table",
-            //     }
-            // },
-            // {
-            //     title: "дата",
-            //     field: "date",
-            //     width: 75,
-            //     headerFilter: true,
-            //     formatter: "datetime",
-            //     formatterParams: {
-            //         inputFormat: "YYYY-MM-DD",
-            //         outputFormat: "DD.MM.YYYY",
-            //     },
-            // },
             {
                 title: "дата-время",
                 field: "date_time",
@@ -148,12 +128,10 @@ function tabulator_dionis_opers(
                     outputFormat: "DD.MM.YYYY HH:ss",
                 },
             },
-            // { title: 'p1', field: 'id_connect_point1', width: 60, headerFilter: true },
-            // { title: 'p2', field: 'id_connect_point2', width: 60, headerFilter: true },    
             {
                 title: 'Dinois',
                 columns: [
-                    { title: 'инв№', field: 'inv_n', width: 100, headerFilter: true },
+                    { title: 'инв №', field: 'inv_n', width: 100, headerFilter: true },
                     { title: 'SN', field: 'sn', width: 100, headerFilter: true },
                     { title: 'модель', field: 'model', width: 150, headerFilter: true },
                     { title: 'тип', field: 'type', width: 100, headerFilter: true },
@@ -167,17 +145,6 @@ function tabulator_dionis_opers(
                 columns: [
                     { title: '', field: 'ifns_sono1', width: 60, headerFilter: true },
                     { title: 'СОНО', field: 'torm_sono1', width: 62, headerFilter: true },
-                    // { 
-                    //     title: 'ТОРМ', 
-                    //     field: 'torm_sono1', 
-                    //     width: 60, 
-                    //     headerFilter: true,
-                    //     formatter:function(cell, formatterParams, onRendered){
-                    //         let d = cell.getRow().getData()
-                    //         if (d.ifns_sono1 == d.torm_sono1) return ''
-                    //         return cell.getValue()
-                    //     }
-                    // },
                     { title: '', field: 'ip1', widthGrow: 2, headerFilter: true },
                 ]
             },
@@ -186,17 +153,6 @@ function tabulator_dionis_opers(
                 columns: [
                     { title: '', field: 'ifns_sono2', width: 60, headerFilter: true },
                     { title: 'СОНО', field: 'torm_sono2', width: 62, headerFilter: true },
-                    // { 
-                    //     title: 'ТОРМ', 
-                    //     field: 'torm_sono2', 
-                    //     width: 60, 
-                    //     headerFilter: true,
-                    //     formatter:function(cell, formatterParams, onRendered){
-                    //         let d = cell.getRow().getData()
-                    //         if (d.ifns_sono2 == d.torm_sono2) return ''
-                    //         return cell.getValue()
-                    //     }
-                    // },
                     { title: '', field: 'ip2', widthGrow: 2, headerFilter: true },
                 ]
             },
@@ -302,15 +258,6 @@ function tabulator_dionis_opers(
         },
 
         cellDblClick: async function (e, cell) {
-            // if ((mode == "select")) {
-            //     removeModalWindow(win_current, win_return)
-            //     resolve(cell.getRow().getData())
-            // } else {
-            //     const res = await edit_dionis_oper(
-            //         tabulator.getSelectedData()[0],
-            //         win_current // win_return
-            //     )
-            // }
             const d = tabulator.getSelectedData()[0]
             const title = d.sn            
 
@@ -340,10 +287,7 @@ function tabulator_dionis_opers(
 
     id2e(id_button_add).onclick = async () => {
         const d = factory_dionis_oper()
-
         d.id = await save_dionis_oper(d)
-
-        // const title = (id_dionis == 0) ? '' : tabulator.getSelectedData()[0].sn        
 
         addTabRow(tabulator, d, (top = false))
 

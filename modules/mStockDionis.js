@@ -14,7 +14,7 @@ async function mStockDionis() {
 
     // список МТС -----------------------------------------------------------------------
     select_dionis(
-        sono = '6100', 
+        sono = g_user.sono, 
         id_otdel, 
         sklad, 
         id_type_oper,
