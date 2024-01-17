@@ -6,7 +6,7 @@ function select_point_dionis(
     selectable = 1,
     mode = 'select',
     win_return = null,
-    id_gk = 0
+    id_point = 0
 ) {
     return new Promise(async function (resolve, reject) {
         // const result = await recalc_mts(0)
@@ -37,7 +37,7 @@ function select_point_dionis(
             mode,
             win_current,
             win_return,
-            id_gk,
+            id_point,
         )
 
         if (mode == "select") id_2_set_focus(win_current)
@@ -54,7 +54,7 @@ function tabulator_select_point_dionis(
     mode = "select",
     win_current = null,
     win_return = null,
-    id_gk = 0,
+    id_point = 0,
 ) {
     const cols = [
         { title: "id",   field: "id", width: 50, headerFilter: true, topCalc: "count" },
@@ -102,9 +102,9 @@ function tabulator_select_point_dionis(
         // },
 
         dataLoaded: function () {
-            if (id_gk == 0) return
-            tabulator.selectRow(id_gk)
-            tabulator.scrollToRow(id_gk, "center", false)
+            if (id_point == 0) return
+            tabulator.selectRow(id_point)
+            tabulator.scrollToRow(id_point, "center", false)
         },
 
         rowFormatter: function (row) {
@@ -127,16 +127,20 @@ function tabulator_select_point_dionis(
                 removeModalWindow(win_current, win_return)
                 resolve([cell.getRow().getData()])
             } else {
+                const d = tabulator.getSelectedData()[0]
+                const title = d.sono + '/' + d.sono_torm + '   ' + d.name
+                
                 select_dionis_oper(
-                    '6100',      // sono
-                    0,           // id_otdel
-                    0,           // sklad
-                    1,           // selectable
-                    'select',    // mode
-                    null,        // win_return
-                    0,           // id_oper
-                    0,           // id_dionis
-                    tabulator.getSelectedData()[0].id // id_dionis
+                    '6100',   // sono
+                    0,        // id_otdel
+                    0,        // sklad
+                    1,        // selectable
+                    'select', // mode
+                    null,     // win_return
+                    0,        // id_oper
+                    0,        // id_dionis
+                    d.id,     // id_torm
+                    title     // title
                 )
         
                 // const res = await edit_dionis(
@@ -147,6 +151,24 @@ function tabulator_select_point_dionis(
         },
 
     })
+
+    id2e(id_button_opr).onclick = () => {
+        const d = tabulator.getSelectedData()[0]
+        const title = d.sono + '/' + d.sono_torm + '   ' + d.name
+        
+        select_dionis_oper(
+            '6100',   // sono
+            0,        // id_otdel
+            0,        // sklad
+            1,        // selectable
+            'select', // mode
+            null,     // win_return
+            0,        // id_oper
+            0,        // id_dionis
+            d.id,     // id_torm
+            title     // title
+        )
+}
 
     // id2e(id_button_sel).onclick = () => {
     //     removeModalWindow(win_current, win_return)
@@ -186,8 +208,8 @@ function tabulator_select_point_dionis(
     //             del_gk(d.id)
     //             tabulator.deleteRow(d.id)
     //         })
-    //         const id_gk = getFirstID(tabulator)
-    //         tabulator.selectRow(id_gk)
+    //         const id_point = getFirstID(tabulator)
+    //         tabulator.selectRow(id_point)
     //     }
     // }
 
@@ -415,11 +437,11 @@ function edit_point_dionis(d, win_return = null, mode = "") {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 function remove_selected_gk() {
-    let id_gk = table_select_point_dionis.getSelectedData()[0].id
-    del_gk(id_gk)
-    table_select_point_dionis.deleteRow(id_gk)
-    id_gk = getFirstID(table_select_point_dionis)
-    table_select_point_dionis.selectRow(id_gk)
+    let id_point = table_select_point_dionis.getSelectedData()[0].id
+    del_gk(id_point)
+    table_select_point_dionis.deleteRow(id_point)
+    id_point = getFirstID(table_select_point_dionis)
+    table_select_point_dionis.selectRow(id_point)
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

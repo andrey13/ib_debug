@@ -267,16 +267,20 @@ function tabulator_select_dionis(
                 removeModalWindow(win_current, win_return)
                 resolve([cell.getRow().getData()])
             } else {
+                const d = tabulator.getSelectedData()[0]
+                const title = d.sn
+
                 select_dionis_oper(
-                    '6100',      // sono
-                    0,           // id_otdel
-                    0,           // sklad
-                    1,           // selectable
-                    'select',    // mode
-                    null,        // win_return
-                    0,           // id_oper
-                    tabulator.getSelectedData()[0].id, // id_dionis
-                    0
+                    '6100',    // sono
+                    0,         // id_otdel
+                    0,         // sklad
+                    1,         // selectable
+                    'select',  // mode
+                    null,      // win_return
+                    0,         // id_oper
+                    d.id,      // id_dionis
+                    0,         // id_torm
+                    title      // title
                 )
         
                 // const res = await edit_dionis(

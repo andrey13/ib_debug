@@ -8,17 +8,19 @@ function select_dionis_oper(
     win_return = null,
     id_oper = 0,
     id_dionis = 0,
-    id_torm = 0
+    id_torm = 0,
+    title = ''
 ) {
-    // console.log('id_dionis2 = ', id_dionis)
+    
     return new Promise(function (resolve, reject) {
         const salt = randomStr(10)
         const win_current = 'selectOper' + salt
+        const header = `<h4>операции Dionis: ${title}</h4>`
 
         if (mode == 'select') {
             newModalWindow(
                 win_current, // modal
-                'операции Dionis', // html_header
+                header, // html_header
                 '', // html_body
                 '', // html_footer
                 '90%', // width
@@ -46,7 +48,8 @@ function select_dionis_oper(
             win_return,
             id_oper,
             id_dionis,
-            id_torm
+            id_torm,
+            title
         )
 
         // table_opers.setSort([
@@ -71,9 +74,9 @@ function tabulator_dionis_opers(
     win_return = null,
     id_oper = 0,
     id_dionis = 0,
-    id_torm = 0
+    id_torm = 0,
+    title = ''
 ) {
-    // console.log('id_dionis4 = ', id_dionis)
     const salt = randomStr(10)
 
     const id_button_sel = 'sel' + salt
@@ -103,7 +106,7 @@ function tabulator_dionis_opers(
         layout: "fitColumns",
         tooltipsHeader: true,
         printAsHtml: true,
-        printHeader: "<h1>Операции Dionis<h1>",
+        printHeader: "<h1>Операции Dionis<h1>" + title,
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
@@ -308,9 +311,15 @@ function tabulator_dionis_opers(
             //         win_current // win_return
             //     )
             // }
+            const d = tabulator.getSelectedData()[0]
+            const title = d.sn            
+
             const res = await edit_dionis_oper(
-                tabulator.getSelectedData()[0],
-                win_current // win_return
+                d,
+                win_current, // win_return
+                'mod',
+                id_dionis,
+                title        // title
             )
     },
 
@@ -334,22 +343,30 @@ function tabulator_dionis_opers(
 
         d.id = await save_dionis_oper(d)
 
+        // const title = (id_dionis == 0) ? '' : tabulator.getSelectedData()[0].sn        
+
         addTabRow(tabulator, d, (top = false))
 
         const res = await edit_dionis_oper(
             d,
             win_current, // win_return
             "new", // mode
-            id_dionis
+            id_dionis,
+            title  // title
         )
     }
 
 
     id2e(id_button_mod).onclick = async () => {
+        const d = tabulator.getSelectedData()[0]
+        const title = d.sn  
+
         const res = await edit_dionis_oper(
-            tabulator.getSelectedData()[0],
+            d,
             win_current, // win_return
-            "mod" // mode
+            "mod", // mode
+            id_dionis,
+            title
         )
     }
 
@@ -379,7 +396,8 @@ function edit_dionis_oper(
     d,
     win_return = null,
     mode = "",
-    id_dionis = 0
+    id_dionis = 0,
+    title
 ) {
     return new Promise(async function (resolve, reject) {
         const salt = randomStr(10)
@@ -412,7 +430,7 @@ function edit_dionis_oper(
         const sel_user_tno  = 'select_user_tno' + salt
         const sel_user_fku  = 'select_user_fku' + salt
 
-        const header = `<h4>id: ${d.id} операция Dionis</h4>`
+        const header = `<h4>id: ${d.id} операция Dionis: ${title}</h4>`
 
         // номер операции<br>
         // <input class="o3-border" type="text" v-model="dv.nn"><br><br>
