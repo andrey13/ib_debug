@@ -436,6 +436,7 @@ function tabulator_select_dionis(
     return tabulator
 
     function set_Filter() {
+
         const str_Filter = (
             (flag_ust ? str_ust + ' ' : '') + 
             (flag_rez ? str_rez + ' ' : '') +
@@ -443,16 +444,23 @@ function tabulator_select_dionis(
             (flag_spi ? str_spi : '')
         ).trim()
 
+        const arr_Filter = []
+        if (flag_ust) arr_Filter.push(str_ust)
+        if (flag_rez) arr_Filter.push(str_rez)
+        if (flag_nei) arr_Filter.push(str_nei)
+        if (flag_spi) arr_Filter.push(str_spi)
+
         console.log(`str_Filter = |${str_Filter}|`)
         // tabulator.setFilter('status', 'keywords', str_Filter)
+        console.log('arr_Filter = ', arr_Filter)
 
         if (g_user.sono == '6100') {
             tabulator.setFilter([
-                {field: 'status', type: 'in', value: str_Filter.split(' ')},
+                {field: 'status', type: 'in', value: arr_Filter},
             ])
         } else {
             tabulator.setFilter([
-                {field: 'status', type: 'in', value: str_Filter.split(' ')},
+                {field: 'status', type: 'in', value: arr_Filter},
                 [
                     {field: 'ifns_sono1', type: '=', value: g_user.sono},
                     {field: 'ifns_sono2', type: '=', value: g_user.sono},

@@ -42,7 +42,7 @@ if ($id_dionis == 0) {
     LEFT JOIN user AS u2 ON u2.id=o.id_user_tno
     LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
-    ORDER BY o.date_time , ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date_time, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 } else {
     $sql = "SELECT 
         o.*,
@@ -80,7 +80,7 @@ if ($id_dionis == 0) {
     LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
     WHERE o.id_dionis=$id_dionis
-    ORDER BY o.nn, o.date_time, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date_time, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 }
 
 if ($id_torm != 0) {
@@ -120,7 +120,7 @@ if ($id_torm != 0) {
     LEFT JOIN user AS u3 ON u3.id=o.id_user_fku
     LEFT JOIN goskontrakt AS g ON g.id=d.id_gk
     WHERE p1.id_torm = $id_torm OR p2.id_torm = $id_torm
-    ORDER BY o.date_time , ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
+    ORDER BY o.date_time, ifns_sono1, torm_sono1, ifns_sono2, torm_sono2";
 }
 
 // echo $sql;        

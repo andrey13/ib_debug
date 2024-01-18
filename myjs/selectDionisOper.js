@@ -540,7 +540,7 @@ function edit_dionis_oper(
                     return ['39', '42', '43', '44', '45', '40', '46'].includes(this.dv.id_oper_type)
                 },
                 shP1() {
-                    return ['36', '37', '38', '39', '41'].includes(this.dv.id_oper_type)
+                    return ['36', '37', '38', '39', '41', '46'].includes(this.dv.id_oper_type)
                 },
                 shP2() {
                     return ['36', '37', '38', '39', '41'].includes(this.dv.id_oper_type)
