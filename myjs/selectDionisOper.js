@@ -1159,42 +1159,9 @@ async function print_report1(id_dionis_oper) {
 
         let model_content_d = await id_oper_2_model_content(id_dionis_oper)
         
-        // let sql =
-        // `SELECT 
-        // do.date,
-        // do.id_dionis,
-        // d.id_gk,
-        // g.date_fns,
-        // g.numb_fns,
-        // g.date_ufns,
-        // g.numb_ufns,
-        // v.name as vendor,
-        // do.id_user_tno,
-        // u.name as user,
-        // do.id_connect_point2,
-        // cp.id_torm,
-        // t.name as tno, 
-        // do.date as oper_date
-        // FROM dionis_oper as do 
-        // left join dionis as d on d.id=do.id_dionis 
-        // left join goskontrakt as g on g.id=d.id_gk 
-        // left join vendor v on v.id=g.id_vendor 
-        // left join user as u on u.id=do.id_user_tno 
-        // left join connect_point as cp on cp.id=do.id_connect_point2 
-        // left join torm as t on t.id=cp.id_torm 
-        // WHERE do.id = ${id_dionis_oper}`
-
-        // let res = await runSQL_p(sql)
-        // let data = await JSON.parse(res)[0]
-
         let data   = await id_oper_2_date(id_dionis_oper)
         let d36    = await dionis_oper_2_dionis_oper(id_dionis_oper, 37, 36)
         let data36 = await id_oper_2_date(d36.id)
-
-
-
-        console.log('data = ', data)
-
 
         let table_content = []
         let i = 0
@@ -1211,7 +1178,7 @@ async function print_report1(id_dionis_oper) {
                 // { text: data.ifns2, style: 'tableCell' }, 
                 { text: data.point2_str, style: 'tableCell' }, 
                 { text: date2date(data.date_ufns) + '\n' + data.numb_ufns, style: 'tableCell' }, 
-                { text: date2date(data.date) + '\n' + fio2fio0(data.user_tno), style: 'tableCell' }, 
+                { text: date2date(data.date_time) + '\n' + fio2fio0(data.user_tno), style: 'tableCell' }, 
                 '', 
                 '', 
                 '', 
@@ -1445,7 +1412,7 @@ async function print_report2(id_dionis_oper) {
         model_content_d.forEach((d) => {
             let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
             let user_fku = d.sn == '{{sn}}' ? data39.user_fku : ''
-            let date_fku = d.sn == '{{sn}}' ? date2date(data39.date) : ''
+            let date_fku = d.sn == '{{sn}}' ? date2date(data39.date_time) : ''
             table_content[i] = [
                 '', 
                 { text: d.name, style: 'tableCell' }, 
@@ -1454,7 +1421,7 @@ async function print_report2(id_dionis_oper) {
                 { text: data36.ifns1, style: 'tableCell' },
                 { text: date2date(data36.date_ufns) + '\n' + data36.numb_ufns, style: 'tableCell' },
                 { text: data39.user_tno, style: 'tableCell' }, 
-                { text: date2date(data39.date), style: 'tableCell' }, 
+                { text: date2date(data39.date_time), style: 'tableCell' }, 
                 { text: user_fku, style: 'tableCell' }, 
                 { text: date_fku, style: 'tableCell' }, 
                 '', 

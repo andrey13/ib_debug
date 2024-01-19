@@ -16,6 +16,7 @@ async function id_oper_2_date(id_dionis_oper) {
     let sql =
     `SELECT 
     do.date,
+    do.date_time,
     do.id_dionis,
     d.id_gk,
     g.date_fns,
@@ -38,7 +39,7 @@ async function id_oper_2_date(id_dionis_oper) {
     t2.id_co,
     i1.name as ifns1,
     i2.name as ifns2,
-    do.date as oper_date
+    do.date_time as oper_date
     FROM dionis_oper as do 
     left join dionis as d on d.id=do.id_dionis 
     left join goskontrakt as g on g.id=d.id_gk 
@@ -69,9 +70,9 @@ async function dionis_oper_2_dionis_oper(
    `SELECT *
     FROM dionis_oper AS do 
     WHERE do.id_dionis = (SELECT do1.id_dionis FROM dionis_oper AS do1 WHERE do1.id=${id_dionis_oper}) 
-    AND do.date < (SELECT do2.date FROM dionis_oper AS do2 WHERE do2.id=${id_dionis_oper})
+    AND do.date_time < (SELECT do2.date_time FROM dionis_oper AS do2 WHERE do2.id=${id_dionis_oper})
     AND do.id_oper_type = ${id_oper_type2}
-    ORDER BY do.date DESC LIMIT 1`
+    ORDER BY do.date_time DESC LIMIT 1`
 
     let res = await runSQL_p(sql)
     let data = await JSON.parse(res)[0]
