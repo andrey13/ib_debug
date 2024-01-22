@@ -31,6 +31,7 @@ async function id_oper_2_date(id_dionis_oper) {
     do.id_connect_point2,
     do.point1_str,
     do.point2_str,
+    do.sn_str,
     cp1.id_torm,
     cp2.id_torm,
     t1.name as tno1, 

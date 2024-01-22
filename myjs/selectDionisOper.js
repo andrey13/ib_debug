@@ -127,6 +127,7 @@ function tabulator_dionis_opers(
                     inputFormat: "YYYY-MM-DD HH:ss",
                     outputFormat: "DD.MM.YYYY HH:ss",
                 },
+                topCalc: "count"
             },
             {
                 title: 'Dinois',
@@ -247,10 +248,12 @@ function tabulator_dionis_opers(
                 id2e(id_button_pr2).disabled = true
                 id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
             } else {
+                const id_oper_type = data[0].id_oper_type
+                console.log('id_oper_type = ', id_oper_type)
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_sel).disabled = false
-                id2e(id_button_pr1).disabled = data[0].oper_type != "передача"
+                id2e(id_button_pr1).disabled = id_oper_type != '37' && id_oper_type != '38'
                 id2e(id_button_pr2).disabled = data[0].oper_type != "подключение"
                 id2e(id_button_add).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
@@ -406,7 +409,8 @@ function edit_dionis_oper(
             </div>
 
             <div class="o3-card" style="display: inline-block; vertical-align: top; height: 100%; width:80%;">
-                <span>Dionis: <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> </span><br>
+                <span>Dionis: <button id=${sel_dionis} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_sn}}</button> </span>
+                &nbsp;&nbsp;заводской № на дату операции:&nbsp; <input class="o3-border o3-button-300" type="text" v-model="dv.sn_str"></span><br>
                 <span v-show="shP1"> Откуда: <button id=${sel_point1} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip1}}</button> 
                 &nbsp;&nbsp;название ТНО на дату операции: <input class="o3-border o3-button-300" type="text" v-model="dv.point1_str"></span><br>
                 <span v-show="shP2"> Куда:&nbsp;&nbsp; <button id=${sel_point2} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{comp_ip2}}</button> 
@@ -700,9 +704,10 @@ function edit_dionis_oper(
             // console.log('selected_dionis = ', selected_dionis)
 
             vm.$data.dv.id_dionis = selected_dionis.id
-            vm.$data.dv.sn = selected_dionis.sn
-            vm.$data.dv.type = selected_dionis.type
-            vm.$data.dv.ver = selected_dionis.ver
+            vm.$data.dv.sn        = selected_dionis.sn
+            vm.$data.dv.type      = selected_dionis.type
+            vm.$data.dv.ver       = selected_dionis.ver
+            vm.$data.dv.sn_str    = selected_dionis.sn
 
             id2e(sel_dionis).innerHTML = vm.$data.dv.sn
             id_2_set_focus(win_current)
@@ -849,7 +854,8 @@ async function save_dionis_oper(d) {
                 config_stp_numb,
                 point1_str,
                 point2_str,
-                nn
+                nn,
+                sn_str
 
             ) VALUES (
                 ${d.id},
@@ -873,7 +879,8 @@ async function save_dionis_oper(d) {
                '${d.config_stp_numb}',
                '${d.point1_str}',
                '${d.point2_str}',
-                ${d.nn}
+                ${d.nn},
+               '${d.sn_str}'
            )`
             : `UPDATE dionis_oper SET 
                 id=${d.id},
@@ -897,7 +904,8 @@ async function save_dionis_oper(d) {
                 config_stp_numb='${d.config_stp_numb}',
                 point1_str='${d.point1_str}',
                 point2_str='${d.point2_str}',
-                nn=${d.nn}
+                nn=${d.nn},
+                sn_str='${d.sn_str}'
             WHERE id=${d.id}`
 
     return runSQL_p(sql)
@@ -932,7 +940,8 @@ function factory_dionis_oper(id_dionis = 0) {
         config_stp_numb: '',
         point1_str: '',
         point2_str: '',
-        nn: 0
+        nn: 0,
+        sn_str: ''
     }
 }
 
@@ -1167,7 +1176,8 @@ async function print_report1(id_dionis_oper) {
         let i = 0
     
         model_content_d.forEach((d) => {
-            let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
+            //let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
+            let sn = d.sn == '{{sn}}' ? data.sn_str : d.sn
             table_content[i] = [
                 '', 
                 { text: d.name, style: 'tableCell' }, 

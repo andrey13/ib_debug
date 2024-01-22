@@ -265,7 +265,8 @@ function tabulator_select_dionis(
         cellDblClick: async function (e, cell) {
             if ((mode == "select")) {
                 removeModalWindow(win_current, win_return)
-                resolve([cell.getRow().getData()])
+                console.log('dionis_select = ', cell.getRow().getData())
+                resolve(cell.getRow().getData())
             } else {
                 const d = tabulator.getSelectedData()[0]
                 const title = d.sn
@@ -289,6 +290,7 @@ function tabulator_select_dionis(
 
     id2e(id_button_sel).onclick = () => {
         removeModalWindow(win_current, win_return)
+        console.log('dionis_select = ', tabulator.getSelectedData()[0])
         resolve(tabulator.getSelectedData()[0])
     }
 
