@@ -12,7 +12,8 @@ if ($id_dionis == 0) {
         d.sn,
         d.type,
         d.ver,
-        d.model,
+        d.id_model,
+        dm.model as model,
         d.inv_n,
         p1.ip AS ip1,        
         p2.ip AS ip2,
@@ -31,6 +32,7 @@ if ($id_dionis == 0) {
         g.name AS gk_name
     FROM dionis_oper AS o
     LEFT JOIN dionis AS d ON d.id=o.id_dionis
+    LEFT JOIN dionis_model AS dm ON dm.id=d.id_model
     LEFT JOIN connect_point AS p1 ON p1.id=o.id_connect_point1
     LEFT JOIN connect_point AS p2 ON p2.id=o.id_connect_point2
     LEFT JOIN torm AS t1 ON t1.id=p1.id_torm
@@ -49,7 +51,8 @@ if ($id_dionis == 0) {
         d.sn,
         d.type,
         d.ver,
-        d.model,
+        d.id_model,
+        dm.model as model,
         d.inv_n,
         p1.ip AS ip1,        
         p2.ip AS ip2,
@@ -68,6 +71,7 @@ if ($id_dionis == 0) {
         g.name AS gk_name
     FROM dionis_oper AS o
     LEFT JOIN dionis AS d ON d.id=o.id_dionis
+    LEFT JOIN dionis_model AS dm ON dm.id=d.id_model
     LEFT JOIN connect_point AS p1 ON p1.id=o.id_connect_point1
     LEFT JOIN connect_point AS p2 ON p2.id=o.id_connect_point2
     LEFT JOIN torm AS t1 ON t1.id=p1.id_torm
@@ -89,7 +93,8 @@ if ($id_torm != 0) {
         d.sn,
         d.type,
         d.ver,
-        d.model,
+        d.id_model,
+        dm.model as model,
         d.inv_n,
         p1.ip AS ip1,        
         p2.ip AS ip2,
@@ -108,6 +113,7 @@ if ($id_torm != 0) {
         g.name AS gk_name
     FROM dionis_oper AS o
     LEFT JOIN dionis AS d ON d.id=o.id_dionis
+    LEFT JOIN dionis_model AS dm ON dm.id=d.id_model
     LEFT JOIN connect_point AS p1 ON p1.id=o.id_connect_point1
     LEFT JOIN connect_point AS p2 ON p2.id=o.id_connect_point2
     LEFT JOIN torm AS t1 ON t1.id=p1.id_torm
