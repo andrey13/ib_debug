@@ -38,6 +38,7 @@ function createTabulatorUser(id_div, appH, msgF) {
             {title:"телефон",  field:"telephone",  widthGrow:2, headerFilter:true},
             {title:"комната",  field:"room",       widthGrow:1, headerFilter:true},
             {title:"описание", field:"description",widthGrow:8, headerFilter:true},
+            {title:"flag",     field:"mail_flag",  width:40,    headerFilter:true},
             {title:"e-mail",   field:"mail",       widthGrow:4, headerFilter:true},
             {title:"ЕСК",      field:"esk_status", widthGrow:1, headerFilter:true},
         ],
