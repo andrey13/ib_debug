@@ -1176,8 +1176,16 @@ async function print_report1(id_dionis_oper) {
         let i = 0
     
         model_content_d.forEach((d) => {
-            //let sn = d.sn == '{{sn}}' ? d.dionis_sn : d.sn
-            let sn = d.sn == '{{sn}}' ? data.sn_str : d.sn
+            // let sn = d.sn == '{{sn}}' ? data.sn_str : d.sn
+
+            let sn_str = !!!data.sn_str ? d.dionis_sn : data.sn_str
+
+            console.log('sn_str        = ', sn_str)
+
+            let sn = d.sn == '{{sn}}' ? sn_str : d.sn
+            // let user_fku = d.sn == '{{sn}}' ? data39.user_fku : ''
+            // let date_fku = d.sn == '{{sn}}' ? date2date(data39.date_time) : ''
+
             table_content[i] = [
                 '', 
                 { text: d.name, style: 'tableCell' }, 
