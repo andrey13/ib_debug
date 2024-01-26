@@ -482,31 +482,33 @@ function edit_dionis(d, win_return = null, mode = "") {
         const salt = randomStr(10)
         const win_current = 'editdionis' + salt
 
-        const headerdionis = `<h4>параметры Dionis</h4>`
+        const headerdionis = `<h4>параметры СКЗИ</h4>`
 
         const sel_gk = 'select_gk' + salt
         const sel_model = 'select_model' + salt
 
+        // <div style="display: inline-block; width:50%; padding: 1px;">
+        // По данным таблицы XLS (Буримов):<br><br>
+        // ТНО приписки:<br>
+        // <input class="o3-border" type="text" v-model="dv.sono1"><br>
+        // <textarea rows="3" style="width:100%" v-model="dv.ifns1"></textarea><br><br>
+        // ТНО нахождения:<br>
+        // <input class="o3-border" type="text" v-model="dv.sono2"><br>
+        // <textarea rows="3" style="width:100%" v-model="dv.ifns2"></textarea><br><br>
+        // </div>
+        // По данным операций Dionis:<br><br>
+        // <div style="display: inline-block; width:50%; padding: 1px;">
+        // </div>
+
         const bodydionis = `
+
         <div style="margin: 0; padding: 1%;">
-            <div style="display: inline-block; width:50%; padding: 1px;">
-                По данным таблицы XLS (Буримов):<br><br>
-                ТНО приписки:<br>
-                <input class="o3-border" type="text" v-model="dv.sono1"><br>
-                <textarea rows="3" style="width:100%" v-model="dv.ifns1"></textarea><br><br>
-                ТНО нахождения:<br>
-                <input class="o3-border" type="text" v-model="dv.sono2"><br>
-                <textarea rows="3" style="width:100%" v-model="dv.ifns2"></textarea><br><br>
-            </div>
-            <div style="display: inline-block; width:50%; padding: 1px;">
-                По данным операций Dionis:<br><br>
                 ТНО приписки:<br>
                 <input class="o3-border" type="text" disabled v-model="calc_sono1"><br>
                 <textarea rows="3" style="width:100%" disabled v-model="calc_torm1"></textarea><br><br>
                 ТНО нахождения:<br>
                 <input class="o3-border" type="text" disabled v-model="dv.ifns_sono2"><br>
                 <textarea rows="3" style="width:100%" disabled v-model="dv.t2name"></textarea><br><br>
-            </div>
 
             <input class="o3-border" type="text" v-model="dv.status"> - статус<br>
             <input class="o3-border" type="text" v-model="dv.inv_n"> - инвентарный номер<br>

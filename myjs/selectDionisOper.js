@@ -1170,7 +1170,7 @@ async function print_report1(id_dionis_oper) {
         
         let data   = await id_oper_2_date(id_dionis_oper)
         let d36    = await dionis_oper_2_dionis_oper(id_dionis_oper, 37, 36)
-        let data36 = await id_oper_2_date(d36.id)
+        // let data36 = await id_oper_2_date(d36.id)
 
         let table_content = []
         let i = 0
