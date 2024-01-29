@@ -100,7 +100,7 @@ function selectUser(
             selectable: selectable,
 
             columns: [
-                //{ title: "id", field: "id", widthGrow: 1, headerFilter: true, },
+                { title: "id", field: "id", widthGrow: 1, headerFilter: true, },
                 // { title: "СОНО", field: "sono", widthGrow: 1, headerFilter: true, topCalc: "count" },            
                 { title: "ЕСК", field: "esk_status", width: 60, headerFilter: true, topCalc: "count" },
                 { title: "логин", field: "Account", width: 100, headerFilter: true },
