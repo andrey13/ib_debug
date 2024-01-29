@@ -821,7 +821,6 @@ async function print_reports(opers_data) {
         }
     }
 
-
     // параметры заголовка pdf-документа ------------------------------------------------
     let doc_head = {
         pageSize: 'A4',
@@ -886,37 +885,36 @@ async function print_reports(opers_data) {
 
         },
     }
-    let content0 = [
-        { text: 'Приложение 1', style: ['header0'] },
-        { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
-        { text: 'Приказом Федерального агенства', style: ['header0'] },
-        { text: 'правительственной связи и информации', style: ['header0'] },
-        { text: 'при Президенте Российской Федерации', style: ['header0'] },
-        { text: 'от 13 июня 2001 г. №152', style: ['header0'] },
 
-        { text: `Журнал поэкземплярного учета СКЗИ, эксплуатационной`, style: ['header'] },
-        { text: `и технической документации к ним, ключевых документов`, style: ['header'] },
-        { text: `(для органа криптографической защиты)`, style: ['header'] },
-    ]
     let content = []
-    let content1 = []
-    let doc = null
+    let i = 1
+    let n = opers_data.length
 
-    opers_data.forEach(async oper_data => {
+    for (const oper_data of opers_data) {
         if (oper_data.id_oper_type != '37' && oper_data.id_oper_type != '38') return
-        console.log('oper_data = ', oper_data)
 
-        content1 = await report_body(oper_data.id)
+        let content1 = await report_body(oper_data.id)
 
-        content = content.concat(content0)
-        content = content.concat(content1)
+        content = content
+            .concat([
+                { text: 'Приложение 1', style: ['header0'] },
+                { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
+                { text: 'Приказом Федерального агенства', style: ['header0'] },
+                { text: 'правительственной связи и информации', style: ['header0'] },
+                { text: 'при Президенте Российской Федерации', style: ['header0'] },
+                { text: 'от 13 июня 2001 г. №152', style: ['header0'] },
+                { text: `Журнал поэкземплярного учета СКЗИ, эксплуатационной`, style: ['header'] },
+                { text: `и технической документации к ним, ключевых документов`, style: ['header'] },
+                { text: `(для органа криптографической защиты)`, style: ['header'] }
+            ])
+            .concat(content1)
+            
+        if (i < n) content = content.concat([{ text: ' ', pageBreak: 'after' }])
+        i++
+    }
 
-        doc = Object.assign(doc_head, { content: content })
-        
-    
-    })
+    let doc = Object.assign(doc_head, { content: content })
     pdfMake.createPdf(doc).open()
-
 
     async function report_body(id_dionis_oper) {
         const hh = 30
