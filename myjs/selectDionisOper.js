@@ -787,11 +787,20 @@ function edit_dionis_oper(
 async function print_reports1(opers_data, win_return) {
     const salt = randomStr(10)
     const win_current = 'indexLoading' + salt
-    const body = `<div style="margin: 10px;"><br>
-    <n-space vertical>
-    <n-slider show-tooltip v-model:value="value" :step="1">
-    </n-slider>
-    </n-space>
+    // const body = `<div style="margin: 10px;"><br>
+    // <n-space vertical>
+    // <n-slider show-tooltip v-model:value="value" :step="1">
+    // </n-slider>
+    // </n-space>
+    // <br></div>`
+
+    const body =`<div style="margin: 10px;">
+        <n-progress
+            type="line"
+            :percentage=value
+            :indicator-placement="'inside'"
+            processing
+        />
     <br></div>`
 
     newModalWindow(
