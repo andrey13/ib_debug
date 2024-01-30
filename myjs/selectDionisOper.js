@@ -130,7 +130,7 @@ function tabulator_dionis_opers(
                 topCalc: "count"
             },
             {
-                title: 'Dinois',
+                title: 'СКЗИ', headerHozAlign:"center",
                 columns: [
                     { title: 'инв №', field: 'inv_n', width: 100, headerFilter: true },
                     { title: 'SN', field: 'sn', width: 100, headerFilter: true },
@@ -140,41 +140,41 @@ function tabulator_dionis_opers(
                     { title: 'поставка', field: 'gk_name', width: 90, headerFilter: true },
                 ]
             },
-            { title: 'операция', field: 'oper_type', width: 140, headerFilter: true },
+            { title: 'операция', field: 'oper_type', width: 140, headerFilter: true, headerHozAlign:"center" },
             {
-                title: 'источник',
+                title: 'ИСТОЧНИК', headerHozAlign:"center",
                 columns: [
-                    { title: '', field: 'ifns_sono1', width: 60, headerFilter: true },
-                    { title: 'СОНО', field: 'torm_sono1', width: 62, headerFilter: true },
+                    { title: 'СОНО', field: 'ifns_sono1', width: 62, headerFilter: true },
+                    { title: 'СОУН', field: 'torm_sono1', width: 62, headerFilter: true },
                     { title: '', field: 'ip1', widthGrow: 2, headerFilter: true },
                 ]
             },
             {
-                title: 'приемник',
+                title: 'ПРИЕМНИК', headerHozAlign:"center",
                 columns: [
-                    { title: '', field: 'ifns_sono2', width: 60, headerFilter: true },
-                    { title: 'СОНО', field: 'torm_sono2', width: 62, headerFilter: true },
+                    { title: 'СОНО', field: 'ifns_sono2', width: 62, headerFilter: true },
+                    { title: 'СОУН', field: 'torm_sono2', width: 62, headerFilter: true },
                     { title: '', field: 'ip2', widthGrow: 2, headerFilter: true },
                 ]
             },
             // { title: 'временно', field: 'temp', width: 90, headerFilter: true },
             {
-                title: 'УФНС', field: 'user_ufns', width: 90, headerFilter: true,
+                title: 'УФНС', field: 'user_ufns', width: 90, headerFilter: true, headerHozAlign:"center",
                 formatter: function (cell, formatterParams) {
                     const d = cell.getData()
                     return fio2fio0(d.user_ufns)
                 }
             },
-            { title: 'id', field: 'id_user_tno', width: 80, headerFilter: true, },
+            // { title: 'id', field: 'id_user_tno', width: 80, headerFilter: true, },
             {
-                title: 'ТНО', field: 'user_tno', width: 90, headerFilter: true,
+                title: 'ТНО', field: 'user_tno', width: 90, headerFilter: true, headerHozAlign:"center",
                 formatter: function (cell, formatterParams) {
                     const d = cell.getData()
                     return fio2fio0(d.user_tno)
                 }
             },
             {
-                title: 'ФКУ', field: 'user_fku', width: 90, headerFilter: true,
+                title: 'ФКУ', field: 'user_fku', width: 90, headerFilter: true, headerHozAlign:"center",
                 formatter: function (cell, formatterParams) {
                     const d = cell.getData()
                     return fio2fio0(d.user_fku)
@@ -736,12 +736,19 @@ function edit_dionis_oper(
         // кнопка выбора источника -----------------------------------------------
         id2e(sel_point1).onclick = async () => {
             const id_depart = isRole("tex") ? g_user.id_depart : 0
-
+            let stock = 0
+            if (vm.$data.dv.id_oper_type == '36') stock = 3 // поставка
+            if (vm.$data.dv.id_oper_type == '37') stock = 1 // передача
+            if (vm.$data.dv.id_oper_type == '38') stock = 1 // передача (временно)
+            if (vm.$data.dv.id_oper_type == '39') stock = 1 // подключение
+            if (vm.$data.dv.id_oper_type == '41') stock = 0 // отключение
+            
             const selected_point = await select_point(
-                1,                            // selectable
-                'select',                     // mode
-                win_current,                  // win_return
-                vm.$data.dv.id_connect_point1 // id_point
+                1,                             // selectable
+                'select',                      // mode
+                win_current,                   // win_return
+                vm.$data.dv.id_connect_point1, // id_point
+                stock                          // stock
             )
 
             const ifns = await sono_2_data(selected_point.ifns_sono)
@@ -760,12 +767,19 @@ function edit_dionis_oper(
         // кнопка выбора приемника -----------------------------------------------
         id2e(sel_point2).onclick = async () => {
             const id_depart = isRole("tex") ? g_user.id_depart : 0
+            let stock = 0
+            if (vm.$data.dv.id_oper_type == '36') stock = 1 // поставка
+            if (vm.$data.dv.id_oper_type == '37') stock = 1 // передача
+            if (vm.$data.dv.id_oper_type == '38') stock = 1 // передача (временно)
+            if (vm.$data.dv.id_oper_type == '39') stock = 0 // подключение
+            if (vm.$data.dv.id_oper_type == '41') stock = 1 // отключение
 
             const selected_point = await select_point(
-                1,                            // selectable
-                'select',                     // mode
-                win_current,                  // win_return
-                vm.$data.dv.id_connect_point2 // id_point
+                1,                             // selectable
+                'select',                      // mode
+                win_current,                   // win_return
+                vm.$data.dv.id_connect_point2, // id_point
+                stock                          // stock
             )
 
             const ifns = await sono_2_data(selected_point.ifns_sono)

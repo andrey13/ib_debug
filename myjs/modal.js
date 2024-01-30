@@ -29,9 +29,9 @@ function newModalWindow(
 
     const modal_html = `
            <div         id="${modalMain}"    class="modal" style="display:none;" tabindex="0">
-               <div     id="${modalContent}" class="modal-content">
+               <div     id="${modalContent}" class="modal-content" >
                    <div id="${modalHeader}"  class="modal-header w3-teal" style="display: flex; align-items: center;">${html_header}</div>
-                   <div id="${modalBody}"    class="modal-body tabulator">${html_body}</div>
+                   <div id="${modalBody}"    class="modal-body">${html_body}</div>
                </div>
            </div>`;
 //           <div id="${modalFooter}"  class="modal-footer w3-teal">${html_footer}</div>

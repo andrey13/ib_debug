@@ -6,7 +6,8 @@ function select_point(
     selectable = 1,
     mode = 'select',
     win_return = null,
-    id_point = 0
+    id_point = 0,
+    stock = 0
 ) {
     return new Promise(async function (resolve, reject) {
         // const result = await recalc_mts(0)
@@ -38,6 +39,7 @@ function select_point(
             win_current,
             win_return,
             id_point,
+            stock
         )
 
         // table_select_point.setFilter("old", "=", 0)
@@ -57,6 +59,7 @@ function tabulator_select_point(
     win_current = null,
     win_return = null,
     id_point = 0,
+    stock = 0
 ) {
     let allow = getAllows();
     let ed = (allow.E == 1) ? "input" : "";
@@ -81,7 +84,7 @@ function tabulator_select_point(
 
     const tabulator = new Tabulator("#" + div, {
         ajaxURL: "myphp/get_all_point.php",
-        // ajaxParams: { t: "connect_point", o: "ip" },
+        ajaxParams: { s: stock },
         ajaxConfig: "GET",
         ajaxContentType: "json",
         height: tabHeight,
@@ -111,7 +114,17 @@ function tabulator_select_point(
         // },
 
         dataLoaded: function () {
+            console.log('id_point = ', id_point)
             if (id_point == 0) return
+            
+            // var row = tabulator.findRow(function(data){
+            //     return data.id == id_point;
+            // }).first()
+            // if (!!!row) return
+
+            const d = table_select_point.searchData("id", "=", id_point.toString())
+            if (d.length == 0) return
+
             tabulator.selectRow(id_point)
             tabulator.scrollToRow(id_point, "center", false)
         },

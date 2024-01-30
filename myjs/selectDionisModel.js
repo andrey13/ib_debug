@@ -110,7 +110,7 @@ function tabulator_select_dionis_model(
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
-        selectable: selectable,
+        selectable: 1,
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols,

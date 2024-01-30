@@ -91,7 +91,7 @@ function tabulator_select_dionis(
         { title: "временно", field: "temp", width: 70, headerFilter: true },
         { title: "операций", field: "n_opers", width: 70, headerFilter: true },
         {//группа владелец
-            title: "владелец",
+            title: "ВЛАДЕЛЕЦ", headerHozAlign:"center",
             columns: [
                 {
                     title: "СОНО", field: "ifns_sono1", widthGrow: 1, headerFilter: true,
@@ -110,7 +110,7 @@ function tabulator_select_dionis(
             ],
         },
         {//группа нахождение
-            title: "нахождение",
+            title: "НАХОЖДЕНИЕ", headerHozAlign:"center",
             columns: [
                 { title: "СОНО", field: "ifns_sono2", widthGrow: 1, headerFilter: true },
                 { title: "ТНО", field: "t2name", widthGrow: 3, headerFilter: true },
@@ -128,17 +128,17 @@ function tabulator_select_dionis(
         { title: "Статус", field: "status", widthGrow: 2, headerFilter: true },
         // { title: "Поставка", field: "postavka", width: 80, headerFilter: true },
         { title: "Поставка", field: "gk_name", width: 80, headerFilter: true },
-        {
-            title: "дата установки",
-            field: "date2",
-            width: 80,
-            headerFilter: true,
-            formatter: "datetime",
-            formatterParams: {
-                inputFormat: "YYYY-MM-DD",
-                outputFormat: "DD.MM.YYYY",
-            },
-        },
+        // {
+        //     title: "дата установки",
+        //     field: "date2",
+        //     width: 80,
+        //     headerFilter: true,
+        //     formatter: "datetime",
+        //     formatterParams: {
+        //         inputFormat: "YYYY-MM-DD",
+        //         outputFormat: "DD.MM.YYYY",
+        //     },
+        // },
         { title: "комментарий", field: "comm", widthGrow: 4, headerFilter: true, },
     ]
 
@@ -170,6 +170,10 @@ function tabulator_select_dionis(
     let flag_nei = true
     let flag_spi = true
 
+    // `&nbsp;&nbsp;&nbsp;данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
+    // `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' checked style="vertical-align: middle;">` +
+    // `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
+
     const msgFooter =
         `<span id="select-stats"></span>` +
         `<div style="width: 100%; text-align: left;">` +
@@ -178,9 +182,6 @@ function tabulator_select_dionis(
         `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
         `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
         `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-        `&nbsp;&nbsp;&nbsp;данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' checked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;резерв&nbsp;<input type='checkbox' id='${id_checkb_rez}' checked style="vertical-align: middle;">` +
         `&nbsp;&nbsp;&nbsp;неисправен&nbsp;<input type='checkbox' id='${id_checkb_nei}' checked style="vertical-align: middle;">` +
@@ -200,7 +201,7 @@ function tabulator_select_dionis(
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
-        selectable: selectable,
+        selectable: 1,
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols,
@@ -234,15 +235,16 @@ function tabulator_select_dionis(
             let sono4 = d.ifns_sono2
             let id = d.id
 
-            if (!!sono1 && !!sono2 && !!sono3 && !!sono4) {
-                sono1 = sono1.toString().trim()
-                sono2 = sono2.toString().trim()
-                sono3 = sono3.toString().trim()
-                sono4 = sono4.toString().trim()
-                if (sono1 == sono3 && sono2 == sono4) {
-                    row.getCell("id").getElement().style.backgroundColor = '#ccffcc'
-                }
-            }
+            // данные exel совпадают с данными операций
+            // if (!!sono1 && !!sono2 && !!sono3 && !!sono4) {
+            //     sono1 = sono1.toString().trim()
+            //     sono2 = sono2.toString().trim()
+            //     sono3 = sono3.toString().trim()
+            //     sono4 = sono4.toString().trim()
+            //     if (sono1 == sono3 && sono2 == sono4) {
+            //         row.getCell("id").getElement().style.backgroundColor = '#ccffcc'
+            //     }
+            // }
         },
 
         rowSelectionChanged: function (data, rows) {
@@ -366,59 +368,59 @@ function tabulator_select_dionis(
         set_Filter()
     }
 
-    id2e(id_checkb_xls).onclick = () => {
-        if (id2e(id_checkb_xls).checked) {
-            tabulator.showColumn('sono1')
-            tabulator.showColumn('sono2')
-            tabulator.showColumn('ifns1')
-            tabulator.showColumn('ifns2')
-            tabulator.redraw()
-        } else {
-            tabulator.hideColumn('sono1')
-            tabulator.hideColumn('sono2')
-            tabulator.hideColumn('ifns1')
-            tabulator.hideColumn('ifns2')
-            tabulator.redraw()
-        }
-    }
+    // id2e(id_checkb_xls).onclick = () => {
+    //     if (id2e(id_checkb_xls).checked) {
+    //         tabulator.showColumn('sono1')
+    //         tabulator.showColumn('sono2')
+    //         tabulator.showColumn('ifns1')
+    //         tabulator.showColumn('ifns2')
+    //         tabulator.redraw()
+    //     } else {
+    //         tabulator.hideColumn('sono1')
+    //         tabulator.hideColumn('sono2')
+    //         tabulator.hideColumn('ifns1')
+    //         tabulator.hideColumn('ifns2')
+    //         tabulator.redraw()
+    //     }
+    // }
 
-    id2e(id_checkb_opr).onclick = () => {
-        if (id2e(id_checkb_opr).checked) {
-            tabulator.showColumn('temp')
-            tabulator.showColumn('ifns_sono1')
-            tabulator.showColumn('ifns_sono2')
-            tabulator.showColumn('t1name')
-            tabulator.showColumn('t2name')
-            tabulator.redraw()
-        } else {
-            tabulator.hideColumn('temp')
-            tabulator.hideColumn('ifns_sono1')
-            tabulator.hideColumn('ifns_sono2')
-            tabulator.hideColumn('t1name')
-            tabulator.hideColumn('t2name')
-            tabulator.redraw()
-        }
-    }
+    // id2e(id_checkb_opr).onclick = () => {
+    //     if (id2e(id_checkb_opr).checked) {
+    //         tabulator.showColumn('temp')
+    //         tabulator.showColumn('ifns_sono1')
+    //         tabulator.showColumn('ifns_sono2')
+    //         tabulator.showColumn('t1name')
+    //         tabulator.showColumn('t2name')
+    //         tabulator.redraw()
+    //     } else {
+    //         tabulator.hideColumn('temp')
+    //         tabulator.hideColumn('ifns_sono1')
+    //         tabulator.hideColumn('ifns_sono2')
+    //         tabulator.hideColumn('t1name')
+    //         tabulator.hideColumn('t2name')
+    //         tabulator.redraw()
+    //     }
+    // }
 
-    id2e(id_checkb_sht).onclick = () => {
-        if (id2e(id_checkb_sht).checked) {
-            tabulator.hideColumn('type')
-            tabulator.hideColumn('model')
-            tabulator.hideColumn('ver')
-            // tabulator.hideColumn('date_sert')
-            tabulator.hideColumn('date2')
-            tabulator.hideColumn('comm')
-            tabulator.redraw()
-        } else {
-            tabulator.showColumn('type')
-            tabulator.showColumn('model')
-            tabulator.showColumn('ver')
-            // tabulator.showColumn('date_sert')
-            tabulator.showColumn('date2')
-            tabulator.showColumn('comm')
-            tabulator.redraw()
-        }
-    }
+    // id2e(id_checkb_sht).onclick = () => {
+    //     if (id2e(id_checkb_sht).checked) {
+    //         tabulator.hideColumn('type')
+    //         tabulator.hideColumn('model')
+    //         tabulator.hideColumn('ver')
+    //         // tabulator.hideColumn('date_sert')
+    //         tabulator.hideColumn('date2')
+    //         tabulator.hideColumn('comm')
+    //         tabulator.redraw()
+    //     } else {
+    //         tabulator.showColumn('type')
+    //         tabulator.showColumn('model')
+    //         tabulator.showColumn('ver')
+    //         // tabulator.showColumn('date_sert')
+    //         tabulator.showColumn('date2')
+    //         tabulator.showColumn('comm')
+    //         tabulator.redraw()
+    //     }
+    // }
 
     tabulator.hideColumn('sono1')
     tabulator.hideColumn('sono2')
@@ -500,6 +502,9 @@ function edit_dionis(d, win_return = null, mode = "") {
         // <div style="display: inline-block; width:50%; padding: 1px;">
         // </div>
 
+        // <input class="o3-border" type="text" v-model="dv.date2"> - дата установки<br>
+
+
         const bodydionis = `
 
         <div style="margin: 0; padding: 1%;">
@@ -514,7 +519,6 @@ function edit_dionis(d, win_return = null, mode = "") {
             <input class="o3-border" type="text" v-model="dv.inv_n"> - инвентарный номер<br>
             <input class="o3-border" type="text" v-model="dv.sn"> - заводской номер<br>
             <input class="o3-border" type="text" v-model="dv.ver"> - версия<br>
-            <input class="o3-border" type="text" v-model="dv.date2"> - дата установки<br>
             <br>      
             модель/тип:<br>
             <button id=${sel_model} class="w3-btn w3-padding-small o3-button-200 w3-hover-teal">{{model_type}}</button>

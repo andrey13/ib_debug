@@ -1,7 +1,7 @@
 <?php    
     include 'openConn.php';
 
-    $sono = $_GET['s'];  
+    $sono  = $_GET['s'];  
 
     if ($sono == '6100' or $sono == '6199') {
         $sql = "SELECT * FROM torm ORDER BY sono, sono_torm";

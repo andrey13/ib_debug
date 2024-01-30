@@ -1,7 +1,8 @@
 <?php
 include 'openConn.php';
 
-// $sono = $_GET['s'];
+$stock = $_GET['s'];
+
 // $id_otdel = $_GET['o'];
 // $sklad = $_GET['k'];
 // $id_type_oper = $_GET['t'];
@@ -15,6 +16,7 @@ include 'openConn.php';
 //     LEFT JOIN ifns AS i ON i.id=t.id_co
 //     ORDER By ifns_sono,p.ip ";
 
+
 $sql = "SELECT 
     p.*,
     t.sono AS ifns_sono,
@@ -22,6 +24,7 @@ $sql = "SELECT
     t.name AS torm_name
     FROM connect_point AS p 
     LEFT JOIN torm AS t ON t.id=p.id_torm
+    WHERE p.stock = $stock
     ORDER By ifns_sono,p.ip ";
 
 $result = $conn->query($sql);

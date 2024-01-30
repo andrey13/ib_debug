@@ -37,7 +37,7 @@ function select_point_dionis(
             mode,
             win_current,
             win_return,
-            id_point,
+            id_point
         )
 
         if (mode == "select") id_2_set_focus(win_current)
@@ -91,7 +91,7 @@ function tabulator_select_point_dionis(
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
-        selectable: selectable,
+        selectable: 1,
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols,
