@@ -798,6 +798,7 @@ async function print_reports1(opers_data, win_return) {
         <n-progress
             type="line"
             :percentage=value
+            :height="24"
             :indicator-placement="'inside'"
             processing
         />
