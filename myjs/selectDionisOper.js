@@ -791,7 +791,6 @@ async function print_reports1(opers_data, win_return) {
     <n-space vertical>
     <n-slider show-tooltip v-model:value="value" :step="1">
     </n-slider>
-    <n-input-number v-model:value="value" size="small" />
     </n-space>
     <br></div>`
 
