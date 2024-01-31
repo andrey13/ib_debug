@@ -1231,7 +1231,7 @@ async function print_reports1a(opers_data, win_return, new_page) {
                     sn = d.sn1
                     break;
                 case '{{sn2}}':
-                    sn = s.sn2
+                    sn = d.sn2
                     break;
                 default:
                     sn = d.sn
@@ -1537,7 +1537,7 @@ async function print_reports1(opers_data, win_return, new_page) {
                     sn = d.sn1
                     break;
                 case '{{sn2}}':
-                    sn = s.sn2
+                    sn = d.sn2
                     break;
                 default:
                     sn = d.sn
