@@ -7,7 +7,8 @@ function select_point(
     mode = 'select',
     win_return = null,
     id_point = 0,
-    stock = 0
+    stock = 0,
+    header = ''
 ) {
     return new Promise(async function (resolve, reject) {
         // const result = await recalc_mts(0)
@@ -17,11 +18,11 @@ function select_point(
         if (mode == 'select') {
             newModalWindow(
                 win_current,           // modal
-                'Расположения Dionis', // html_header
+                header, // html_header
                 '',                    // html_body
                 '',                    // html_footer
-                '90%',                 // width
-                '5%',                  // marginLeft
+                '40%',                 // width
+                '40%',                  // marginLeft
                 '3%',                  // marginTop
                 win_return             // win_return
             )
@@ -100,10 +101,10 @@ function tabulator_select_point(
         reactiveData: true,
         columns: [
             { title: "id", field: "id", width: 60, print: false, topCalc: "count" },
-            { title: "ИФНС", field: "ifns_sono", headerFilter: true, width: 80, editor: ed },
-            { title: "ТОРМ", field: "torm_sono", headerFilter: true, width: 80, editor: ed },
-            { title: "местонахождение Dionis", field: "ip", headerFilter: true, widthGrow: 3, editor: ed },
-            { title: "ТНО", field: "torm_name", headerFilter: true, widthGrow: 3, editor: ed },
+            { title: "СОНО", field: "ifns_sono", headerFilter: true, width: 80, editor: ed },
+            { title: "СОУН", field: "torm_sono", headerFilter: true, width: 80, editor: ed },
+            { title: "", field: "ip", headerFilter: true, widthGrow: 3, editor: ed },
+            { title: "", field: "torm_name", headerFilter: true, widthGrow: 3, editor: ed },
             // { title: "mask", field: "mask", headerFilter: true, widthGrow: 2, topCalc: "count", editor: ed },
             // { title: "sklad",       field: "stock",  headerFilter: true, widthGrow: 2, editor: ed },
         ],

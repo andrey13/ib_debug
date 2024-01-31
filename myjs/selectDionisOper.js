@@ -130,7 +130,7 @@ function tabulator_dionis_opers(
                 topCalc: "count"
             },
             {
-                title: 'СКЗИ', headerHozAlign:"center",
+                title: 'СКЗИ', headerHozAlign: "center",
                 columns: [
                     { title: 'инв №', field: 'inv_n', width: 100, headerFilter: true },
                     { title: 'SN', field: 'sn', width: 100, headerFilter: true },
@@ -140,9 +140,9 @@ function tabulator_dionis_opers(
                     { title: 'поставка', field: 'gk_name', width: 90, headerFilter: true },
                 ]
             },
-            { title: 'операция', field: 'oper_type', width: 140, headerFilter: true, headerHozAlign:"center" },
+            { title: 'операция', field: 'oper_type', width: 140, headerFilter: true, headerHozAlign: "center" },
             {
-                title: 'ИСТОЧНИК', headerHozAlign:"center",
+                title: 'ИСТОЧНИК', headerHozAlign: "center",
                 columns: [
                     { title: 'СОНО', field: 'ifns_sono1', width: 62, headerFilter: true },
                     { title: 'СОУН', field: 'torm_sono1', width: 62, headerFilter: true },
@@ -150,7 +150,7 @@ function tabulator_dionis_opers(
                 ]
             },
             {
-                title: 'ПРИЕМНИК', headerHozAlign:"center",
+                title: 'ПРИЕМНИК', headerHozAlign: "center",
                 columns: [
                     { title: 'СОНО', field: 'ifns_sono2', width: 62, headerFilter: true },
                     { title: 'СОУН', field: 'torm_sono2', width: 62, headerFilter: true },
@@ -159,7 +159,7 @@ function tabulator_dionis_opers(
             },
             // { title: 'временно', field: 'temp', width: 90, headerFilter: true },
             {
-                title: 'УФНС', field: 'user_ufns', width: 90, headerFilter: true, headerHozAlign:"center",
+                title: 'УФНС', field: 'user_ufns', width: 90, headerFilter: true, headerHozAlign: "center",
                 formatter: function (cell, formatterParams) {
                     const d = cell.getData()
                     return fio2fio0(d.user_ufns)
@@ -167,14 +167,14 @@ function tabulator_dionis_opers(
             },
             // { title: 'id', field: 'id_user_tno', width: 80, headerFilter: true, },
             {
-                title: 'ТНО', field: 'user_tno', width: 90, headerFilter: true, headerHozAlign:"center",
+                title: 'ТНО', field: 'user_tno', width: 90, headerFilter: true, headerHozAlign: "center",
                 formatter: function (cell, formatterParams) {
                     const d = cell.getData()
                     return fio2fio0(d.user_tno)
                 }
             },
             {
-                title: 'ФКУ', field: 'user_fku', width: 90, headerFilter: true, headerHozAlign:"center",
+                title: 'ФКУ', field: 'user_fku', width: 90, headerFilter: true, headerHozAlign: "center",
                 formatter: function (cell, formatterParams) {
                     const d = cell.getData()
                     return fio2fio0(d.user_fku)
@@ -737,18 +737,51 @@ function edit_dionis_oper(
         id2e(sel_point1).onclick = async () => {
             const id_depart = isRole("tex") ? g_user.id_depart : 0
             let stock = 0
+            let header = ''
             if (vm.$data.dv.id_oper_type == '36') stock = 3 // поставка
             if (vm.$data.dv.id_oper_type == '37') stock = 1 // передача
             if (vm.$data.dv.id_oper_type == '38') stock = 1 // передача (временно)
             if (vm.$data.dv.id_oper_type == '39') stock = 1 // подключение
             if (vm.$data.dv.id_oper_type == '41') stock = 0 // отключение
-            
+
+            switch (vm.$data.dv.id_oper_type) {
+                case '36': // поставка
+                    stock = 3 // поставщик
+                    header = 'Выбор поставщика'
+                    break
+
+                case '37': // передача
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                case '38': // передача (временно)
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                case '39': // подключение
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                case '41': // отключение
+                    stock = 0 // точка подключения
+                    header = 'Выбор точки потключения'
+                    break
+
+                default:
+                    break
+            }
+
+
             const selected_point = await select_point(
                 1,                             // selectable
                 'select',                      // mode
                 win_current,                   // win_return
                 vm.$data.dv.id_connect_point1, // id_point
-                stock                          // stock
+                stock,                         // stock
+                header                         // заголовок окна
             )
 
             const ifns = await sono_2_data(selected_point.ifns_sono)
@@ -768,18 +801,45 @@ function edit_dionis_oper(
         id2e(sel_point2).onclick = async () => {
             const id_depart = isRole("tex") ? g_user.id_depart : 0
             let stock = 0
-            if (vm.$data.dv.id_oper_type == '36') stock = 1 // поставка
-            if (vm.$data.dv.id_oper_type == '37') stock = 1 // передача
-            if (vm.$data.dv.id_oper_type == '38') stock = 1 // передача (временно)
-            if (vm.$data.dv.id_oper_type == '39') stock = 0 // подключение
-            if (vm.$data.dv.id_oper_type == '41') stock = 1 // отключение
+            let header = ''
+
+            switch (vm.$data.dv.id_oper_type) {
+                case '36': // поставка
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                case '37': // передача
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                case '38': // передача (временно)
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                case '39': // подключение
+                    stock = 0 // точка подключения
+                    header = 'Выбор точки потключения'
+                    break
+
+                case '41': // отключение
+                    stock = 1 // склад
+                    header = 'Выбор склада'
+                    break
+
+                default:
+                    break
+            }
 
             const selected_point = await select_point(
                 1,                             // selectable
                 'select',                      // mode
                 win_current,                   // win_return
                 vm.$data.dv.id_connect_point2, // id_point
-                stock                          // stock
+                stock,                         // stock
+                header                         // заголовок окна
             )
 
             const ifns = await sono_2_data(selected_point.ifns_sono)
@@ -808,7 +868,7 @@ async function print_reports1(opers_data, win_return) {
     // </n-space>
     // <br></div>`
 
-    const body =`<div style="margin: 10px;">
+    const body = `<div style="margin: 10px;">
         <n-progress
             type="line"
             :percentage=value
@@ -971,7 +1031,7 @@ async function print_reports1(opers_data, win_return) {
                 { text: `(для органа криптографической защиты)`, style: ['header'] }
             ])
             .concat(content1)
-            
+
         if (i < n) content = content.concat([{ text: ' ', pageBreak: 'after' }])
         i++
     }
@@ -1230,7 +1290,7 @@ async function print_reports2(opers_data) {
                 { text: `(для обладателя криптографической информации)`, style: ['header'] },
             ])
             .concat(content1)
-            
+
         if (i < n) content = content.concat([{ text: ' ', pageBreak: 'after' }])
         i++
     }
