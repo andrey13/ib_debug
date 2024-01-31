@@ -135,7 +135,7 @@ function tabulator_dionis_opers(
                     { title: 'инв №', field: 'inv_n', width: 100, headerFilter: true },
                     { title: 'SN', field: 'sn', width: 100, headerFilter: true },
                     { title: 'модель', field: 'model', width: 150, headerFilter: true },
-                    { title: 'тип', field: 'type', width: 100, headerFilter: true },
+                    { title: 'тип', field: 'model_type', width: 100, headerFilter: true },
                     { title: 'версия', field: 'ver', width: 100, headerFilter: true },
                     { title: 'поставка', field: 'gk_name', width: 90, headerFilter: true },
                 ]

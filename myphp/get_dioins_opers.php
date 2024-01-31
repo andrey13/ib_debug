@@ -14,6 +14,7 @@ if ($id_dionis == 0) {
         d.ver,
         d.id_model,
         dm.model as model,
+        dm.type as model_type,
         d.inv_n,
         p1.ip AS ip1,        
         p2.ip AS ip2,
