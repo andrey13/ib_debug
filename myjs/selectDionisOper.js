@@ -244,7 +244,7 @@ function tabulator_dionis_opers(
         },
 
         rowSelectionChanged: function (data, rows) {
-            console.log('data.length = ', data.length)
+            //console.log('data.length = ', data.length)
             if (data.length == 0) {
                 id2e(id_button_mod).disabled = true
                 id2e(id_button_del).disabled = true
@@ -256,7 +256,7 @@ function tabulator_dionis_opers(
 
             if (data.length == 1) {
                 const id_oper_type = data[0].id_oper_type
-                console.log('id_oper_type = ', id_oper_type)
+                //console.log('id_oper_type = ', id_oper_type)
                 id2e(id_button_mod).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_del).disabled = !isRole("dionis") && !isRole("su")
                 id2e(id_button_sel).disabled = false
@@ -294,16 +294,20 @@ function tabulator_dionis_opers(
     })
 
     id2e(id_button_pr1).onclick = async () => {
-        // const id_dionis_oper = tabulator.getSelectedData()[0].id
-        // print_report1(id_dionis_oper)
-
         const opers_data = tabulator.getSelectedData()
-        print_reports1(opers_data, win_return)
+
+        const ans = await dialogYESNO(
+            "Печатать каждое СКЗИ на отдельном листе?", // text
+            win_current // win_return
+        )
+
+        if (ans == 'ESC') return
+
+        if (ans == 'YES') print_reports1(opers_data, win_return, ans)
+        if (ans == 'NO')  print_reports1a(opers_data, win_return, ans)
     }
 
     id2e(id_button_pr2).onclick = async () => {
-        // const id_dionis_oper = tabulator.getSelectedData()[0].id
-        // print_report2(id_dionis_oper)
         const opers_data = tabulator.getSelectedData()
         print_reports2(opers_data)
     }
@@ -649,14 +653,14 @@ function edit_dionis_oper(
             vapp.unmount()
             if (mode == "new") remove_selected_dionis_oper()
             removeModalWindow(win_current, win_return)
-            console.log('d_save = ', d_save)
+            //console.log('d_save = ', d_save)
             table_dionis_opers.updateData([d_save])
             resolve("CANCEL")
         }
 
         // кнопка применения изменений --------------------------------------------------
         id2e(id_button_enter).onclick = () => {
-            console.log('SAVE')
+            //console.log('SAVE')
             const d = vm.$data.dv
             d.temp = d.id_oper_type == 38 ? 1 : 0
             vapp.unmount()
@@ -858,17 +862,12 @@ function edit_dionis_oper(
 }
 
 //=============================================================================
-async function print_reports1(opers_data, win_return) {
+async function print_reports1a(opers_data, win_return, new_page) {
     const salt = randomStr(10)
     const win_current = 'indexLoading' + salt
-    // const body = `<div style="margin: 10px;"><br>
-    // <n-space vertical>
-    // <n-slider show-tooltip v-model:value="value" :step="1">
-    // </n-slider>
-    // </n-space>
-    // <br></div>`
 
-    const body = `<div style="margin: 10px;">
+    // модальное окно прогресса печати ----------------------------------------
+    const body = `<div style="margin: 10px; padding: 10px">
         <n-progress
             type="line"
             :percentage=value
@@ -876,7 +875,7 @@ async function print_reports1(opers_data, win_return) {
             :indicator-placement="'inside'"
             processing
         />
-    <br></div>`
+        </div>`
 
     newModalWindow(
         win_current, // modal
@@ -903,7 +902,389 @@ async function print_reports1(opers_data, win_return) {
 
     const vm = vapp.use(naive).mount('#' + win_current)
 
-    // параметры шрифта pdf-документа ---------------------------------------------------
+    // параметры шрифта pdf-документа -----------------------------------------
+    pdfMake.fonts = {
+        times: {
+            normal: 'times.ttf',
+            bold: 'timesbd.ttf',
+            italics: 'timesi.ttf',
+            bolditalics: 'timesbi.ttf'
+        }
+    }
+    pdfMake.tableLayouts = {
+        szLayout: {
+            hLineWidth: function (i, node) {
+                return 0.5
+                if (i === 0 || i === node.table.body.length) {
+                    return 0
+                }
+                return (i === node.table.headerRows) ? 2 : 1
+            },
+            vLineWidth: function (i) {
+                return 0.5
+                return 0
+            },
+            hLineColor: function (i) {
+                return 'black'
+                return i === 1 ? 'black' : '#aaa'
+            },
+            paddingLeft: function (i) {
+                return 3
+                return i === 0 ? 0 : 8
+            },
+            paddingRight: function (i, node) {
+                return 3
+                return (i === node.table.widths.length - 1) ? 0 : 8
+            }
+        }
+    }
+
+    // параметры заголовка pdf-документа --------------------------------------
+    let doc_head = {
+        pageSize: 'A4',
+        pageOrientation: 'landscape',
+        pageMargins: [10, 5, 5, 5],
+
+        defaultStyle: {
+            font: 'times',
+            fontSize: 8,
+        },
+
+        styles: {
+            tableStyle: {
+                border: '1px solid black', // толщина границы
+                borderWidth: [1, 1, 1, 1] // толщина границы для каждой стороны (верх, право, низ, лево)
+            },
+            header0: {
+                font: 'times',
+                fontSize: 9,
+                italics: true,
+                alignment: 'right',
+            },
+            header: {
+                font: 'times',
+                fontSize: 10,
+                bold: true,
+                alignment: 'center',
+            },
+            table: {
+                font: 'times',
+                bold: false,
+                fontSize: 6,
+                margin: [0, 0, 0, 0]
+            },
+            tableHeader: {
+                font: 'times',
+                bold: false,
+                fontSize: 6,
+                alignment: 'center',
+            },
+            tableCell: {
+                fontSize: 6,
+                // alignment: 'center',
+                heights: 100
+            },
+            tableV: {
+                fontSize: 6,
+                alignment: 'center',
+                heights: 100
+            },
+            tableHV: {
+                fontSize: 6,
+                alignment: 'center',
+                verticalAlign: 'middle',
+                heights: 100
+            },
+            tableV: {
+                fontSize: 6,
+                verticalAlign: 'middle',
+                heights: 100
+            }
+
+        },
+    }
+
+    let content = []
+
+    // разрыв страницы --------------------------------------------------------
+    const page_break = [{ text: ' ', pageBreak: 'after' }]
+
+    // заголовок страницы -----------------------------------------------------
+    const head_page = [
+        { text: 'Приложение 1', style: ['header0'] },
+        { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
+        { text: 'Приказом Федерального агенства', style: ['header0'] },
+        { text: 'правительственной связи и информации', style: ['header0'] },
+        { text: 'при Президенте Российской Федерации', style: ['header0'] },
+        { text: 'от 13 июня 2001 г. №152', style: ['header0'] },
+        { text: `Журнал поэкземплярного учета СКЗИ, эксплуатационной`, style: ['header'] },
+        { text: `и технической документации к ним, ключевых документов`, style: ['header'] },
+        { text: `(для органа криптографической защиты)`, style: ['header'] },
+        { text: `\n`, style: ['header'] }
+    ]
+
+    const blank_table = [
+        {
+            style: 'table',
+            table: {
+                //       1  2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
+                widths: [8, 90, 90, 30, 50, 40, 60, 40, 40, 40, 40, 40, 40, 40, 40, 32],
+                heights: [6, 40, 6, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+                headerRows: 3,
+                // keepWithHeaderRows: 1,
+                body: [
+                    [
+                        { text: '№ п/п', style: 'tableHeader', rowSpan: 2 },
+                        { text: 'Наименование СКЗИ, эксплуатационной и технической документации к ним, ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                        { text: 'Серийные номера СКЗИ, эксплуатационной и технической документации к ним, номера серий ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                        { text: 'Номера экземпляров (криптографические номера) ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                        { text: 'Отметка о получении', style: 'tableHeader', colSpan: 2 },
+                        {},
+                        { text: 'Отметка о рассылке (передаче)', style: 'tableHeader', colSpan: 3 },
+                        {},
+                        {},
+                        { text: 'Отметка о возврате', style: 'tableHeader', colSpan: 2 },
+                        {},
+                        { text: 'Дата ввода в действие', style: 'tableHeader', rowSpan: 2 },
+                        { text: 'Дата вывода из действия', style: 'tableHeader', rowSpan: 2 },
+                        { text: 'Отметка об уничтожении СКЗИ, ключевых документов', style: 'tableHeader', colSpan: 2 },
+                        {},
+                        { text: 'Примечание', style: 'tableHeader', rowSpan: 2 },
+                    ],
+                    [
+                        {}, {}, {}, {},
+                        { text: 'От кого получены или Ф.И.О. сотрудника органа криптографической защиты, изготовившего ключевые документы', style: 'tableHeader' },
+                        { text: 'Дата и номер сопроводительного письма или дата изготовления ключевых документов и расписка в изготовлении ', style: 'tableHeader' },
+                        { text: 'Кому разосланы (переданы)', style: 'tableHeader' },
+                        { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                        { text: 'Дата и номер подтверждения или расписка в получении', style: 'tableHeader' },
+                        { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                        { text: 'Дата и номер подтверждения', style: 'tableHeader' },
+                        {}, {},
+                        { text: 'Дата уничтожения', style: 'tableHeader' },
+                        { text: 'Номер акта или расписка об уничтожении', style: 'tableHeader' },
+                        {},
+                    ],
+                    [
+                        { text: '1', style: 'tableHeader' },
+                        { text: '2', style: 'tableHeader' },
+                        { text: '3', style: 'tableHeader' },
+                        { text: '4', style: 'tableHeader' },
+                        { text: '5', style: 'tableHeader' },
+                        { text: '6', style: 'tableHeader' },
+                        { text: '7', style: 'tableHeader' },
+                        { text: '8', style: 'tableHeader' },
+                        { text: '9', style: 'tableHeader' },
+                        { text: '10', style: 'tableHeader' },
+                        { text: '11', style: 'tableHeader' },
+                        { text: '12', style: 'tableHeader' },
+                        { text: '13', style: 'tableHeader' },
+                        { text: '14', style: 'tableHeader' },
+                        { text: '15', style: 'tableHeader' },
+                        { text: '16', style: 'tableHeader' },
+                    ]
+
+                ]
+            },
+            layout: 'szLayout'
+        },
+    ]
+
+    
+    let table_content = []
+
+    // цикл по выбранным операциям и сборкам, формирования массива строк отчета
+    let i = 0
+    let n = opers_data.length
+    for (const oper_data of opers_data) {
+        // console.log('Math.floor(i / n * 100) = ', Math.floor(i / n * 100))
+        // vm.$data.txt = i.toString() + "/" + n.toString()
+        vm.$data.value = Math.floor(i / n * 100)
+        if (oper_data.id_oper_type != '37' && oper_data.id_oper_type != '38') continue
+        let table_content_oper = await reports_body1a(oper_data.id)
+        table_content = table_content.concat(table_content_oper)
+        i++
+    }
+
+    //console.log('table_content.length = ', table_content.length)
+
+    // цикл по массиву строк отчета, формирование отчета ----------------------
+    i = 0
+    n = table_content.length
+    let table_temp = []
+    for (const line of table_content) {
+        // vm.$data.value = Math.floor(i / n * 100)
+        if (!(i % 11)) {
+            if (i > 0) { 
+                content = content.concat(table_temp)
+            }
+            table_temp = [
+                {
+                    style: 'table',
+                    table: {
+                        //       1  2   3   4   5   6   7   8   9   10  11  12  13  14  15  16
+                        widths: [8, 90, 90, 30, 50, 40, 60, 40, 40, 40, 40, 40, 40, 40, 40, 32],
+                        heights: [6, 40, 6, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30],
+                        headerRows: 3,
+                        // keepWithHeaderRows: 1,
+                        body: [
+                            [
+                                { text: '№ п/п', style: 'tableHeader', rowSpan: 2 },
+                                { text: 'Наименование СКЗИ, эксплуатационной и технической документации к ним, ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                                { text: 'Серийные номера СКЗИ, эксплуатационной и технической документации к ним, номера серий ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                                { text: 'Номера экземпляров (криптографические номера) ключевых документов', style: 'tableHeader', rowSpan: 2 },
+                                { text: 'Отметка о получении', style: 'tableHeader', colSpan: 2 },
+                                {},
+                                { text: 'Отметка о рассылке (передаче)', style: 'tableHeader', colSpan: 3 },
+                                {},
+                                {},
+                                { text: 'Отметка о возврате', style: 'tableHeader', colSpan: 2 },
+                                {},
+                                { text: 'Дата ввода в действие', style: 'tableHeader', rowSpan: 2 },
+                                { text: 'Дата вывода из действия', style: 'tableHeader', rowSpan: 2 },
+                                { text: 'Отметка об уничтожении СКЗИ, ключевых документов', style: 'tableHeader', colSpan: 2 },
+                                {},
+                                { text: 'Примечание', style: 'tableHeader', rowSpan: 2 },
+                            ],
+                            [
+                                {}, {}, {}, {},
+                                { text: 'От кого получены или Ф.И.О. сотрудника органа криптографической защиты, изготовившего ключевые документы', style: 'tableHeader' },
+                                { text: 'Дата и номер сопроводительного письма или дата изготовления ключевых документов и расписка в изготовлении ', style: 'tableHeader' },
+                                { text: 'Кому разосланы (переданы)', style: 'tableHeader' },
+                                { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                                { text: 'Дата и номер подтверждения или расписка в получении', style: 'tableHeader' },
+                                { text: 'Дата и номер сопроводительного письма', style: 'tableHeader' },
+                                { text: 'Дата и номер подтверждения', style: 'tableHeader' },
+                                {}, {},
+                                { text: 'Дата уничтожения', style: 'tableHeader' },
+                                { text: 'Номер акта или расписка об уничтожении', style: 'tableHeader' },
+                                {},
+                            ],
+                            [
+                                { text: '1', style: 'tableHeader' },
+                                { text: '2', style: 'tableHeader' },
+                                { text: '3', style: 'tableHeader' },
+                                { text: '4', style: 'tableHeader' },
+                                { text: '5', style: 'tableHeader' },
+                                { text: '6', style: 'tableHeader' },
+                                { text: '7', style: 'tableHeader' },
+                                { text: '8', style: 'tableHeader' },
+                                { text: '9', style: 'tableHeader' },
+                                { text: '10', style: 'tableHeader' },
+                                { text: '11', style: 'tableHeader' },
+                                { text: '12', style: 'tableHeader' },
+                                { text: '13', style: 'tableHeader' },
+                                { text: '14', style: 'tableHeader' },
+                                { text: '15', style: 'tableHeader' },
+                                { text: '16', style: 'tableHeader' },
+                            ]
+        
+                        ]
+                    },
+                    layout: 'szLayout'
+                },
+            ]
+
+            //console.log(`table_temp = `, table_temp)
+            content = content.concat([
+                { text: 'Приложение 1', style: ['header0'] },
+                { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
+                { text: 'Приказом Федерального агенства', style: ['header0'] },
+                { text: 'правительственной связи и информации', style: ['header0'] },
+                { text: 'при Президенте Российской Федерации', style: ['header0'] },
+                { text: 'от 13 июня 2001 г. №152', style: ['header0'] },
+                { text: `Журнал поэкземплярного учета СКЗИ, эксплуатационной`, style: ['header'] },
+                { text: `и технической документации к ним, ключевых документов`, style: ['header'] },
+                { text: `(для органа криптографической защиты)`, style: ['header'] },
+                { text: `\n`, style: ['header'] }
+            ])
+        }
+
+        table_temp[0].table.body = await table_temp[0].table.body.concat([line])   
+        i++
+    }
+    
+    content = content.concat(table_temp)
+    
+    //console.log('content = ', content)
+
+    let doc = Object.assign(doc_head, { content: content })
+    vapp.unmount()
+
+    removeModalWindow(win_current, win_return)
+    pdfMake.createPdf(doc).open()
+
+    async function reports_body1a(id_dionis_oper) {
+        let model_content_d = await id_oper_2_model_content(id_dionis_oper)
+        let data = await id_oper_2_date(id_dionis_oper)
+        let table_content = []
+        let i = 0
+
+        model_content_d.forEach((d) => {
+            let sn_str = !!!data.sn_str ? d.dionis_sn : data.sn_str
+            let sn = d.sn == '{{sn}}' ? sn_str : d.sn
+
+            table_content[i] = [
+                '',
+                { text: d.name, style: 'tableCell' },
+                { text: sn, style: 'tableV' },
+                { text: '1', style: 'tableHV' },
+                { text: data.vendor, style: 'tableCell' },
+                { text: date2date(data.date_fns) + '\n' + data.numb_fns, style: 'tableCell' },
+                // { text: data.ifns2, style: 'tableCell' }, 
+                { text: data.point2_str, style: 'tableCell' },
+                { text: date2date(data.date_ufns) + '\n' + data.numb_ufns, style: 'tableCell' },
+                { text: date2date(data.date_time) + '\n' + fio2fio0(data.user_tno), style: 'tableCell' },
+                '', '', '', '', '', '', '',
+            ]
+            i += 1
+        })
+        return table_content
+    }
+}
+
+//=============================================================================
+async function print_reports1(opers_data, win_return, new_page) {
+    const salt = randomStr(10)
+    const win_current = 'indexLoading' + salt
+
+    // модальное окно прогресса печати ----------------------------------------
+    const body = `<div style="margin: 10px; padding: 10px">
+        <n-progress
+            type="line"
+            :percentage=value
+            :height="24"
+            :indicator-placement="'inside'"
+            processing
+        />
+        </div>`
+
+    newModalWindow(
+        win_current, // modal
+        'печать журнала...', // html_header
+        body, // html_body
+        '', // html_footer
+        '90%', // width
+        '5%', // marginLeft
+        '3%', // marginTop
+        win_return // win_return
+    )
+
+    const { ref } = Vue
+    const { defineComponent } = Vue
+
+    const vapp = Vue.createApp({
+        data() {
+            return {
+                txt: "000",
+                value: 0,
+            }
+        }
+    })
+
+    const vm = vapp.use(naive).mount('#' + win_current)
+
+    // параметры шрифта pdf-документа -----------------------------------------
     pdfMake.fonts = {
         times: {
             normal: 'times.ttf',
@@ -1036,6 +1417,8 @@ async function print_reports1(opers_data, win_return) {
         i++
     }
 
+    //console.log('content = ', content)
+
     let doc = Object.assign(doc_head, { content: content })
     vapp.unmount()
     removeModalWindow(win_current, win_return)
@@ -1126,7 +1509,7 @@ async function print_reports1(opers_data, win_return) {
 
             let sn_str = !!!data.sn_str ? d.dionis_sn : data.sn_str
 
-            console.log('sn_str        = ', sn_str)
+            //console.log('sn_str        = ', sn_str)
 
             let sn = d.sn == '{{sn}}' ? sn_str : d.sn
             // let user_fku = d.sn == '{{sn}}' ? data39.user_fku : ''
@@ -1603,7 +1986,7 @@ function format_point(
     point = '',
     stock = 0
 ) {
-    console.log(`sono1, sono2, point, stock = ${sono1}, ${sono2}, ${point}, ${stock}`)
+    //console.log(`sono1, sono2, point, stock = ${sono1}, ${sono2}, ${point}, ${stock}`)
 
     // -------------- ДНР ----------------------------------
     if (stock == 2) return point
