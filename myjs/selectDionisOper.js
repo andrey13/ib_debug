@@ -304,7 +304,7 @@ function tabulator_dionis_opers(
         if (ans == 'ESC') return
 
         if (ans == 'YES') print_reports1(opers_data, win_return, ans)
-        if (ans == 'NO')  print_reports1a(opers_data, win_return, ans)
+        if (ans == 'NO') print_reports1a(opers_data, win_return, ans)
     }
 
     id2e(id_button_pr2).onclick = async () => {
@@ -1090,7 +1090,7 @@ async function print_reports1a(opers_data, win_return, new_page) {
         },
     ]
 
-    
+
     let table_content = []
 
     // цикл по выбранным операциям и сборкам, формирования массива строк отчета
@@ -1115,7 +1115,7 @@ async function print_reports1a(opers_data, win_return, new_page) {
     for (const line of table_content) {
         // vm.$data.value = Math.floor(i / n * 100)
         if (!(i % 11)) {
-            if (i > 0) { 
+            if (i > 0) {
                 content = content.concat(table_temp)
             }
             table_temp = [
@@ -1178,7 +1178,7 @@ async function print_reports1a(opers_data, win_return, new_page) {
                                 { text: '15', style: 'tableHeader' },
                                 { text: '16', style: 'tableHeader' },
                             ]
-        
+
                         ]
                     },
                     layout: 'szLayout'
@@ -1200,12 +1200,12 @@ async function print_reports1a(opers_data, win_return, new_page) {
             ])
         }
 
-        table_temp[0].table.body = await table_temp[0].table.body.concat([line])   
+        table_temp[0].table.body = await table_temp[0].table.body.concat([line])
         i++
     }
-    
+
     content = content.concat(table_temp)
-    
+
     //console.log('content = ', content)
 
     let doc = Object.assign(doc_head, { content: content })
@@ -1222,7 +1222,24 @@ async function print_reports1a(opers_data, win_return, new_page) {
 
         model_content_d.forEach((d) => {
             let sn_str = !!!data.sn_str ? d.dionis_sn : data.sn_str
-            let sn = d.sn == '{{sn}}' ? sn_str : d.sn
+            let sn = ''
+            switch (d.sn) {
+                case '{{sn}}':
+                    sn = sn_str
+                    break;
+                case '{{sn1}}':
+                    sn = d.sn1
+                    break;
+                case '{{sn2}}':
+                    sn = s.sn2
+                    break;
+                default:
+                    sn = d.sn
+                    break;
+            }
+            // let sn = d.sn == '{{sn}}' ? sn_str : d.sn
+            // sn = d.sn == '{{sn1}}' ? d.sn1 : d.sn
+            // sn = d.sn == '{{sn2}}' ? d.sn2 : d.sn
 
             table_content[i] = [
                 '',
@@ -1511,7 +1528,23 @@ async function print_reports1(opers_data, win_return, new_page) {
 
             //console.log('sn_str        = ', sn_str)
 
-            let sn = d.sn == '{{sn}}' ? sn_str : d.sn
+            let sn = ''
+            switch (d.sn) {
+                case '{{sn}}':
+                    sn = sn_str
+                    break;
+                case '{{sn1}}':
+                    sn = d.sn1
+                    break;
+                case '{{sn2}}':
+                    sn = s.sn2
+                    break;
+                default:
+                    sn = d.sn
+                    break;
+            }
+
+            //let sn = d.sn == '{{sn}}' ? sn_str : d.sn
             // let user_fku = d.sn == '{{sn}}' ? data39.user_fku : ''
             // let date_fku = d.sn == '{{sn}}' ? date2date(data39.date_time) : ''
 

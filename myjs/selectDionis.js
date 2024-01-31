@@ -517,6 +517,8 @@ function edit_dionis(d, win_return = null, mode = "") {
             <input class="o3-border" type="text" v-model="dv.status"> - статус<br>
             <input class="o3-border" type="text" v-model="dv.inv_n"> - инвентарный номер<br>
             <input class="o3-border" type="text" v-model="dv.sn"> - заводской номер<br>
+            <input class="o3-border" type="text" v-model="dv.sn1"> - заводской номер 1<br>
+            <input class="o3-border" type="text" v-model="dv.sn2"> - заводской номер 2<br>
             <input class="o3-border" type="text" v-model="dv.ver"> - версия<br>
             <br>      
             модель/тип:<br>
@@ -811,6 +813,8 @@ async function save_dionis(d) {
             type,
             model,
             sn,
+            sn1,
+            sn2,
             inv_n,
             ver,
             date_sert,
@@ -830,6 +834,8 @@ async function save_dionis(d) {
             '${d.type}',
             '${d.model}',
             '${d.sn}',
+            '${d.sn1}',
+            '${d.sn2}',
             '${d.inv_n}',
             '${d.ver}',
             '${d.date_sert}',
@@ -850,6 +856,8 @@ async function save_dionis(d) {
             type='${d.type}',
             model='${d.model}',
             sn='${d.sn}',
+            sn1='${d.sn1}',
+            sn2='${d.sn2}',
             inv_n='${d.inv_n}',
             ver='${d.ver}',
             date_sert='${d.date_sert}',
@@ -882,6 +890,8 @@ function factory_dionis() {
         type: '',
         model: '',
         sn: '',
+        sn1: '',
+        sn2: '',
         inv_n: '',
         ver: '',
         date_sert: '',
