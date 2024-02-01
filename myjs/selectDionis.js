@@ -172,6 +172,10 @@ function tabulator_select_dionis(
     // `&nbsp;&nbsp;&nbsp;данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
     // `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' checked style="vertical-align: middle;">` +
     // `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
+    // `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
+    // `&nbsp;&nbsp;&nbsp;резерв&nbsp;<input type='checkbox' id='${id_checkb_rez}' checked style="vertical-align: middle;">` +
+    // `&nbsp;&nbsp;&nbsp;неисправен&nbsp;<input type='checkbox' id='${id_checkb_nei}' checked style="vertical-align: middle;">` +
+    // `&nbsp;&nbsp;&nbsp;на списании&nbsp;<input type='checkbox' id='${id_checkb_spi}' checked style="vertical-align: middle;">` +
 
     const msgFooter =
         `<span id="select-stats"></span>` +
@@ -181,10 +185,6 @@ function tabulator_select_dionis(
         `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
         `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
         `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
-        `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;резерв&nbsp;<input type='checkbox' id='${id_checkb_rez}' checked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;неисправен&nbsp;<input type='checkbox' id='${id_checkb_nei}' checked style="vertical-align: middle;">` +
-        `&nbsp;&nbsp;&nbsp;на списании&nbsp;<input type='checkbox' id='${id_checkb_spi}' checked style="vertical-align: middle;">` +
         `</div>`
 
     const tabulator = new Tabulator("#" + div, {
@@ -347,25 +347,25 @@ function tabulator_select_dionis(
         )
     }
 
-    id2e(id_checkb_ust).onclick = () => {
-        flag_ust = id2e(id_checkb_ust).checked 
-        set_Filter()
-    }
+    // id2e(id_checkb_ust).onclick = () => {
+    //     flag_ust = id2e(id_checkb_ust).checked 
+    //     set_Filter()
+    // }
 
-    id2e(id_checkb_rez).onclick = () => {
-        flag_rez = id2e(id_checkb_rez).checked 
-        set_Filter()
-    }
+    // id2e(id_checkb_rez).onclick = () => {
+    //     flag_rez = id2e(id_checkb_rez).checked 
+    //     set_Filter()
+    // }
 
-    id2e(id_checkb_nei).onclick = () => {
-        flag_nei = id2e(id_checkb_nei).checked 
-        set_Filter()
-    }
+    // id2e(id_checkb_nei).onclick = () => {
+    //     flag_nei = id2e(id_checkb_nei).checked 
+    //     set_Filter()
+    // }
 
-    id2e(id_checkb_spi).onclick = () => {
-        flag_spi = id2e(id_checkb_spi).checked 
-        set_Filter()
-    }
+    // id2e(id_checkb_spi).onclick = () => {
+    //     flag_spi = id2e(id_checkb_spi).checked 
+    //     set_Filter()
+    // }
 
     // id2e(id_checkb_xls).onclick = () => {
     //     if (id2e(id_checkb_xls).checked) {
@@ -432,7 +432,7 @@ function tabulator_select_dionis(
     tabulator.showColumn('t1name')
     tabulator.showColumn('t2name')
 
-    set_Filter()
+    // set_Filter()
 
     tabulator.redraw()   
 
