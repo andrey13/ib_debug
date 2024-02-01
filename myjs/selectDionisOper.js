@@ -1090,15 +1090,13 @@ async function print_reports1a(opers_data, win_return, new_page) {
         },
     ]
 
-
     let table_content = []
 
     // цикл по выбранным операциям и сборкам, формирования массива строк отчета
     let i = 0
     let n = opers_data.length
+
     for (const oper_data of opers_data) {
-        // console.log('Math.floor(i / n * 100) = ', Math.floor(i / n * 100))
-        // vm.$data.txt = i.toString() + "/" + n.toString()
         vm.$data.value = Math.floor(i / n * 100)
         if (oper_data.id_oper_type != '37' && oper_data.id_oper_type != '38') continue
         let table_content_oper = await reports_body1a(oper_data.id)
@@ -1106,14 +1104,11 @@ async function print_reports1a(opers_data, win_return, new_page) {
         i++
     }
 
-    //console.log('table_content.length = ', table_content.length)
-
     // цикл по массиву строк отчета, формирование отчета ----------------------
     i = 0
     n = table_content.length
     let table_temp = []
     for (const line of table_content) {
-        // vm.$data.value = Math.floor(i / n * 100)
         if (!(i % 11)) {
             if (i > 0) {
                 content = content.concat(table_temp)
@@ -1185,7 +1180,6 @@ async function print_reports1a(opers_data, win_return, new_page) {
                 },
             ]
 
-            //console.log(`table_temp = `, table_temp)
             content = content.concat([
                 { text: 'Приложение 1', style: ['header0'] },
                 { text: 'к Инструкции (пункт 26), утвержденной', style: ['header0'] },
@@ -1205,8 +1199,6 @@ async function print_reports1a(opers_data, win_return, new_page) {
     }
 
     content = content.concat(table_temp)
-
-    //console.log('content = ', content)
 
     let doc = Object.assign(doc_head, { content: content })
     vapp.unmount()
@@ -1237,9 +1229,6 @@ async function print_reports1a(opers_data, win_return, new_page) {
                     sn = d.sn
                     break;
             }
-            // let sn = d.sn == '{{sn}}' ? sn_str : d.sn
-            // sn = d.sn == '{{sn1}}' ? d.sn1 : d.sn
-            // sn = d.sn == '{{sn2}}' ? d.sn2 : d.sn
 
             table_content[i] = [
                 '',
@@ -1247,7 +1236,7 @@ async function print_reports1a(opers_data, win_return, new_page) {
                 { text: sn, style: 'tableV' },
                 { text: '1', style: 'tableHV' },
                 { text: data.vendor, style: 'tableCell' },
-                { text: date2date(data.date_fns) + '\n' + data.numb_fns, style: 'tableCell' },
+                { text: date2date(data.date_vendor) + '\n' + data.numb_vendor, style: 'tableCell' },
                 // { text: data.ifns2, style: 'tableCell' }, 
                 { text: data.point2_str, style: 'tableCell' },
                 { text: date2date(data.date_ufns) + '\n' + data.numb_ufns, style: 'tableCell' },
@@ -1407,8 +1396,6 @@ async function print_reports1(opers_data, win_return, new_page) {
     let i = 1
     let n = opers_data.length
 
-
-
     for (const oper_data of opers_data) {
         vm.$data.txt = i.toString() + "/" + n.toString()
         vm.$data.value = Math.floor(i / n * 100)
@@ -1433,8 +1420,6 @@ async function print_reports1(opers_data, win_return, new_page) {
         if (i < n) content = content.concat([{ text: ' ', pageBreak: 'after' }])
         i++
     }
-
-    //console.log('content = ', content)
 
     let doc = Object.assign(doc_head, { content: content })
     vapp.unmount()
@@ -1513,20 +1498,13 @@ async function print_reports1(opers_data, win_return, new_page) {
         ]
 
         let model_content_d = await id_oper_2_model_content(id_dionis_oper)
-
         let data = await id_oper_2_date(id_dionis_oper)
         let d36 = await dionis_oper_2_dionis_oper(id_dionis_oper, 37, 36)
-        // let data36 = await id_oper_2_date(d36.id)
-
         let table_content = []
         let i = 0
 
         model_content_d.forEach((d) => {
-            // let sn = d.sn == '{{sn}}' ? data.sn_str : d.sn
-
             let sn_str = !!!data.sn_str ? d.dionis_sn : data.sn_str
-
-            //console.log('sn_str        = ', sn_str)
 
             let sn = ''
             switch (d.sn) {
@@ -1544,38 +1522,23 @@ async function print_reports1(opers_data, win_return, new_page) {
                     break;
             }
 
-            //let sn = d.sn == '{{sn}}' ? sn_str : d.sn
-            // let user_fku = d.sn == '{{sn}}' ? data39.user_fku : ''
-            // let date_fku = d.sn == '{{sn}}' ? date2date(data39.date_time) : ''
-
             table_content[i] = [
                 '',
                 { text: d.name, style: 'tableCell' },
                 { text: sn, style: 'tableV' },
                 { text: '1', style: 'tableHV' },
                 { text: data.vendor, style: 'tableCell' },
-                { text: date2date(data.date_fns) + '\n' + data.numb_fns, style: 'tableCell' },
+                { text: date2date(data.date_vendor) + '\n' + data.numb_vendor, style: 'tableCell' },
                 // { text: data.ifns2, style: 'tableCell' }, 
                 { text: data.point2_str, style: 'tableCell' },
                 { text: date2date(data.date_ufns) + '\n' + data.numb_ufns, style: 'tableCell' },
                 { text: date2date(data.date_time) + '\n' + fio2fio0(data.user_tno), style: 'tableCell' },
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
-                '',
+                '', '', '', '', '', '', '',
             ]
             i += 1
         })
 
-
-
         table_head[1].table.body = table_head[1].table.body.concat(table_content)
-
-        // console.log('table_head = ', table_head)
-
         return table_head
     }
 }

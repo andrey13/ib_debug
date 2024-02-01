@@ -23,6 +23,8 @@ async function id_oper_2_date(id_dionis_oper) {
     g.numb_fns,
     g.date_ufns,
     g.numb_ufns,
+    g.date_vendor,
+    g.numb_vendor,
     v.name as vendor,
     do.id_user_tno,
     u1.name as user_tno,
