@@ -1,4 +1,5 @@
-// import { select_gk } from '../myjs/selectGK.js'
+import { getAllows, isRole } from '../myjs/start.js'
+import { select_gk } from '../myjs/selectGK.js'
 
 async function mGK() {
     // очистка таймера -----------------------------------------------------------------
@@ -16,9 +17,9 @@ async function mGK() {
 
     // список МТС -----------------------------------------------------------------------
     select_gk(
-        selectable = true, 
-        mode = 'edit', 
-        win_return = '', 
+        true,    // selectable
+        'edit',  // mode
+        '',      // win_return
     )
 }
 

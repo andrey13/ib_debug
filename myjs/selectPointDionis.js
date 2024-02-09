@@ -1,4 +1,7 @@
+import { select_dionis_oper } from '../myjs/selectDionisOper.js'
+
 let table_select_point_dionis = null
+
 //=======================================================================================
 // модальное окно выбора ГК
 //=======================================================================================
@@ -536,3 +539,8 @@ function tabulator_select_point_dionis(
 //     let row = table_select_point_dionis.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
 // }
+
+
+export {
+    select_point_dionis
+}

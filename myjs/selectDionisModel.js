@@ -1,4 +1,8 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { tabulator_model_content } from '../myjs/tabModelContent.js'
+
 let table_select_dionis_model = null
+let tab_model_content = null
 //=======================================================================================
 // модальное окно выбора ГК
 //=======================================================================================
@@ -13,11 +17,10 @@ function select_dionis_model(
         const salt = randomStr(10)
         const win_current = 'selectdionismodel' + salt
 
-        console.log('========================================>')
-        console.log('select_dionis_model:')
-        console.log('win_current = ', win_current)
-        console.log('win_return = ', win_return)
-
+        // console.log('========================================>')
+        // console.log('select_dionis_model:')
+        // console.log('win_current = ', win_current)
+        // console.log('win_return = ', win_return)
 
         if (mode == 'select') {
             newModalWindow(
@@ -69,10 +72,10 @@ function tabulator_select_dionis_model(
     win_return = null,
     id_dionis_model = 0,
 ) {
-    console.log('========================================>')
-    console.log('tabulator_select_dionis_model:')
-    console.log('win_current = ', win_current)
-    console.log('win_return = ', win_return)
+    // console.log('========================================>')
+    // console.log('tabulator_select_dionis_model:')
+    // console.log('win_current = ', win_current)
+    // console.log('win_return = ', win_return)
 
     const cols = [
         { title: "id", field: "id", widthGrow: 1, headerFilter: true, topCalc: "count" },
@@ -450,3 +453,8 @@ function factory_dionis_model() {
 //     let row = table_select_gk.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
 // }
+
+
+export {
+    select_dionis_model
+}

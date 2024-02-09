@@ -1,3 +1,9 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableIFNS = null
+let tableTORM = null
+let tablePoint = null
+
 function mIFNS() {
     $("#appBody").html('<div id="tabIT"><div id="tabI"></div><div id="tabT"></div><div id="tabP"></div></div>')
     createTabulatorIFNS("tabI", appBodyHeight())
@@ -16,7 +22,7 @@ function createTabulatorIFNS(id_div, appH) {
     let bDEL = (allow.D == 1) ? "<button id='delIFNS' class='w3-button w3-white w3-border w3-hover-teal'>Удалить</button>" : "";
     let ms = bDEL + bADD;
 
-    tableIFNS = new Tabulator('#'+id_div, {
+    const tableIFNS = new Tabulator('#'+id_div, {
         ajaxURL: "myphp/loadData.php",
         ajaxParams: { t: "ifns", o: "sono" },
         ajaxConfig: "GET",
@@ -363,4 +369,8 @@ function editIFNS(c) {
     }
 
     activateModalWindow("mainModal");
+}
+
+export {
+    mIFNS
 }

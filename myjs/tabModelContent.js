@@ -46,7 +46,7 @@ function tabulator_model_content(
         printFooter: "",
         rowContextMenu: rowMenu(),
         headerFilterPlaceholder: "",
-        selectable: selectable,
+        selectable: 1,
         selectableRangeMode: "click",
         reactiveData: true,
         columns: cols,
@@ -156,4 +156,8 @@ function factory_dionis_model_content(id_dionis_model) {
         sn: '',
         comm: ''
     }
+}
+
+export {
+    tabulator_model_content
 }

@@ -106,3 +106,8 @@ function filterSelect(data, filterParams) {
     let row = tableSelectComp.searchRows("id", "=", data.id)[0];
     return row.isSelected();
 }
+
+
+export {
+    selectComp
+}

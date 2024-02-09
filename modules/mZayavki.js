@@ -1,3 +1,5 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
 let v1 = null
 let m_id_zayavka = 0
 let m_id_MTS = 0
@@ -9,6 +11,9 @@ let m_id_user = 0
 let m_user_it = 0
 let m_user_ib = 0
 let m_user = ''
+let table_zayavki = null
+let table_oper = null
+let table_arm = null
 
 // виды операций с МТС---------------------------------------------------------
 let m_operTypes = []
@@ -199,7 +204,7 @@ function tabulator_zayavki(id_div, appH) {
         cellDblClick: function (e, cell) {
             edit_zayavka(
                 table_zayavki.getSelectedData()[0],
-                (win_return = win_current)
+                win_current
             )
         },
     })
@@ -456,7 +461,7 @@ function tabulator_zayavki(id_div, appH) {
 
                             </div>`
 
-        footZayavka = ``
+        const footZayavka = ``
 
         const esc_zayavka = mode == 'new'
             ? () => { 
@@ -468,9 +473,9 @@ function tabulator_zayavki(id_div, appH) {
             }
 
         newModalWindow(win_current, headerZayavka, bodyZayavka, footZayavka,
-            (width = "98%"),
-            (marginLeft = "1%"),
-            (marginTop = "1%"),
+            "98%",  // width
+            "1%",   // marginLeft
+            "1%",   // marginTop
             win_return,
             esc_zayavka
         )
@@ -1952,4 +1957,8 @@ function factory_zayavka() {
         user_isp: "<выбрать>",
         depart: g_user.depart,
     }
+}
+
+export {
+    mZayavki
 }

@@ -1,3 +1,6 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { select_point_dionis } from '../myjs/selectPointDionis.js'
+
 async function mPointDionis() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -14,8 +17,12 @@ async function mPointDionis() {
 
     // список подключений Dionis -----------------------------------------------------------------------
     select_point_dionis(
-        selectable = true, 
-        mode = 'edit', 
-        win_return = '', 
+        true,   //selectable
+        'edit', // mode
+        '',     // win_return
     )
+}
+
+export {
+    mPointDionis
 }

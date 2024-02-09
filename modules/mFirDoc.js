@@ -1,3 +1,5 @@
+import { getAllows } from '../myjs/start.js'
+
 let id_dep_dep = 0;
 
 function mFirDoc() {
@@ -37,7 +39,7 @@ function createTabFirDoc(id_div, appH) {
     let ms = bUPL + bPRT + bVEW + bDEL + bMOD + bADD + bCOP;
     let dep_filter = (allow.A == 1) ? -1 : g_user.id_depart;
 
-    tableFirDoc = new Tabulator('#'+id_div, {
+    const tableFirDoc = new Tabulator('#'+id_div, {
         ajaxURL: "myphp/loadDataFirDoc.php",
         ajaxParams: { s: g_user.sono, d:  dep_filter },
         ajaxConfig: "GET",
@@ -996,4 +998,8 @@ function createTabSelectReson(id_div, appH, sono, id_depart, resolve, reject) {
     });
 
 
+}
+
+export {
+    mFirDoc
 }

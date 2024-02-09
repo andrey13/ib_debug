@@ -1,3 +1,6 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { select_mts } from '../myjs/selectMTS.js'
+
 async function mMTS() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -13,12 +16,16 @@ async function mMTS() {
 
     // список МТС -----------------------------------------------------------------------
     select_mts(
-        sono = '6100', 
+        '6100',  // sono
         id_otdel, 
         sklad, 
         id_type_oper,
-        selectable = true, 
-        mode = 'edit', 
-        win_return = '', 
+        true, 
+        'edit', 
+        '', 
     )
+}
+
+export {
+    mMTS
 }

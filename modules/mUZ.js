@@ -1,3 +1,7 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableUKEP = null
+
 //console.log("load mUZ");
 
 function mUZ(){
@@ -219,4 +223,8 @@ function recalcSum(id_start) {
         saveRow(r);
     }
 
+}
+
+export {
+    mUZ
 }

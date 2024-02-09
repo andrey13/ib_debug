@@ -1,4 +1,10 @@
-//console.log("load mVulner");
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableScns = null
+let tableVulner = null
+let tableScanREP = null
+let tableVulnerComp = null 
+
 let msgFooterVULN = `<button id="b_REP1" class="w3-button w3-white w3-border w3-hover-teal">Сформировать квартальный отчет</button>`;
 
 function mVulner() {
@@ -420,4 +426,9 @@ function createTabulatorVulnerComp1(id_div, id_vulner, vulner_name, appH, sono, 
 
     });
 
+}
+
+
+export {
+    mVulner
 }

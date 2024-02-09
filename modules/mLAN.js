@@ -1,3 +1,8 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableLVS = null
+let tableLVST = null
+
 function mLAN() {
     $("#appBody").html('<div id="tabLLT"><div id="tabL"></div><div id="tabLT"></div></div>');
     createTabulatorLVS("tabL", appBodyHeight());
@@ -199,3 +204,6 @@ function createTabulatorLVST(id_div, appH, msgF) {
 
 }
 
+export {
+    mLAN
+}

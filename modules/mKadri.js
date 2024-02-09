@@ -1,3 +1,8 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableSZ = null
+let tableD = null
+
 const w_fio = 170;
 const w_tabn = 20;
 const w_date = 58;
@@ -1220,4 +1225,8 @@ function configKadri(id_doc_type) {
         },
     });
 
+}
+
+export {
+    mKadri
 }

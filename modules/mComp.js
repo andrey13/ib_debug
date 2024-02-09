@@ -1,4 +1,9 @@
+import { getAllows } from '../myjs/start.js'
 //console.log("load mComp");
+
+let tableComp = null
+let tableCompSoft = null
+let tableCompVulner = null
 
 async function mComp() {
     console.log("run mComp");
@@ -330,10 +335,10 @@ function editComp(c) {
         '',
         formComp,
         '',
-        width = '600px',
-        marginLeft = '5%',
-        marginTop = '5%',
-        win_return = null
+        '600px',
+        '5%',
+        '5%',
+        null
     )
 
     // id_2_set_focus(win_current)
@@ -421,4 +426,11 @@ function createTabulatorCompVulner(id_div, comp_id, comp_name, appH, id_level_fi
     if (id_level_filter == "") { } else {
         tableCompVulner.setFilter("id_level", "=", id_level_filter);
     }
+}
+
+export {
+    mComp,
+    createTabulatorComp,
+    createTabulatorCompSoft,
+    createTabulatorCompVulner
 }

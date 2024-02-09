@@ -1,4 +1,5 @@
-//=============================================================================
+let table_dionis_opers= null
+
 function select_dionis_oper(
     sono = '6100',
     id_otdel = 0,
@@ -1997,4 +1998,8 @@ function format_point(
 
     // -------------- ТОРМ ТНО -----------------------------
     return sono1 + '/' + sono2 + '/' + point
+}
+
+export {
+    select_dionis_oper
 }

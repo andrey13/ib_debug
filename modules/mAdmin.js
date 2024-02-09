@@ -1,3 +1,10 @@
+import { getAllows } from '../myjs/start.js'
+
+let tableMod = null
+let tableGrp = null
+let tableModGrp = null
+let tableGrpUsr = null
+
 function mAdmin() {    
     let appHeight = appBodyHeight();
 
@@ -482,3 +489,6 @@ function createTabulatorGrpUsr(id_div, appH) {
 //}
 
 
+export {
+    mAdmin
+}

@@ -1,4 +1,6 @@
-//console.log("load mSoftComp");
+import { getAllows, isRole } from '../myjs/start.js'
+import { createTabulatorComp } from '../modules/mComp.js'
+import { createTabulatorSoft } from '../modules/mSoft.js'
 
 function mSoftComp(){
     console.log("run mSoftComp1");
@@ -9,4 +11,8 @@ function mSoftComp(){
     createTabulatorSoft("tabS", appHeight / 2, "");
     createTabulatorComp("tabC", appHeight / 2, "");
     console.log("run mSoftComp3");
+}
+
+export {
+    mSoftComp,
 }

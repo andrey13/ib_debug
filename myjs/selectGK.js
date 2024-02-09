@@ -545,30 +545,13 @@ function factory_gk() {
 
 
 
-// export {
-//     select_gk    
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // function filterSelect(data, filterParams) {
 //     let id = data.id
 //     let row = table_select_gk.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
 // }
+
+export {
+    select_gk    
+}

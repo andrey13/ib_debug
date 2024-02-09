@@ -1,3 +1,7 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableLog = null 
+
 function mLog() {    
     $("#appBody").html('<div id="tabLog"></div>');
     createTabulatorLog("tabLog", appBodyHeight());
@@ -47,3 +51,6 @@ function createTabulatorLog(id_div, appH) {
 
 }
 
+export {
+    mLog
+}

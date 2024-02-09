@@ -1,3 +1,8 @@
+import { getAllows } from '../myjs/start.js'
+
+let tableSoftComp = null
+let tableSoft = null
+
 //console.log("load mSoft");
 let msgFooterSoft = "<b>ЛЕВАЯ КНОПКА МЫШИ</b> - вывод списка компьютеров, на которых установлено выбранное ПО&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ПРАВАЯ КНОПКА МЫШИ</b> - вывод на печать или в файл XLSX текущего списка ПО";
 
@@ -301,4 +306,11 @@ function editSoft(c) {
     }
 
     activateModalWindow("mainModal");
+}
+
+
+export {
+    mSoft,
+    createTabulatorSoft,
+    createTabulatorSoftComp
 }

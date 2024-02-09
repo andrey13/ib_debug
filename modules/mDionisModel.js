@@ -1,3 +1,6 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { select_dionis_model } from '../myjs/selectDionisModel.js'
+
 async function mDionisModel() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -10,8 +13,12 @@ async function mDionisModel() {
 
     // список МТС -----------------------------------------------------------------------
     select_dionis_model(
-        selectable = true, 
-        mode = 'edit', 
-        win_return = '', 
+        true,    // selectable
+        'edit',  // mode
+        '',      // win_return
     )
+}
+
+export {
+    mDionisModel
 }

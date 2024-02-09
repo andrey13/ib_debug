@@ -1,3 +1,6 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { select_oper } from '../myjs/selectOper.js'
+
 async function mOper() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -12,11 +15,15 @@ async function mOper() {
 
     // список МТС -----------------------------------------------------------------------
     select_oper(
-        sono = '6100', 
+        '6100', 
         id_otdel, 
         sklad, 
-        selectable = true, 
-        mode = 'edit', 
-        win_return = '', 
+        true, 
+        'edit', 
+        '',  // win_return
     )
+}
+
+export {
+    mOper
 }

@@ -1,3 +1,7 @@
+import { getAllows } from '../myjs/start.js'
+
+let tabCert = null
+
 function mCert() {
     let appHeight = appBodyHeight();
     let tCert = '<div id="tabCert" style="display: inline-block; height: 100%; width: 100%;"></div>';
@@ -254,3 +258,7 @@ async function editCert( mode ) {
         removeModalWindow('editCert');
     }; //b_CANCEL ------------------------------------------------------------------------   
 } 
+
+export {
+    mCert
+}

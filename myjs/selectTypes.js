@@ -198,3 +198,6 @@ function tabulator_Select_Types(
     }
 }
 
+export {
+    selectTypes
+}

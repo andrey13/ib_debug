@@ -1,4 +1,6 @@
-//console.log("load mUser");
+import { getAllows, isRole } from '../myjs/start.js'
+
+let tableUser = null
 let msgFooterUser   = "<input type='checkbox' id='cUsr' name='cUsr' value='No'><label for='cUsr'>Показывать отключенные</label>               <b>ЛЕВАЯ КНОПКА МЫШИ</b> - подробная информация&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>ПРАВАЯ КНОПКА МЫШИ</b> - вывод на печать или в файл XLSX текущего списка ПО";
 
 function mUser(){
@@ -62,3 +64,6 @@ function createTabulatorUser(id_div, appH, msgF) {
     
     }
     
+    export {
+        mUser
+    }

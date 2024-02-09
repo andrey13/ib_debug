@@ -1,3 +1,6 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { select_dionis } from '../myjs/selectDionis.js'
+
 async function mStockDionis() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -14,12 +17,16 @@ async function mStockDionis() {
 
     // список МТС -----------------------------------------------------------------------
     select_dionis(
-        sono = g_user.sono, 
+        g_user.sono, 
         id_otdel, 
         sklad, 
         id_type_oper,
-        selectable = true, 
-        mode = 'edit', 
-        win_return = '', 
+        true,    // selectable
+        'edit',  // mode
+        '',      // win_return
     )
+}
+
+export {
+    mStockDionis
 }

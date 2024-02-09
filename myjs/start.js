@@ -1,22 +1,39 @@
+import { mAdmin } from '../modules/mAdmin.js'
+import { mCert } from '../modules/mCert.js'
+import { mComp } from '../modules/mComp.js'
+import { mDionis } from '../modules/mDionis.js'
+import { mDionisModel } from '../modules/mDionisModel.js'
+import { mFIR } from '../modules/mFIR.js'
+import { mFirDoc } from '../modules/mFirDoc.js'
+import { mGK } from '../modules/mGK.js'
+import { mIFNS } from '../modules/mIFNS.js'
+import { mIncident } from '../modules/mIncident.js'
+import { mINN } from '../modules/mINN.js'
+import { mKadri } from '../modules/mKadri.js'
+import { mLAN } from '../modules/mLAN.js'
+import { mLog } from '../modules/mLog.js'
+import { mMaxpatrol } from '../modules/mMaxpatrol.js'
+import { mMTS } from '../modules/mMTS.js'
 import { mNews } from '../modules/mNews.js'
+import { mOper } from '../modules/mOper.js'
+import { mOperDionis } from '../modules/mOperDionis.js'
+import { mPointDionis } from '../modules/mPointDionis.js'
+import { mResource } from '../modules/mResource.js'
+import { mRVision } from '../modules/mRVision.js'
 import { mSoft } from '../modules/mSoft.js'
-import { mComp } from '../modules/m.js'
-import { mSoftComp } from '../modules/m.js'
-import { mZayavki } from '../modules/m.js'
-import { mMTS } from '../modules/m.js'
-import { mOper } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
-import { m } from '../modules/m.js'
+import { mSoftComp } from '../modules/mSoftComp.js'
+import { mSoftGroup } from '../modules/mSoftGroup.js'
+import { mStat } from '../modules/mStat.js'
+import { mStockDionis } from '../modules/mStockDionis.js'
+import { mSTP } from '../modules/mSTP.js'
+import { mTest } from '../modules/mTest.js'
+import { mUser } from '../modules/mUser.js'
+import { mUZ } from '../modules/mUZ.js'
+import { mUZstat } from '../modules/mUZstat.js'
+import { mVendor } from '../modules/mVendor.js'
+import { mVulner } from '../modules/mVulner.js'
+import { mZayavki } from '../modules/mZayavki.js'
+
 
 async function start_app() {
     sel_STAT = await loadSelector("status");
@@ -30,7 +47,8 @@ async function start_app() {
     let res = ''
 
     if (!!usr) {
-        g_user.usr = s_usr
+        // g_user.usr = s_usr
+        g_user.usr = ''
         let r = await initUser(usr)
     } else {
         res = await identUser();
@@ -192,7 +210,7 @@ async function initUser(account) {
 
 // проверка роли текущего пользователя ==================================================
 function isRole(role) {
-    for (d of g_user.roles) {
+    for (let d of g_user.roles) {
         if (d.role == role) return true
     }
     return false
