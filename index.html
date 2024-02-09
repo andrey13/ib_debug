@@ -22,7 +22,7 @@
     <script type="text/javascript" src="js/naive-ui/naive-ui.js"></script>
 
     <!--подключение модулей приложения--------------------------------------------------->
-    <script type="text/javascript" src="myjs/start.js"></script>
+    <!-- <script type="text/javascript" src="myjs/start.js"></script> -->
     <script type="text/javascript" src="myjs/tab.js"></script>
     <script type="text/javascript" src="myjs/log.js"></script>
     <script type="text/javascript" src="myjs/data.js"></script>
@@ -46,7 +46,7 @@
     <script type="text/javascript" src="myjs/selectTypes.js"></script>
     <script type="text/javascript" src="myjs/selectProfile.js"></script>
     <script type="text/javascript" src="myjs/init_global_vars.js"></script>
-    <script type="text/javascript" src="modules/mNews.js"></script>
+    <script type="module" src="modules/mNews.js"></script>
     <script type="text/javascript" src="myjs/tabModelContent.js"></script>
 
     <!--подключение библиотек CSS-------------------------------------------------------->
@@ -82,8 +82,9 @@
     </div>
 
     <!--регистрация пользователя и запуск приложения------------------------------------>
-    <script>
-        start_app();       
+    <script type="module">
+        import { start_app } from './myjs/start.js'
+        start_app()
     </script>
 
 </body>

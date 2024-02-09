@@ -1,3 +1,5 @@
+import { getAllows } from '../myjs/start.js'
+
 function mNews() {    
     $("#appBody").html('<div id="tabNews"></div>');
     createTabulatorNews("tabNews", appBodyHeight());
@@ -14,7 +16,8 @@ function createTabulatorNews(id_div, appH) {
     let bADD  = (allow.C == 1) ? "<button id='addNews' class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'>Добавить</button>&nbsp;" : "";
     let bEDI  = (allow.E == 1) ? "<button id='ediNews' class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'>Изменить</button>&nbsp;" : "";
     let bDEL  = (allow.D == 1) ? "<button id='delNews' class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'>Удалить</button>&nbsp;" : "";
-    let ms    =  bADD + bEDI + bDEL  ;
+    let ms    =  bADD + bEDI + bDEL  
+    let cols = ''
 
     if (allow.E == 1) {
         cols = [
@@ -36,7 +39,7 @@ function createTabulatorNews(id_div, appH) {
         ];
     }
 
-    tableNews = new Tabulator('#'+id_div, {
+    const tableNews = new Tabulator('#'+id_div, {
         ajaxURL: "myphp/loadData.php",
         ajaxParams: { t: "news", o: "dt DESC" },
         ajaxConfig: "GET",
@@ -95,3 +98,7 @@ function createTabulatorNews(id_div, appH) {
     tableNews.setSort("dt", "desc");
 }
 
+
+export {
+    mNews
+}

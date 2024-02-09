@@ -11,6 +11,11 @@
 /* table, tr, th, td {
     border:1px solid grey;
 }       */
+.button_main_menu {
+    margin-left: 2px;
+    margin-right: 0px;
+    margin-bottom: 2px;
+}
 .o3-card {
     border: 1px solid #dddddd;
     border-radius: 5px;
@@ -81,9 +86,10 @@
 }
 
 #appMenu {
-    margin: 0;
+    margin: 0px;
     padding: 0;
-    margin-bottom: -1;
+    margin-bottom: 0;
+    display: inline;
 }
 
 #appHeader {
