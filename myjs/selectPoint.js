@@ -1,3 +1,5 @@
+import { getAllows, isRole } from '../myjs/start.js'
+
 let table_select_point = null
 
 //=======================================================================================

@@ -1,3 +1,8 @@
+import { getAllows, isRole } from '../myjs/start.js'
+import { selectUser } from '../myjs/selectUser.js'
+import { select_dionis } from './selectDionis.js'
+import { select_point } from './selectPoint.js'
+
 let table_dionis_opers= null
 
 function select_dionis_oper(
