@@ -1,5 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-
 let tableMod = null
 let tableGrp = null
 let tableModGrp = null
@@ -489,6 +487,6 @@ function createTabulatorGrpUsr(id_div, appH) {
 //}
 
 
-export {
-    mAdmin
-}
+// export {
+//     mAdmin
+// }

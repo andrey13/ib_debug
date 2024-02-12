@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 function mIncident() {
     let appHeight = appBodyHeight();
     let tIncident = '<div id="tabIncident" style="display: inline-block; height: 100%; width: 100%;"></div>';
@@ -205,6 +203,6 @@ async function editIncident( mode ) {
     }; //b_CANCEL ------------------------------------------------------------------------   
 } 
 
-export {
-    mIncident
-}
+// export {
+//     mIncident
+// }

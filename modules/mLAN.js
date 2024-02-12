@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableLVS = null
 let tableLVST = null
 
@@ -204,6 +202,6 @@ function createTabulatorLVST(id_div, appH, msgF) {
 
 }
 
-export {
-    mLAN
-}
+// export {
+//     mLAN
+// }

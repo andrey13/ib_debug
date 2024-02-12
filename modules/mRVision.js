@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tabRVision = null
 
 function mRVision() {
@@ -270,6 +268,6 @@ async function editRVision( mode ) {
     }; //b_CANCEL ------------------------------------------------------------------------   
 } 
 
-export {
-    mRVision
-}
+// export {
+//     mRVision
+// }

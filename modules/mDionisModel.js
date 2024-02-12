@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_dionis_model } from '../myjs/selectDionisModel.js'
-
 async function mDionisModel() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -19,6 +16,6 @@ async function mDionisModel() {
     )
 }
 
-export {
-    mDionisModel
-}
+// export {
+//     mDionisModel
+// }

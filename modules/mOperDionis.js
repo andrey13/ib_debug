@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_dionis_oper } from '../myjs/selectDionisOper.js'
-
 async function mOperDionis() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -24,6 +21,6 @@ async function mOperDionis() {
     )
 }
 
-export {
-    mOperDionis
-}
+// export {
+//     mOperDionis
+// }

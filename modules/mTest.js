@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 const empty_d = {
     id: "-1",
     name: "name",
@@ -126,6 +124,6 @@ function createTabTest(id_div, appH) {
     }
 }
 
-export {
-    mTest
-}
+// export {
+//     mTest
+// }

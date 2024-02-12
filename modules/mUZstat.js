@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
-//console.log("load mUZstat");
 let msgFooterUKEP   = "";
 let tableUKEP = null
 
@@ -354,6 +351,6 @@ function recalcAll() {
 }
 
 
-export {
-    mUZstat
-}
+// export {
+//     mUZstat
+// }

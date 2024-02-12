@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_gk } from '../myjs/selectGK.js'
-
 async function mGK() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -23,6 +20,6 @@ async function mGK() {
     )
 }
 
-export {
-    mGK
-}
+// export {
+//     mGK
+// }

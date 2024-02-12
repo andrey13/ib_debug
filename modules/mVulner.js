@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableScns = null
 let tableVulner = null
 let tableScanREP = null
@@ -429,6 +427,6 @@ function createTabulatorVulnerComp1(id_div, id_vulner, vulner_name, appH, sono, 
 }
 
 
-export {
-    mVulner
-}
+// export {
+//     mVulner
+// }

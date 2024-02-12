@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 function mSTP() {
     let appHeight = appBodyHeight();
 //    $("#appBody").html(tSZ + tDD);
@@ -9,6 +7,6 @@ function mSTP() {
 }
 
 
-export {
-    mSTP
-}
+// export {
+//     mSTP
+// }

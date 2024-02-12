@@ -101,6 +101,6 @@ function filterSelect(data, filterParams) {
     return row.isSelected();
 }
 
-export {
-    selectProfile
-}
+// export {
+//     selectProfile
+// }

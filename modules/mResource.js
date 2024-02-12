@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableResTyp = null
 let tableResRes = null
 let tableResCmp = null
@@ -534,6 +532,6 @@ function setRowColor(row,date) {
     if (d.filter != null && d.dt_stop < date) row.getCells()[5].getElement().style.backgroundColor = '#ff8585'; 
 }
 
-export {
-    mResource
-}
+// export {
+//     mResource
+// }

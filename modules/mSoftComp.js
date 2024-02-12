@@ -1,7 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { createTabulatorComp } from '../modules/mComp.js'
-import { createTabulatorSoft } from '../modules/mSoft.js'
-
 function mSoftComp(){
     console.log("run mSoftComp1");
     let appHeight = appBodyHeight();
@@ -13,6 +9,6 @@ function mSoftComp(){
     console.log("run mSoftComp3");
 }
 
-export {
-    mSoftComp,
-}
+// export {
+//     mSoftComp,
+// }

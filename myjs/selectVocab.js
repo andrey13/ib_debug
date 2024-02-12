@@ -232,6 +232,6 @@ function createTabulatorSelectVocab(
     })
 }
 
-export {
-    selectVocab
-}
+// export {
+//     selectVocab
+// }

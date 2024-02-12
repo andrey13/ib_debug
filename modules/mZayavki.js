@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let v1 = null
 let m_id_zayavka = 0
 let m_id_MTS = 0
@@ -1959,6 +1957,6 @@ function factory_zayavka() {
     }
 }
 
-export {
-    mZayavki
-}
+// export {
+//     mZayavki
+// }

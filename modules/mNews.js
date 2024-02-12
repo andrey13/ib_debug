@@ -1,5 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-
 function mNews() {    
     $("#appBody").html('<div id="tabNews"></div>');
     createTabulatorNews("tabNews", appBodyHeight());
@@ -99,6 +97,6 @@ function createTabulatorNews(id_div, appH) {
 }
 
 
-export {
-    mNews
-}
+// export {
+//     mNews
+// }

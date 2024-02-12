@@ -1,6 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-//console.log("load mComp");
-
 let tableComp = null
 let tableCompSoft = null
 let tableCompVulner = null
@@ -428,9 +425,9 @@ function createTabulatorCompVulner(id_div, comp_id, comp_name, appH, id_level_fi
     }
 }
 
-export {
-    mComp,
-    createTabulatorComp,
-    createTabulatorCompSoft,
-    createTabulatorCompVulner
-}
+// export {
+//     mComp,
+//     createTabulatorComp,
+//     createTabulatorCompSoft,
+//     createTabulatorCompVulner
+// }

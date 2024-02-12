@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableUKEP = null
 
 //console.log("load mUZ");
@@ -225,6 +223,6 @@ function recalcSum(id_start) {
 
 }
 
-export {
-    mUZ
-}
+// export {
+//     mUZ
+// }

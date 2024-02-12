@@ -1,7 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { createTabulatorSoft } from './mSoft.js';
-
-//console.log("load mSoftGroup");
 let msgFooterGroups = "<button  id='b_OTSS'>отчет ОТСС</button>  <button id='baddGroup'>Добавить</button>";
 
 function mSoftGroup() {
@@ -235,8 +231,8 @@ function delSoft4Group(id_soft, id_prog, name_soft) {
   xhttp.send();
 }
 
-export {
-  mSoftGroup,
-  createTabulatorGroups,
-  createTabulatorGS,
-}
+// export {
+//   mSoftGroup,
+//   createTabulatorGroups,
+//   createTabulatorGS,
+// }

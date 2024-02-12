@@ -1,5 +1,3 @@
-import { edit_mts_vocab } from '../myjs/selectMTS.js'
-
 let table_opers = null
 
 function select_oper(
@@ -154,6 +152,6 @@ function tabulator_opers(
     return tabulator
 }
 
-export {
-    select_oper
-}
+// export {
+//     select_oper
+// }

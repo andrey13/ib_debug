@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableQuart = null
 let tableScans = null
 let tableVulners = null
@@ -620,6 +618,6 @@ async function editVulner(cell) {
     
 }
 
-export {
-    mMaxpatrol
-}
+// export {
+//     mMaxpatrol
+// }

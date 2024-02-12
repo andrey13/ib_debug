@@ -158,6 +158,6 @@ function factory_dionis_model_content(id_dionis_model) {
     }
 }
 
-export {
-    tabulator_model_content
-}
+// export {
+//     tabulator_model_content
+// }

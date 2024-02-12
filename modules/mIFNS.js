@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableIFNS = null
 let tableTORM = null
 let tablePoint = null
@@ -371,6 +369,6 @@ function editIFNS(c) {
     activateModalWindow("mainModal");
 }
 
-export {
-    mIFNS
-}
+// export {
+//     mIFNS
+// }

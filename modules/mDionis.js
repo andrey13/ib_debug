@@ -1,5 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-
 function mDionis() {
     let appHeight = appBodyHeight();
 
@@ -152,6 +150,6 @@ function printDeleteRequest(data) {
     div_modal.style.display = "block";
 }
 
-export {
-    mDionis
-}
+// export {
+//     mDionis
+// }

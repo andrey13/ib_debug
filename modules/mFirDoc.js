@@ -1,5 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-
 let id_dep_dep = 0;
 
 function mFirDoc() {
@@ -1000,6 +998,6 @@ function createTabSelectReson(id_div, appH, sono, id_depart, resolve, reject) {
 
 }
 
-export {
-    mFirDoc
-}
+// export {
+//     mFirDoc
+// }

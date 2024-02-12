@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_vendor } from '../myjs/selectVendor.js'
-
 async function mVendor() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -19,6 +16,6 @@ async function mVendor() {
     )
 }
 
-export {
-    mVendor
-}
+// export {
+//     mVendor
+// }

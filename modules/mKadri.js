@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableSZ = null
 let tableD = null
 
@@ -1227,6 +1225,6 @@ function configKadri(id_doc_type) {
 
 }
 
-export {
-    mKadri
-}
+// export {
+//     mKadri
+// }

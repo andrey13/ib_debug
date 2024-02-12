@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tabINN = null
 
 function mINN() {
@@ -260,6 +258,6 @@ function createtabINN(id_div, appH) {
 //     }; //b_CANCEL ------------------------------------------------------------------------   
 // } 
 
-export {
-    mINN
-}
+// export {
+//     mINN
+// }

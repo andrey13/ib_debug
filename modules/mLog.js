@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableLog = null 
 
 function mLog() {    
@@ -51,6 +49,6 @@ function createTabulatorLog(id_div, appH) {
 
 }
 
-export {
-    mLog
-}
+// export {
+//     mLog
+// }

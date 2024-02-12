@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableStat = null
 let Stat1 = null
 let Stat2 = null
@@ -211,6 +209,6 @@ function createTabulatorStat() {
     });
 }
 
-export {
-    mStat
-}
+// export {
+//     mStat
+// }

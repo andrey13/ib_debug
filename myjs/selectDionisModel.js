@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { tabulator_model_content } from '../myjs/tabModelContent.js'
-
 let table_select_dionis_model = null
 let tab_model_content = null
 //=======================================================================================
@@ -455,6 +452,6 @@ function factory_dionis_model() {
 // }
 
 
-export {
-    select_dionis_model
-}
+// export {
+//     select_dionis_model
+// }

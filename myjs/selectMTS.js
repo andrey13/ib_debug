@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let table_select_mts = null
 //=======================================================================================
 // модальное окно выбора МТС
@@ -1050,7 +1048,7 @@ function factory_MTS() {
 // }
 
 
-export {
-    select_mts,
-    edit_mts_vocab,
-}
+// export {
+//     select_mts,
+//     edit_mts_vocab,
+// }

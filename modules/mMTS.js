@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_mts } from '../myjs/selectMTS.js'
-
 async function mMTS() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -26,6 +23,6 @@ async function mMTS() {
     )
 }
 
-export {
-    mMTS
-}
+// export {
+//     mMTS
+// }

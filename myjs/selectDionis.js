@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_dionis_oper } from './selectDionisOper.js'
-
 let table_select_dionis = null
 //=======================================================================================
 // модальное окно выбора Dionis
@@ -939,6 +936,6 @@ function factory_dionis() {
 // }
 
 
-export {
-    select_dionis
-}
+// export {
+//     select_dionis
+// }

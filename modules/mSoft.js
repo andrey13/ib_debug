@@ -1,5 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-
 let tableSoftComp = null
 let tableSoft = null
 
@@ -309,8 +307,8 @@ function editSoft(c) {
 }
 
 
-export {
-    mSoft,
-    createTabulatorSoft,
-    createTabulatorSoftComp
-}
+// export {
+//     mSoft,
+//     createTabulatorSoft,
+//     createTabulatorSoftComp
+// }

@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_dionis } from '../myjs/selectDionis.js'
-
 async function mStockDionis() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -27,6 +24,6 @@ async function mStockDionis() {
     )
 }
 
-export {
-    mStockDionis
-}
+// export {
+//     mStockDionis
+// }

@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_oper } from '../myjs/selectOper.js'
-
 async function mOper() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -24,6 +21,6 @@ async function mOper() {
     )
 }
 
-export {
-    mOper
-}
+// export {
+//     mOper
+// }

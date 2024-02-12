@@ -1,5 +1,3 @@
-import { getAllows } from '../myjs/start.js'
-
 let tabCert = null
 
 function mCert() {
@@ -259,6 +257,6 @@ async function editCert( mode ) {
     }; //b_CANCEL ------------------------------------------------------------------------   
 } 
 
-export {
-    mCert
-}
+// export {
+//     mCert
+// }

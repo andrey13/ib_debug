@@ -1,6 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-import { select_point_dionis } from '../myjs/selectPointDionis.js'
-
 async function mPointDionis() {
     // очистка таймера -----------------------------------------------------------------
     if (g_timerId != 0) clearInterval(g_timerId)
@@ -23,6 +20,6 @@ async function mPointDionis() {
     )
 }
 
-export {
-    mPointDionis
-}
+// export {
+//     mPointDionis
+// }

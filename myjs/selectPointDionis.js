@@ -1,5 +1,3 @@
-import { select_dionis_oper } from '../myjs/selectDionisOper.js'
-
 let table_select_point_dionis = null
 
 //=======================================================================================
@@ -541,6 +539,6 @@ function tabulator_select_point_dionis(
 // }
 
 
-export {
-    select_point_dionis
-}
+// export {
+//     select_point_dionis
+// }

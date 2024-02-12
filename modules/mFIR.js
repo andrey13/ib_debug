@@ -1,5 +1,3 @@
-import { getAllows, isRole } from '../myjs/start.js'
-
 let tableFirUsr = null
 let tableUsrPrf = null
 
@@ -439,6 +437,6 @@ function printAddRequest(data) {
     div_modal.style.display = "block";
 }
 
-export {
-    mFIR
-}
+// export {
+//     mFIR
+// }
