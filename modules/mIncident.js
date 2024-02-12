@@ -22,7 +22,7 @@ function createTabIncident(id_div, appH) {
     let bMOD = `<button id='modIncident' title='Изменить заявку'                 class='w3-button w3-tiny w3-padding-small w3-white w3-border w3-hover-teal'><i class='fa fa-pencil fa-fw'></i></button>`;
     let ms = bPRT + bVEW + bDEL + bMOD + bADD;
 
-    const tabIncident = new Tabulator('#'+id_div, {
+    tabIncident = new Tabulator('#'+id_div, {
         ajaxURL: "myphp/loadDataIncident.php",
         ajaxParams: { s: g_user.sono },
         ajaxConfig: "GET",
@@ -202,7 +202,3 @@ async function editIncident( mode ) {
         removeModalWindow('editIncident');
     }; //b_CANCEL ------------------------------------------------------------------------   
 } 
-
-// export {
-//     mIncident
-// }

@@ -10,12 +10,8 @@ async function mDionisModel() {
 
     // список МТС -----------------------------------------------------------------------
     select_dionis_model(
-        true,    // selectable
-        'edit',  // mode
-        '',      // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mDionisModel
-// }

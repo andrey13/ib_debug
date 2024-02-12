@@ -13,16 +13,12 @@ async function mMTS() {
 
     // список МТС -----------------------------------------------------------------------
     select_mts(
-        '6100',  // sono
+        sono = '6100', 
         id_otdel, 
         sklad, 
         id_type_oper,
-        true, 
-        'edit', 
-        '', 
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mMTS
-// }

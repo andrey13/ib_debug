@@ -344,7 +344,6 @@ function edit_gk(d, win_return = null, mode = "") {
             esc_gk      // esc_callback
         )
 
-        
         //--- View Model-------------------------------------------------------start
         const vapp = Vue.createApp({
             data() {
@@ -546,12 +545,27 @@ function factory_gk() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // function filterSelect(data, filterParams) {
 //     let id = data.id
 //     let row = table_select_gk.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
-// }
-
-// export {
-//     select_gk    
 // }

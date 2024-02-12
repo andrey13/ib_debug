@@ -1,5 +1,5 @@
+//console.log("load mUZstat");
 let msgFooterUKEP   = "";
-let tableUKEP = null
 
 function mUZstat(){
     console.log("run mUZstat");
@@ -349,8 +349,3 @@ function recalcAll() {
     }
     console.log("End recalcAll")
 }
-
-
-// export {
-//     mUZstat
-// }

@@ -1,7 +1,3 @@
-let tableStat = null
-let Stat1 = null
-let Stat2 = null
-
 //console.log("load mStat");
 
 function mStat() {
@@ -19,7 +15,7 @@ function mStat() {
 function showVulnerStat2() {
     let ctx = document.getElementById('vulnerStat2');
 
-    let data = { labels: "", datasets: [] };
+    let data = {   labels: "",   datasets: []  };
 
     let config = {
         type: 'line',
@@ -69,7 +65,7 @@ function showVulnerStat2() {
 function showVulnerStat1() {
     let ctx = document.getElementById('vulnerStat1');
 
-    let data = { labels: "", datasets: [] };
+    let data = {   labels: "",   datasets: []  };
 
     let config = {
         type: 'line',
@@ -127,7 +123,7 @@ function getVulnerStat2(dd, sono, color) {
             let data_vulners = [];
             res.forEach((d) => { data_vulners.push(d.n_comps) });
 
-            const dataset = {
+            dataset = {
                 label: '61' + sono,
                 backgroundColor: color,
                 borderColor: color,
@@ -157,7 +153,7 @@ function getVulnerStat1(dd, sono, color) {
             let data_vulners = [];
             res.forEach((d) => { data_vulners.push(d.n_vulners) });
 
-            const dataset = {
+            dataset = {
                 label: '61' + sono,
                 backgroundColor: color,
                 borderColor: color,
@@ -208,7 +204,3 @@ function createTabulatorStat() {
         //cellContext:function(e, cell){tableStat.print(false, false);e.preventDefault();},
     });
 }
-
-// export {
-//     mStat
-// }

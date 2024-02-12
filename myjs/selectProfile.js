@@ -100,7 +100,3 @@ function filterSelect(data, filterParams) {
     let row = tableSelectProfile.searchRows("id", "=", data.id)[0];
     return row.isSelected();
 }
-
-// export {
-//     selectProfile
-// }

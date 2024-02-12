@@ -1,6 +1,4 @@
-let tableComp = null
-let tableCompSoft = null
-let tableCompVulner = null
+//console.log("load mComp");
 
 async function mComp() {
     console.log("run mComp");
@@ -332,10 +330,10 @@ function editComp(c) {
         '',
         formComp,
         '',
-        '600px',
-        '5%',
-        '5%',
-        null
+        width = '600px',
+        marginLeft = '5%',
+        marginTop = '5%',
+        win_return = null
     )
 
     // id_2_set_focus(win_current)
@@ -424,10 +422,3 @@ function createTabulatorCompVulner(id_div, comp_id, comp_name, appH, id_level_fi
         tableCompVulner.setFilter("id_level", "=", id_level_filter);
     }
 }
-
-// export {
-//     mComp,
-//     createTabulatorComp,
-//     createTabulatorCompSoft,
-//     createTabulatorCompVulner
-// }

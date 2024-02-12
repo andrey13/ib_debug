@@ -24,7 +24,7 @@ function createTabulatorDionis(id_div, appH) {
                      <button id='bOff'   class='w3-button w3-white w3-border w3-hover-teal'>Отменить выделение</button> 
                      <button id='bPrt' class='w3-button w3-white w3-border w3-hover-teal'>сгенерировать текст заявки СТП на удаление помеченных записей</button>`;
 
-    const tableDionis = new Tabulator('#'+id_div, {
+    tableDionis = new Tabulator('#'+id_div, {
         ajaxURL: "myphp/loadDataDionis.php",
         ajaxParams: { s: g_user.sono },
         ajaxConfig: "GET",
@@ -149,7 +149,3 @@ function printDeleteRequest(data) {
 
     div_modal.style.display = "block";
 }
-
-// export {
-//     mDionis
-// }

@@ -10,12 +10,8 @@ async function mVendor() {
 
     // список МТС -----------------------------------------------------------------------
     select_vendor(
-        true,    // selectable
-        'edit',  // mode
-        '',      // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mVendor
-// }

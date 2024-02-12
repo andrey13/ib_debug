@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--подключение библиотек JS--------------------------------------------------------->
+    <!--<script type="text/javascript" src="js/polyfill.js"></script>-->
+    <script type="text/javascript" src="js/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="js/moment.js"></script>
+    <script type="text/javascript" src="js/tabulator.min.js"></script>
+    <script type="text/javascript" src="js/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="js/FileSaver.min.js"></script>
+    <script type="text/javascript" src="js/chart.min.js"></script>
+    <!--<script type="text/javascript" src="js/jspdf.umd.min.js"></script>-->
+    <script type="text/javascript" src="js/pdfmake.js"></script>
+    <script type="text/javascript" src="js/vfs_fonts.js"></script>
+    <script type="text/javascript" src="js/vue/vue.global.js"></script>
+    <!-- <script type="text/javascript" src="js/vue/vue.global.prod.js"></script> -->
+    <!-- <script type="text/javascript" src="js/vuetify/vuetify.min.js"></script> -->
+    <script type="text/javascript" src="js/naive-ui/naive-ui.js"></script>
+
+    <!--подключение модулей приложения--------------------------------------------------->
+    <script type="text/javascript" src="myjs/start.js"></script>
+    <script type="text/javascript" src="myjs/tab.js"></script>
+    <script type="text/javascript" src="myjs/log.js"></script>
+    <script type="text/javascript" src="myjs/data.js"></script>
+    <script type="text/javascript" src="myjs/date.js"></script>
+    <script type="text/javascript" src="myjs/utils.js"></script>
+    <script type="text/javascript" src="myjs/modal.js"></script>
+    <script type="text/javascript" src="myjs/fio.js"></script>
+    <script type="text/javascript" src="myjs/ip.js"></script>
+    <script type="text/javascript" src="myjs/selectUser.js"></script>
+    <script type="text/javascript" src="myjs/selectComp.js"></script>
+    <script type="text/javascript" src="myjs/selectMTS.js"></script>
+    <script type="text/javascript" src="myjs/selectDionis.js"></script>
+    <script type="text/javascript" src="myjs/selectGK.js"></script>
+    <script type="text/javascript" src="myjs/selectPointDionis.js"></script>
+    <script type="text/javascript" src="myjs/selectVendor.js"></script>
+    <script type="text/javascript" src="myjs/selectDionisOper.js"></script>
+    <script type="text/javascript" src="myjs/selectDionisModel.js"></script>
+    <script type="text/javascript" src="myjs/selectOper.js"></script>
+    <script type="text/javascript" src="myjs/selectPoint.js"></script>
+    <script type="text/javascript" src="myjs/selectVocab.js"></script>
+    <script type="text/javascript" src="myjs/selectTypes.js"></script>
+    <script type="text/javascript" src="myjs/selectProfile.js"></script>
+    <script type="text/javascript" src="myjs/init_global_vars.js"></script>
+    <script type="text/javascript" src="modules/mNews.js"></script>
+    <script type="text/javascript" src="myjs/tabModelContent.js"></script>
+
+    <!--подключение библиотек CSS-------------------------------------------------------->
+    <link href="css/w3.css" rel="stylesheet">
+    <link href="css/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/w3-colors-2019.css" rel="stylesheet">
+    <link href="css/w3-colors-2020.css" rel="stylesheet">
+    <link href="css/w3-colors-2021.css" rel="stylesheet">
+    <link href="css/tabulator.min.css" rel="stylesheet">
+    <!-- <link href="js/vuetify/vuetify.min.css" rel="stylesheet"> -->
+    <link href="mycss/modal.css" rel="stylesheet">
+    <link href="mycss/app.css" rel="stylesheet">
+    <link rel="shortcut icon" href="#">
+
+    <title>Информационная безопасность УФНС РФ по РО</title>
+</head>
+
+<body>
+    <!--основные блоки страницы--------------------------------------------------------->
+    <div id="appHeader"></div>
+    <div id="appMenu"></div>
+    <div id="appBody"></div>
+    <div id="appFooter"></div>
+    <div id="help" class="modal" style="display:none; height:390px; width:500px"></div>
+
+    <!--скрытое модальное окно---------------------------------------------------------->
+    <div id="mainModal" class="modal" style="display:none;">
+        <div id="modalContent" class="modal-content">
+            <div id="mainModalHeader" class="modal-header w3-teal"></div>
+            <div id="mainModalBody"   class="modal-body tabulator"></div>
+            <div id="mainModalFooter" class="modal-footer w3-teal"></div>
+        </div>
+    </div>
+
+    <!--регистрация пользователя и запуск приложения------------------------------------>
+    <script>
+        start_app();       
+    </script>
+
+</body>
+
+</html>

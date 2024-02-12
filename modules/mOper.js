@@ -12,15 +12,11 @@ async function mOper() {
 
     // список МТС -----------------------------------------------------------------------
     select_oper(
-        '6100', 
+        sono = '6100', 
         id_otdel, 
         sklad, 
-        true, 
-        'edit', 
-        '',  // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mOper
-// }

@@ -1,0 +1,243 @@
+/*
+      button, input {
+        font-family:monospace;
+        font-size: 14px;
+        border: 1px solid;
+        outline: 0;
+        border-radius: 0;
+        display:inline-block;
+      }
+      */
+/* table, tr, th, td {
+    border:1px solid grey;
+}       */
+.o3-card {
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    background-color: #ffffff;
+    padding: 15px; 
+}
+.o3-button-0 {
+    border: 0px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 300px;
+}
+.o3-button-fix {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 100px;
+}
+.o3-button-200 {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 200px;
+}
+.o3-button-300 {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    width: 300px;
+}
+.o3-button {
+    border: 1px solid black;
+    margin-right: 1px;
+    margin-bottom: 1px;
+}
+.o3-border {
+    border: 1px solid grey;
+    margin-right: 1px;
+    margin-bottom: 1px;
+}
+/* input:focus {
+        border: 1px solid red;
+        outline: 1px solid black;
+      } */
+.tabulator {
+    margin: 0;
+    border: 1px solid black;
+    border-collapse: collapse;
+    box-shadow: none;
+    font-family: monospace;
+    font-size: 12px;
+}
+.tabulator-header-filter input {
+    margin: 0;
+    border: 0px solid black;
+    border-collapse: collapse;
+    box-shadow: none;
+    font-family: monospace;
+    font-style: normal;
+    font-weight: normal;
+    /*font-family:serif;*/
+    font-size: 12px;
+}
+
+.tabulator-row.tabulator-selected {
+    background-color: #008080;
+    color: #ffffff;
+}
+
+#appMenu {
+    margin: 0;
+    padding: 0;
+    margin-bottom: -1;
+}
+
+#appHeader {
+    margin: 0;
+    padding: 0;
+    border: 1px;
+}
+
+#appFooter {
+    margin: 0;
+    padding: 0;
+    font-family: monospace;
+    font-size: 12px;
+    background-color: powderblue;
+}
+div.c {
+    line-height: 10%;
+}
+#help {
+    padding: 5px;
+    font-family: monospace;
+    font-size: 10px;
+    display: none;
+    position: absolute;
+    border: 1px solid black;
+    z-index: 1;
+    left: 40%;
+    top: 100;
+    overflow: auto;
+    background-color: rgb(255, 255, 255);
+}
+#tabScan,
+#tabVulner,
+#tabGS1,
+#tabGS2,
+#tabGS3,
+#tabS,
+#tabC,
+#tabSC,
+#tabCS,
+#tabL,
+#tabLT,
+#tabI,
+#tabT,
+#tabP,
+#tabMod,
+#tabUsr,
+#tabStat {
+    display: inline-block;
+}
+#appBody {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    /* background-color: powderblue; */
+    display: inline-block;
+    /* flex: 1;
+          display: flex;
+          align-items: stretch; */
+}
+#tabScanVulner {
+    height: 100%;
+    width: 100%;
+}
+#tabScan {
+    height: 100%;
+    width: 5%;
+}
+#tabVulner {
+    height: 100%;
+    width: 95%;
+}
+
+#tabGS {
+    height: 100%;
+    width: 100%;
+}
+#tabGS1 {
+    height: 100%;
+    width: 50%;
+}
+#tabGS2 {
+    height: 100%;
+    width: 25%;
+}
+#tabGS3 {
+    height: 100%;
+    width: 25%;
+}
+#tab12 {
+    height: 50%;
+    width: 100%;
+}
+#tab34 {
+    height: 50%;
+    width: 100%;
+}
+#tabS {
+    height: 100%;
+    width: 67%;
+    /*background-color: rgb(24, 124, 138);*/
+}
+#tabSC {
+    height: 100%;
+    width: 33%;
+    /*background-color: rgb(4, 48, 54);*/
+}
+#tabC {
+    height: 100%;
+    width: 67%;
+    /*background-color: rgb(180, 192, 109);*/
+}
+#tabCS {
+    height: 100%;
+    width: 33%;
+    /*background-color: rgb(136, 36, 18);*/
+}
+#tabLLT {
+    height: 100%;
+    width: 100%;
+}
+#tabL {
+    height: 100%;
+    width: 80%;
+}
+#tabLT {
+    height: 100%;
+    width: 20%;
+}
+#tabIT {
+    height:100%;
+    width: 100%;
+}
+#tabI {
+    height: 100%;
+    width: 35%;
+}
+#tabT {
+    height: 100%;
+    width: 35%;
+}
+#tabP {
+    height: 100%;
+    width: 30%;
+}
+#tabModUsr {
+    height: 100%;
+    width: 100%;
+}
+#tabMod {
+    height: 100%;
+    width: 30%;
+}
+#tabUsr {
+    height: 100%;
+    width: 70%;
+}

@@ -44,7 +44,7 @@ function selectUser(
          <button id='addSel' class='w3-btn w3-white o3-border w3-hover-teal'>Выбрать</button>
          </div>`
 
-        const appHeight = appBodyHeight()
+        appHeight = appBodyHeight()
 
         tabulator_Select_User(
             win_current + 'Body',
@@ -153,6 +153,3 @@ function selectUser(
 
 
 
-// export {
-//     selectUser
-// }

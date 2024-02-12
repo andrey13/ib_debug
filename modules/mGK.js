@@ -14,12 +14,8 @@ async function mGK() {
 
     // список МТС -----------------------------------------------------------------------
     select_gk(
-        true,    // selectable
-        'edit',  // mode
-        '',      // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mGK
-// }

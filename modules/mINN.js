@@ -1,5 +1,3 @@
-let tabINN = null
-
 function mINN() {
     let appHeight = appBodyHeight();
     let tINN = '<div id="tabINN" style="display: inline-block; height: 100%; width: 100%;"></div>';
@@ -257,7 +255,3 @@ function createtabINN(id_div, appH) {
 //         removeModalWindow('editRVision');
 //     }; //b_CANCEL ------------------------------------------------------------------------   
 // } 
-
-// export {
-//     mINN
-// }

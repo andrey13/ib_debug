@@ -1,5 +1,3 @@
-let tabRVision = null
-
 function mRVision() {
     let appHeight = appBodyHeight();
     let tRVision = '<div id="tabRVision" style="display: inline-block; height: 100%; width: 100%;"></div>';
@@ -267,7 +265,3 @@ async function editRVision( mode ) {
         removeModalWindow('editRVision');
     }; //b_CANCEL ------------------------------------------------------------------------   
 } 
-
-// export {
-//     mRVision
-// }

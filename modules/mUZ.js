@@ -1,5 +1,3 @@
-let tableUKEP = null
-
 //console.log("load mUZ");
 
 function mUZ(){
@@ -222,7 +220,3 @@ function recalcSum(id_start) {
     }
 
 }
-
-// export {
-//     mUZ
-// }

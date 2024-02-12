@@ -12,15 +12,11 @@ async function mOperDionis() {
 
     // список МТС -----------------------------------------------------------------------
     select_dionis_oper(
-        '6100', 
+        sono = '6100', 
         id_otdel, 
         sklad, 
-        true,  // selectable
-        'edit', 
-        '',  // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mOperDionis
-// }

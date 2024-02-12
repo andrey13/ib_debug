@@ -14,16 +14,12 @@ async function mStockDionis() {
 
     // список МТС -----------------------------------------------------------------------
     select_dionis(
-        g_user.sono, 
+        sono = g_user.sono, 
         id_otdel, 
         sklad, 
         id_type_oper,
-        true,    // selectable
-        'edit',  // mode
-        '',      // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mStockDionis
-// }

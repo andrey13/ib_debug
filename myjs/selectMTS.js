@@ -54,7 +54,7 @@ function select_mts(
     })
 }
 
-//=======================================================================================
+/////////////////////////////////////////////////////////////////////////////////////////
 function tabulator_select_mts(
     div,
     sono,
@@ -70,6 +70,9 @@ function tabulator_select_mts(
     win_return = null,
     id_mts = 0,
 ) {
+    console.log('win_current = ', win_current)
+    console.log('win_return = ', win_return)
+
     let cols = []
 
     const cols1 = [
@@ -373,8 +376,6 @@ function tabulator_select_mts(
 
     tabulator.redraw()
 
-    // console.log('tabulator = ', tabulator)
-
     return tabulator
 }
 
@@ -658,9 +659,9 @@ function edit_mts_vocab(d, win_return = null, mode = "") {
             headerMTSVocab,
             bodyMTSVocab,
             footMTSVocab,
-            "60%", // width
-            "15%", // marginLeft
-            "5%",  // marginTop
+            (width = "60%"),
+            (marginLeft = "15%"),
+            (marginTop = "5%"),
             win_return,
             esc_mts_vocab
         )
@@ -1045,10 +1046,4 @@ function factory_MTS() {
 //     let id = data.id
 //     let row = table_select_mts.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
-// }
-
-
-// export {
-//     select_mts,
-//     edit_mts_vocab,
 // }

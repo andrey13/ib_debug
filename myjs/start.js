@@ -199,7 +199,7 @@ async function initMenu(modules) {
     // цикл по всем модулям, доступным пользователю -------------------------------------
     modules.forEach(module => {
         // создание кнопки вызова модуля ------------------------------------------------
-        ht += `<button id="${module.name}" class="button_main_menu w3-button w3-padding-small w3-border w3-hover-teal">${module.title}</button> `;
+        ht += `<button id="${module.name}" class="button_main_menu w3-button w3-padding-small w3-border w3-hover-teal">${module.title}</button>`
         // загрузка модуля --------------------------------------------------------------
         if (module.name != 'mNews') {
             script = document.createElement('script');

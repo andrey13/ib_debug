@@ -1,5 +1,3 @@
-let table_opers = null
-
 function select_oper(
     sono = '6100',
     id_otdel = 0,
@@ -151,7 +149,3 @@ function tabulator_opers(
     })
     return tabulator
 }
-
-// export {
-//     select_oper
-// }

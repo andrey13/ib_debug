@@ -1,7 +1,3 @@
-let tableResTyp = null
-let tableResRes = null
-let tableResCmp = null
-
 function mResource() {
     let appHeight = appBodyHeight();
     //appHeight = appHeight - 40;
@@ -531,7 +527,3 @@ function setRowColor(row,date) {
     if (!d.filter)                            row.getCells()[5].getElement().style.backgroundColor = '#8cff8c'; 
     if (d.filter != null && d.dt_stop < date) row.getCells()[5].getElement().style.backgroundColor = '#ff8585'; 
 }
-
-// export {
-//     mResource
-// }

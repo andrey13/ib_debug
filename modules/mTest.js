@@ -123,7 +123,3 @@ function createTabTest(id_div, appH) {
         }
     }
 }
-
-// export {
-//     mTest
-// }

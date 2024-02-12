@@ -1,3 +1,5 @@
+//console.log("load mSoftComp");
+
 function mSoftComp(){
     console.log("run mSoftComp1");
     let appHeight = appBodyHeight();
@@ -8,7 +10,3 @@ function mSoftComp(){
     createTabulatorComp("tabC", appHeight / 2, "");
     console.log("run mSoftComp3");
 }
-
-// export {
-//     mSoftComp,
-// }

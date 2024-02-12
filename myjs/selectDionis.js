@@ -1,4 +1,5 @@
 let table_select_dionis = null
+
 //=======================================================================================
 // модальное окно выбора Dionis
 //=======================================================================================
@@ -47,8 +48,6 @@ function select_dionis(
             win_return,
             id_dionis,
         )
-
-        // console.log('table_select_dionis = ', table_select_dionis.getData())
 
         if (mode == "select") id_2_set_focus(win_current)
     })
@@ -103,7 +102,7 @@ function tabulator_select_dionis(
         // { title: "Поставка", field: "postavka", width: 80, headerFilter: true },
         { title: "Поставка", field: "gk_name", width: 80, headerFilter: true },
         {//группа владелец
-            title: "ВЛАДЕЛЕЦ", headerHozAlign: "center",
+            title: "ВЛАДЕЛЕЦ", headerHozAlign:"center",
             columns: [
                 {
                     title: "СОНО", field: "ifns_sono1", widthGrow: 1, headerFilter: true,
@@ -122,7 +121,7 @@ function tabulator_select_dionis(
             ],
         },
         {//группа нахождение
-            title: "НАХОЖДЕНИЕ", headerHozAlign: "center",
+            title: "НАХОЖДЕНИЕ", headerHozAlign:"center",
             columns: [
                 { title: "СОНО", field: "ifns_sono2", widthGrow: 1, headerFilter: true },
                 { title: "ТНО", field: "t2name", widthGrow: 3, headerFilter: true },
@@ -435,16 +434,14 @@ function tabulator_select_dionis(
 
     // set_Filter()
 
-    tabulator.redraw()
-
-    // console.log('tabulator = ', tabulator)
+    tabulator.redraw()   
 
     return tabulator
 
     function set_Filter() {
 
         const str_Filter = (
-            (flag_ust ? str_ust + ' ' : '') +
+            (flag_ust ? str_ust + ' ' : '') + 
             (flag_rez ? str_rez + ' ' : '') +
             (flag_nei ? str_nei + ' ' : '') +
             (flag_spi ? str_spi : '')
@@ -462,20 +459,20 @@ function tabulator_select_dionis(
 
         if (g_user.sono == '6100') {
             tabulator.setFilter([
-                { field: 'status', type: 'in', value: arr_Filter },
+                {field: 'status', type: 'in', value: arr_Filter},
             ])
         } else {
             tabulator.setFilter([
-                { field: 'status', type: 'in', value: arr_Filter },
+                {field: 'status', type: 'in', value: arr_Filter},
                 [
-                    { field: 'ifns_sono1', type: '=', value: g_user.sono },
-                    { field: 'ifns_sono2', type: '=', value: g_user.sono },
+                    {field: 'ifns_sono1', type: '=', value: g_user.sono},
+                    {field: 'ifns_sono2', type: '=', value: g_user.sono},
                 ]
             ])
-
+    
         }
     }
-
+    
 
 }
 
@@ -596,8 +593,8 @@ function edit_dionis(d, win_return = null, mode = "") {
                 }
             },
             computed: {
-                calc_sono1() { return this.dv.temp == 1 ? this.dv.ifns_sono1 : this.dv.ifns_sono2 },
-                calc_torm1() { return this.dv.temp == 1 ? this.dv.t1name : this.dv.t2name },
+                calc_sono1() {return this.dv.temp == 1 ? this.dv.ifns_sono1 : this.dv.ifns_sono2},
+                calc_torm1() {return this.dv.temp == 1 ? this.dv.t1name : this.dv.t2name},
                 goskontrakt() {
                     return !!!this.dv.gk_name
                         ? "<выбрать ГК>"
@@ -632,7 +629,7 @@ function edit_dionis(d, win_return = null, mode = "") {
             id2e(sel_model).innerHTML = vm.$data.dv.model_name + '/' + vm.$data.dv.type_name
             id_2_set_focus(win_current)
         }
-
+        
         // кнопка выбора ГК -----------------------------------------------
         id2e(sel_gk).onclick = async () => {
             // console.log('sel_gk')
@@ -725,14 +722,14 @@ async function show_dionis_history(id_dionis, win_return = null) {
     }
 
     newModalWindow(
-        win_current,
-        header,
-        body,
+        win_current, 
+        header, 
+        body, 
         foot,
         "59%", // width
         "40%", // marginLeft
         "1%",  // marginTop
-        win_return,
+        win_return, 
         esc_dionis_history
     )
 
@@ -933,9 +930,4 @@ function factory_dionis() {
 //     let id = data.id
 //     let row = table_select_dionis.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
-// }
-
-
-// export {
-//     select_dionis
 // }

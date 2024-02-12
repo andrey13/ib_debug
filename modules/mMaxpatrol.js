@@ -1,9 +1,3 @@
-let tableQuart = null
-let tableScans = null
-let tableVulners = null
-let tableVulnerComp = null
-let tableScanREP = null
-
 function mMaxpatrol() {
     console.log("run mMaxpatrol-------------------------------------->");
     let appHeight = appBodyHeight();
@@ -617,7 +611,3 @@ async function editVulner(cell) {
 
     
 }
-
-// export {
-//     mMaxpatrol
-// }

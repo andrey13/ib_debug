@@ -5,8 +5,3 @@ function mSTP() {
 //    $("#appBody").height(appHeight);
 //
 }
-
-
-// export {
-//     mSTP
-// }

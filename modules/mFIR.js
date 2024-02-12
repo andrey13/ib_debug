@@ -1,6 +1,3 @@
-let tableFirUsr = null
-let tableUsrPrf = null
-
 function mFIR() {
     let appHeight = appBodyHeight();
     //appHeight = appHeight - 40;
@@ -436,7 +433,3 @@ function printAddRequest(data) {
 
     div_modal.style.display = "block";
 }
-
-// export {
-//     mFIR
-// }

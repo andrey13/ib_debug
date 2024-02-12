@@ -231,7 +231,3 @@ function createTabulatorSelectVocab(
         }
     })
 }
-
-// export {
-//     selectVocab
-// }

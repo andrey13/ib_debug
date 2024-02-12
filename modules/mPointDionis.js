@@ -14,12 +14,8 @@ async function mPointDionis() {
 
     // список подключений Dionis -----------------------------------------------------------------------
     select_point_dionis(
-        true,   //selectable
-        'edit', // mode
-        '',     // win_return
+        selectable = true, 
+        mode = 'edit', 
+        win_return = '', 
     )
 }
-
-// export {
-//     mPointDionis
-// }

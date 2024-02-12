@@ -1,5 +1,4 @@
 let table_select_point_dionis = null
-
 //=======================================================================================
 // модальное окно выбора ГК
 //=======================================================================================
@@ -536,9 +535,4 @@ function tabulator_select_point_dionis(
 //     let id = data.id
 //     let row = table_select_point_dionis.searchRows("id", "=", data.id)[0]
 //     return row.isSelected()
-// }
-
-
-// export {
-//     select_point_dionis
 // }
