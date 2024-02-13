@@ -35,6 +35,7 @@ function createTabulatorUser(id_div, appH, msgF) {
             {title:"СОНО",     field:"sono",       widthGrow:1, headerFilter:true, topCalc:"count"},
             {title:"логин",    field:"Account",    widthGrow:2, headerFilter:true},
             {title:"ФИО",      field:"name",       widthGrow:4, headerFilter:true},
+            {title:"отдел",    field:"dname",      widthGrow:4, headerFilter:true},
             {title:"телефон",  field:"telephone",  widthGrow:2, headerFilter:true},
             {title:"комната",  field:"room",       widthGrow:1, headerFilter:true},
             {title:"описание", field:"description",widthGrow:8, headerFilter:true},

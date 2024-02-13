@@ -4,7 +4,13 @@
     $ifns=$sono;
    
 
-    $sql = "SELECT * FROM user WHERE sono LIKE '$sono%' ORDER BY name";
+    $sql = "SELECT 
+	u.*,
+	d.name AS dname 
+	FROM user AS u 
+	LEFT JOIN depart AS d ON d.id=u.id_depart 
+	WHERE u.sono LIKE '$sono%' 
+	ORDER BY u.name";
 
 
     $result = $conn->query($sql);
