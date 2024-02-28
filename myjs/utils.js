@@ -118,12 +118,25 @@ function randomColor(brightness) {
 
 // высота экрана без заголовка, меню и футера -------------------------------------------
 function appBodyHeight() {
+    console.log('window.innerHeight = ', window.innerHeight)
+    console.log('id2e(appHeader).offsetHeight = ', id2e('appHeader').offsetHeight)
+    console.log('id2e(appMenu).offsetHeight = ', id2e('appMenu').offsetHeight)
+    console.log('id2e(appMenu).getBoundingClientRect().heght = ', id2e('appMenu').getBoundingClientRect().height)
+    console.log('id2e(appFooter).offsetHeight = ', id2e('appFooter').offsetHeight)
+
+    // return (
+    //     window.innerHeight -
+    //     id2e('appHeader').offsetHeight -
+    //     id2e('appMenu').offsetHeight -
+    //     id2e('appFooter').offsetHeight
+    // )
+
     return (
         window.innerHeight -
-        id2e('appHeader').offsetHeight -
-        id2e('appMenu').offsetHeight -
-        id2e('appFooter').offsetHeight
-    );
+        id2e('appHeader').getBoundingClientRect().height -
+        id2e('appMenu').getBoundingClientRect().height -
+        id2e('appFooter').getBoundingClientRect().height
+    )
 }
 
 // ширина основного экрана приложения ---------------------------------------------------

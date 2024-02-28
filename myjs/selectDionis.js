@@ -32,6 +32,7 @@ function select_dionis(
         }
 
         const appHeight = appBodyHeight()
+        console.log('appHeight = ', appHeight)
 
         table_select_dionis = tabulator_select_dionis(
             (mode == 'select') ? win_current + 'Body' : 'appBody', // div
@@ -169,7 +170,7 @@ function tabulator_select_dionis(
     let flag_nei = true
     let flag_spi = true
 
-    // `&nbsp;&nbsp;&nbsp;данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
+    
     // `&nbsp;&nbsp;&nbsp;результат операций&nbsp;<input type='checkbox' id='${id_checkb_opr}' checked style="vertical-align: middle;">` +
     // `&nbsp;&nbsp;&nbsp;кратко&nbsp;<input type='checkbox' id='${id_checkb_sht}' unchecked style="vertical-align: middle;">` +
     // `&nbsp;&nbsp;&nbsp;установлен&nbsp;<input type='checkbox' id='${id_checkb_ust}' checked style="vertical-align: middle;">` +
@@ -185,6 +186,7 @@ function tabulator_select_dionis(
         `<button id='${id_button_add}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Добавить</button>` +
         `<button id='${id_button_del}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>Удалить</button>` +
         `<button id='${id_button_his}' class='w3-btn w3-padding-small w3-white o3-border w3-hover-teal' disabled>История</button>` +
+        `&nbsp;&nbsp;&nbsp;данные exel&nbsp;<input type='checkbox' id='${id_checkb_xls}' unchecked style="vertical-align: middle;">` +
         `</div>`
 
     const tabulator = new Tabulator("#" + div, {
@@ -206,9 +208,9 @@ function tabulator_select_dionis(
         columns: cols,
         footerElement: msgFooter,
 
-        // renderComplete: function() {
-        //     if (mode == "select") id2e(id_checkb_xls).disabled = true
-        // },
+        renderComplete: function() {
+            if (mode == "select") id2e(id_checkb_xls).disabled = true
+        },
 
         dataLoaded: function () {
             if (id_dionis == 0) return
@@ -367,21 +369,21 @@ function tabulator_select_dionis(
     //     set_Filter()
     // }
 
-    // id2e(id_checkb_xls).onclick = () => {
-    //     if (id2e(id_checkb_xls).checked) {
-    //         tabulator.showColumn('sono1')
-    //         tabulator.showColumn('sono2')
-    //         tabulator.showColumn('ifns1')
-    //         tabulator.showColumn('ifns2')
-    //         tabulator.redraw()
-    //     } else {
-    //         tabulator.hideColumn('sono1')
-    //         tabulator.hideColumn('sono2')
-    //         tabulator.hideColumn('ifns1')
-    //         tabulator.hideColumn('ifns2')
-    //         tabulator.redraw()
-    //     }
-    // }
+    id2e(id_checkb_xls).onclick = () => {
+        if (id2e(id_checkb_xls).checked) {
+            tabulator.showColumn('sono1')
+            tabulator.showColumn('sono2')
+            tabulator.showColumn('ifns1')
+            tabulator.showColumn('ifns2')
+            tabulator.redraw()
+        } else {
+            tabulator.hideColumn('sono1')
+            tabulator.hideColumn('sono2')
+            tabulator.hideColumn('ifns1')
+            tabulator.hideColumn('ifns2')
+            tabulator.redraw()
+        }
+    }
 
     // id2e(id_checkb_opr).onclick = () => {
     //     if (id2e(id_checkb_opr).checked) {
